@@ -22,12 +22,13 @@ attempt. Without grants (the v1-v3 default) every foreign-owner read is flagged.
 
 from __future__ import annotations
 
+import posixpath
 import re
 import warnings
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Protocol
-from urllib.parse import unquote, urlsplit
+from urllib.parse import unquote
 
 import httpx
 
@@ -101,9 +102,13 @@ class RequestRecord:
 
 
 def _route(path: str) -> str:
-    """The request path without query or fragment, percent-decoded, without trailing slashes."""
-    decoded = unquote(urlsplit(path).path)
-    return decoded.rstrip("/") or "/"
+    """The path the app will route: no query or fragment, percent-decoded, dot segments and
+    repeated or trailing slashes resolved. A lab-grade normalization for the demo app's
+    router; it is not a general defense against path confusion."""
+    # cut by hand: urlsplit would read "//payments//x" as a host named "payments"
+    raw = path.split("?", 1)[0].split("#", 1)[0]
+    decoded = unquote(raw)
+    return posixpath.normpath("/" + decoded.lstrip("/"))
 
 
 class DefensiveGateway:

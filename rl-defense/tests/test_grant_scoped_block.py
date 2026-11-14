@@ -82,6 +82,32 @@ def test_in_the_loop_the_scoped_block_keeps_authorized_traffic_on_an_insider_sce
     assert scoped["compromise_rate"] <= wide["compromise_rate"] + 1e-9
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/payments/./pay_c1",
+        "/payments/unused/../pay_c1",
+        "//payments//pay_c1",
+        "/payments/%2E/pay_c1",
+    ],
+)
+def test_dot_segments_and_repeated_slashes_resolve_before_the_ownership_lookup(path):
+    from rl_defense.live.gateway import _route
+
+    assert _route(path) == UNGRANTED
+    controls = DefenseControls(blocked_principals={DAVE: ["payments"]}, block_scope="ungranted")
+    with _gateway(controls) as gw:
+        rec = _get(gw, path)
+        assert rec.blocked_reason == "ungranted_blocked" and not rec.compromised
+
+
+def test_route_normalization_keeps_ordinary_paths():
+    from rl_defense.live.gateway import _route
+
+    for p in ("/", "/me", "/payments", "/payments/pay_a1", "/customers/cus_alice"):
+        assert _route(p) == p
+
+
 @pytest.mark.parametrize("suffix", ["?x=1", "/", "#frag", "?a=b&c=d"])
 def test_a_decorated_path_cannot_slip_past_the_detector_or_the_scoped_block(suffix):
     path = UNGRANTED + suffix
