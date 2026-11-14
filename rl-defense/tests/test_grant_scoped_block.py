@@ -80,3 +80,22 @@ def test_in_the_loop_the_scoped_block_keeps_authorized_traffic_on_an_insider_sce
     assert pg.access_summary(wide_access)["delegated_success"] < 1.0
     assert scoped["availability"] == 1.0 and wide["availability"] < 1.0
     assert scoped["compromise_rate"] <= wide["compromise_rate"] + 1e-9
+
+
+@pytest.mark.parametrize("suffix", ["?x=1", "/", "#frag", "?a=b&c=d"])
+def test_a_decorated_path_cannot_slip_past_the_detector_or_the_scoped_block(suffix):
+    path = UNGRANTED + suffix
+    with _gateway(DefenseControls()) as gw:
+        seen = _get(gw, path)
+        assert seen.cross_tenant_attempt and seen.owner == IDENTITIES["carol"].customer_id
+        assert seen.node == "payments" and DAVE in gw.flagged_principals()
+    controls = DefenseControls(blocked_principals={DAVE: ["payments"]}, block_scope="ungranted")
+    with _gateway(controls) as gw:
+        assert _get(gw, path).blocked_reason == "ungranted_blocked"
+        assert _get(gw, OWN + suffix).allowed  # own reads still pass, decorated or not
+
+
+def test_percent_encoded_ids_resolve_to_the_same_owner():
+    controls = DefenseControls(blocked_principals={DAVE: ["payments"]}, block_scope="ungranted")
+    with _gateway(controls) as gw:
+        assert _get(gw, "/payments/pay%5Fc1").blocked_reason == "ungranted_blocked"

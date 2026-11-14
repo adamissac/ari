@@ -27,6 +27,7 @@ import warnings
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Protocol
+from urllib.parse import unquote, urlsplit
 
 import httpx
 
@@ -99,6 +100,12 @@ class RequestRecord:
         return self.blocked_reason is None
 
 
+def _route(path: str) -> str:
+    """The request path without query or fragment, percent-decoded, without trailing slashes."""
+    decoded = unquote(urlsplit(path).path)
+    return decoded.rstrip("/") or "/"
+
+
 class DefensiveGateway:
     """Wraps the target ASGI app; enforces :class:`DefenseControls` per node."""
 
@@ -141,10 +148,14 @@ class DefensiveGateway:
         token: str | None = None,
         is_attack: bool = False,
     ) -> RequestRecord:
-        node = self._topology.node_for(method, path)
+        # Classify and look up ownership on the route the app will actually serve: without
+        # this, "/payments/pay_c1?x=1" has no owner here, is never flagged, and passes a
+        # grant-scoped block. The request is forwarded unchanged.
+        route = _route(path)
+        node = self._topology.node_for(method, route)
         headers = {"Authorization": f"Bearer {token}"} if token else {}
         principal = self._inst.principal(token)
-        owner = self._inst.resource_owner(method, path)
+        owner = self._inst.resource_owner(method, route)
         cross = (
             principal is not None
             and owner is not None
