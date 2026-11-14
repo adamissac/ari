@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AntColony } from '@/components/ant-colony';
+import { LiquidBackground } from '@/components/liquid-bg';
 
 /**
  * Full-screen interactive hero band. Pointer position and scroll progress are written as CSS
@@ -16,7 +17,7 @@ import { AntColony } from '@/components/ant-colony';
 /** The seven steps of an assessment, shown as chips on the hero and sign-in screens. */
 export const ASSESSMENT_LOOP = ['Understand', 'Review', 'Attack Safely', 'Diagnose', 'Repair', 'Verify', 'Monitor'];
 
-export function HeroStage({ children, className = '', labelledBy, play = true, colony = false, base }: { children: ReactNode; className?: string; labelledBy: string; play?: boolean; colony?: boolean; base?: ReactNode }) {
+export function HeroStage({ children, className = '', labelledBy, play = true, colony = false, liquid = false, base }: { children: ReactNode; className?: string; labelledBy: string; play?: boolean; colony?: boolean; liquid?: boolean; base?: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -26,7 +27,6 @@ export function HeroStage({ children, className = '', labelledBy, play = true, c
     root.dataset.homeHero = '';
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let frame = 0;
-    let pointer: { x: number; y: number } | null = null;
     let lastScroll = '';
     const paint = () => {
       frame = 0;
@@ -38,25 +38,15 @@ export function HeroStage({ children, className = '', labelledBy, play = true, c
       // Once the page has fully covered the pinned hero, stop painting it (orbs, glow, text).
       toggle(el.dataset, 'covered', y > height * 1.05);
       if (reduced) return;
-      if (pointer && y < height) {
-        el.style.setProperty('--mx', `${pointer.x - box.left}px`);
-        el.style.setProperty('--my', `${pointer.y - box.top}px`);
-      }
       const scroll = Math.min(1, Math.max(0, y / height)).toFixed(3);
       if (scroll !== lastScroll) { lastScroll = scroll; el.style.setProperty('--scroll', scroll); }
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(paint); };
-    const onMove = (e: PointerEvent) => { pointer = { x: e.clientX, y: e.clientY }; el.dataset.pointer = 'on'; schedule(); };
-    const onLeave = () => { el.dataset.pointer = 'off'; };
-    el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerleave', onLeave);
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
     schedule();
     return () => {
       cancelAnimationFrame(frame);
-      el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
       delete root.dataset.homeHero;
@@ -78,8 +68,8 @@ export function HeroStage({ children, className = '', labelledBy, play = true, c
         <span className="hero-orb hero-orb-c" />
         <span className="hero-orb hero-orb-d" />
         <span className="hero-orb hero-orb-e" />
-        <span className="hero-glow" />
       </div>
+      {liquid && <LiquidBackground />}
       {colony && <AntColony play={play} />}
       <div className="hero-content">{children}</div>
       {base}

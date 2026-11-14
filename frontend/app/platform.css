@@ -128,13 +128,12 @@ h1 { font-weight: 500; }
 tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: linear-gradient(90deg, rgb(var(--ember) / 9%), transparent 55%); }
 
 /* Trails across the hero: thin ember streaks that fade out, behind the content. */
-.hero-full { position: relative; }
 
 .hero-full .hero-content { position: relative; z-index: 1; }
 /* With a banner above it (demo account), the landing top bar stays in flow instead of covering it. */
 body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:has(.demo-banner) .site-header { position: sticky; }
 .marketing-atmosphere { background: transparent !important; }
-.bleed::after, .hero-cover::after { background: transparent !important; }
+.bleed::after, .hero-cover::after { background: var(--color-bg) !important; }
 .bleed-hero::after { display: none !important; }
 .project-head, .project-tabbar { background: var(--color-night) !important; border-image-source: none !important; }
 @media (min-width: 1024px) { .project-shell > .project-head, .project-shell > .project-tabbar { background: none !important; } }
@@ -210,3 +209,8 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
     #0b0b0c;
 }
 .hero-orb { opacity: 0.22; }
+
+/* Landing hero: a slow liquid backdrop replaces the drifting orbs; no cursor spotlight. */
+.liquid-bg { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; filter: blur(2px) saturate(0.9); transform: translateY(calc(var(--scroll, 0) * 120px)); }
+.hero-stage:has(.liquid-bg) .hero-orbs { display: none; }
+.hero-glow { display: none !important; }
