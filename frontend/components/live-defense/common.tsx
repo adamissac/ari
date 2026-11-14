@@ -9,7 +9,7 @@ import { Mono, Tag } from '@/components/ui';
 export function SourceTag({ mode }: { mode: LiveDefenseMode }) {
   return mode === 'layout-preview'
     ? <Tag tone="warn">Sample layout</Tag>
-    : <Tag tone="info">Control-plane records</Tag>;
+    : <Tag tone="info">Real records</Tag>;
 }
 
 export function PreviewBanner() {

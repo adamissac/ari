@@ -12,7 +12,7 @@ test('Live Defense Phase 4: authorize owned-test control, verify, rollback', asy
   await expect(page.getByTestId('live-defense-no-enforcement')).toContainText('does not apply, isolate, rate-limit, or block');
   await expect(page.getByRole('button', { name: /^(apply|isolate|rate-limit|block source)$/i })).toHaveCount(0);
 
-  await page.getByRole('link', { name: 'Staging apps' }).click();
+  await page.getByRole('link', { name: 'Apps', exact: true }).click();
   await page.getByLabel('Name').fill('payments-lite owned test');
   await page.getByLabel('Environment').selectOption('owned_test');
   await page.getByRole('button', { name: 'Register app' }).click();

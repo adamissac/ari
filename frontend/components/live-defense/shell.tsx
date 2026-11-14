@@ -9,10 +9,13 @@ import { liveDefenseHref, liveDefenseMode, liveDefenseTab, SHADOW_VS_CONTROLS_CO
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
-  { id: 'incidents', label: 'Investigation' },
-  { id: 'explain', label: 'Explainability' },
-  { id: 'apps', label: 'Staging apps' },
+  { id: 'incidents', label: 'Incidents' },
+  { id: 'apps', label: 'Apps' },
   { id: 'controls', label: 'Controls' },
+] as const;
+/** For whoever runs the pilot; kept reachable, out of the owner's way. */
+const ADVANCED = [
+  { id: 'explain', label: 'Explainability' },
   { id: 'first-responder', label: 'First responder' },
   { id: 'readiness', label: 'Readiness' },
   { id: 'executions', label: 'Executions' },
@@ -42,16 +45,16 @@ export function LiveDefenseShell({
     <div className="flex min-w-0 flex-col gap-6" data-testid="live-defense" data-mode={mode}>
       <header className="monitor-head" data-testid="live-defense-head">
         <div>
-          <p className="label-mono text-white/70">Ari Live Defense · shadow-pilot (recommendation-only)</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-tight text-white">Review, authorize, execute, and verify</h2>
-          <p className="mt-1 max-w-2xl text-sm text-white/80">Recommendations are never executed without a separate owner authorization.</p>
+          <p className="text-sm text-white/70">Live Defense</p>
+          <h2 className="mt-1 text-xl font-medium text-white">Watches your running app for attacks, around the clock</h2>
+          <p className="mt-1 max-w-2xl text-sm text-white/80">Ari records what it sees and what it would do about it. It acts only through a control you authorize.</p>
         </div>
         <div className="flex flex-col items-start gap-3 lg:items-end">
           <SourceTag mode={mode} />
           {!standalone && (
             <button
               type="button"
-              className="rounded-lg border border-white/25 bg-white/10 px-3.5 py-2 text-sm text-white hover:bg-white/20"
+              className="text-sm text-white/70 underline-offset-2 hover:text-white hover:underline"
               data-testid="live-defense-preview-toggle"
               aria-pressed={mode === 'layout-preview'}
               onClick={toggle}
@@ -67,11 +70,19 @@ export function LiveDefenseShell({
           const href = liveDefenseHref(standalone ? null : projectId, item.id, mode);
           const active = tab === item.id;
           return (
-            <Link key={item.id} href={href} aria-current={active ? 'page' : undefined} className="ld-tab label-mono">
+            <Link key={item.id} href={href} aria-current={active ? 'page' : undefined} className="ld-tab">
               {item.label}
             </Link>
           );
         })}
+        <span className="ld-tabs-advanced">
+          <span className="text-xs text-faint">Advanced</span>
+          {ADVANCED.map(item => (
+            <Link key={item.id} href={liveDefenseHref(standalone ? null : projectId, item.id, mode)} aria-current={tab === item.id ? 'page' : undefined} className="ld-tab ld-tab-quiet">
+              {item.label}
+            </Link>
+          ))}
+        </span>
       </nav>
       {children}
       <Details summary="Safety boundaries">
