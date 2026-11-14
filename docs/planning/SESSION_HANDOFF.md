@@ -7,6 +7,13 @@ adds an entry before ending.
 - Did: `monitoring/monitoring/proxy.py` sidecar reverse proxy (httpx + uvicorn, `proxy` extra) wrapping `AriCollector` and `AriControls`; collector gained owner route templates and skip paths. Tests: `monitoring/tests/test_proxy.py` (proxy as a real process in front of a Node server) and `test_ari_controls_a_node_app_through_the_sidecar_proxy` (API + worker -> proxy -> Node).
 - Known gaps: controls are per proxy process (run one instance); WebSockets and serverless not covered; no published image or package for customers outside this repo.
 
+### 2026-11-14 — Claude (agent, for Alan) — gate v2 run on the deterministic long-block rule: FAIL
+
+- Owner decision (Alan): spend `pilot_gate_v2` on `always_block_principal_long` as the pilot control. Pre-registered in `5fe2d147`, run once.
+- Result: FAIL, 4 of 9 checks pass (availability 0.831, delegated 0.711, return below the rules, -4.31 on `gate2_both_bookkeepers_rogue`). `pilot_gate.run` now accepts `candidate_rule`.
+- Finding: principal-wide blocking cannot separate an insider delegate's attack from their authorized reads. Recommended next step is a grant-scoped control in the gateway/action space, before any new candidate or gate. Both gate scenario sets are exposed.
+- Backend and readiness unchanged. Tests run locally: `tests/test_pilot_gate.py` (7). Full suites: CI.
+
 ### 2026-11-14 — Claude (agent, for Alan) — v11 candidate: validation prediction failed, gate v2 not run
 
 - Owner (Alan) approved a new candidate. Added `train_v11`, `val_v11`, `pilot_gate_v2` (unexposed), `OnlineConfig.min_val_availability`, `rl_defense/live/v11.py`; `pilot_gate.run` takes a candidate, scenario dir and rules tuning.
