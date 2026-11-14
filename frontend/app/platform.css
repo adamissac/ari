@@ -122,7 +122,11 @@ h1 { font-weight: 500; }
     linear-gradient(180deg, rgb(var(--ember) / 9%), transparent 220px) left top / 247px 100% no-repeat,
     linear-gradient(90deg, var(--color-night) 0 247px, var(--glass-line) 247px 248px, transparent 248px); }
   .project-tab[aria-current="page"] { background: linear-gradient(90deg, rgb(var(--ember) / 14%), rgb(var(--ember) / 4%) 60%, transparent), var(--color-panel-2); box-shadow: inset 2px 0 0 rgb(var(--ember-hi)); }
-  .project-shell > .project-body { background: radial-gradient(56% 360px at 100% 0, rgb(var(--ember) / 8%), transparent 100%); }
+  /* Console background: flat charcoal with a faint 32px grid, no glow. */
+  .project-shell > .project-body { background:
+    linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px) 0 0 / 32px 32px,
+    #101011; }
 }
 .evidence-tag { box-shadow: inset 0 0 0 1px rgb(var(--ember) / 30%); }
 tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: linear-gradient(90deg, rgb(var(--ember) / 9%), transparent 55%); }
