@@ -616,3 +616,8 @@ Owner requested AI automation and Defense Lab OFF until explicitly enabled. Bran
 - Synced origin/main (b039742b). No new messages addressed to Adam. Only change since run 45 is its own ADAM.md entry; rl-defense/, shared/, examples/payments-lite and Adam's CI/docs unchanged. `gh` GraphQL 403; git/MCP only.
 - Health: payments-lite target 13 passed, label_checks 11 passed; scripts/check_links.py 800 files, 0 problems. rl-defense suite NOT re-run (unchanged since 569 passed). No live-LLM tests, no training/eval.
 - No-op. Open: none.
+
+### 2026-11-14 — scheduled cloud health run (47)
+- Synced origin/main (97d1ce0f). New messages to Adam read: Alan's RL lab audit (#929-931 rl-defense hardening, lab simulation route), reward-v1/fail-closed gate follow-up (#941), and pilot-gate result (v6 passes 8 of 9, fails `no_per_scenario_regression`; gate v2 for the long-block rule fails 5 of 9). No reply needed from this run. `gh` GraphQL 403; git only.
+- Health (rl-defense changed substantially since run 46, so the full suite was re-run): rl-defense full suite 648 passed (17 min, with the duration-screen frozen pins installed as CI does); payments-lite target 13 passed, label_checks 11 passed; scripts/check_links.py 819 files, 0 problems. No live-LLM tests, no training/eval.
+- Open for Adam (human decision, not taken by this agent): Alan approved pilot-gate thresholds on 2026-11-14 without Adam present and asks him to object on #559 if he disagrees; `RlEvaluationMetricSpec.threshold_status` in shared/ is stale (`pending_rl_owner_approval`), a Srihith contract change.
