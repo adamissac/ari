@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { EnforcementNote, PreviewBanner, SourceTag } from '@/components/live-defense/common';
-import { Details } from '@/components/ui';
+import { EnforcementNote, PreviewBanner } from '@/components/live-defense/common';
+import { Details, PageTitle } from '@/components/ui';
 import { liveDefenseHref, liveDefenseMode, liveDefenseTab, SHADOW_VS_CONTROLS_COPY, withLiveDefenseMode, type LiveDefenseMode } from '@/lib/live-defense';
 
 const TABS = [
@@ -43,27 +43,15 @@ export function LiveDefenseShell({
 
   return (
     <div className="flex min-w-0 flex-col gap-6" data-testid="live-defense" data-mode={mode}>
-      <header className="monitor-head" data-testid="live-defense-head">
-        <div>
-          <p className="text-sm text-white/70">Live Defense</p>
-          <h2 className="mt-1 text-xl font-medium text-white">Watches your running app for attacks, around the clock</h2>
-          <p className="mt-1 max-w-2xl text-sm text-white/80">Ari records what it sees and what it would do about it. It acts only through a control you authorize.</p>
-        </div>
-        <div className="flex flex-col items-start gap-3 lg:items-end">
-          <SourceTag mode={mode} />
-          {!standalone && (
-            <button
-              type="button"
-              className="text-sm text-white/70 underline-offset-2 hover:text-white hover:underline"
-              data-testid="live-defense-preview-toggle"
-              aria-pressed={mode === 'layout-preview'}
-              onClick={toggle}
-            >
-              {mode === 'layout-preview' ? 'Leave sample layout' : 'Open sample layout'}
-            </button>
-          )}
-        </div>
-      </header>
+      <PageTitle
+        title="Live Defense"
+        subtitle="Watches your running app for attacks. It acts only through a control you authorize."
+        actions={!standalone && (
+          <button type="button" className="text-sm text-muted underline-offset-2 hover:text-ink hover:underline" data-testid="live-defense-preview-toggle" aria-pressed={mode === 'layout-preview'} onClick={toggle}>
+            {mode === 'layout-preview' ? 'Leave sample layout' : 'See a sample'}
+          </button>
+        )}
+      />
       {mode === 'layout-preview' && <PreviewBanner />}
       <nav aria-label="Live Defense" className="ld-tabs">
         {TABS.map(item => {

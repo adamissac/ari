@@ -318,7 +318,7 @@ export function ingestCurl(projectId: string): string {
 
 /** One step of the runtime-defense pipeline, lit only by what is recorded for this project. */
 export interface DefenseStage { id: string; title: string; state: 'on' | 'waiting' | 'manual'; fact: string }
-export interface DefenseStatus { tone: 'ok' | 'warn' | 'neutral'; headline: string; detail: string; stages: DefenseStage[] }
+export interface DefenseStatus { enabled: boolean; tone: 'ok' | 'warn' | 'neutral'; headline: string; detail: string; stages: DefenseStage[] }
 
 /** Plain-language status and pipeline. Counts are null while loading or when the request failed. */
 export function defenseStatus(i: {
@@ -337,9 +337,9 @@ export function defenseStatus(i: {
     { id: 'approve', title: 'Your approval', state: 'manual', fact: 'Nothing acts until you authorize it' },
     { id: 'act', title: 'Action and proof', state: 'manual', fact: 'A control is applied, then tested, and can be rolled back' },
   ];
-  if (!i.enabled) return { tone: 'neutral', headline: 'Live Defense is off', detail: 'Turn it on to have Ari re-check your code on every push and watch a connected app.', stages };
-  if (open > 0) return { tone: 'warn', headline: `${n(open, 'open incident')} to look at`, detail: 'Ari recorded suspicious activity. Open the incident to see the evidence and the suggested response.', stages };
-  if (!connected) return { tone: 'neutral', headline: 'Watching your code. No running app is connected yet', detail: 'Ari re-checks every push. To watch for live attacks it needs traffic signals from your running app.', stages };
-  if (!receiving) return { tone: 'neutral', headline: 'App connected. Waiting for its first traffic signals', detail: 'Nothing has been received from the app yet, so there is nothing to check.', stages };
-  return { tone: 'ok', headline: 'Watching your app. No open incidents', detail: 'Traffic signals are arriving and each batch is checked. Ari records what it would do and waits for your authorization to act.', stages };
+  if (!i.enabled) return { enabled: i.enabled, tone: 'neutral', headline: 'Live Defense is off', detail: 'Turn it on to have Ari re-check your code on every push and watch a connected app.', stages };
+  if (open > 0) return { enabled: i.enabled, tone: 'warn', headline: `${n(open, 'open incident')} to look at`, detail: 'Ari recorded suspicious activity. Open the incident to see the evidence and the suggested response.', stages };
+  if (!connected) return { enabled: i.enabled, tone: 'neutral', headline: 'Watching your code. No running app is connected yet', detail: 'Ari re-checks every push. To watch for live attacks it needs traffic signals from your running app.', stages };
+  if (!receiving) return { enabled: i.enabled, tone: 'neutral', headline: 'App connected. Waiting for its first traffic signals', detail: 'Nothing has been received from the app yet, so there is nothing to check.', stages };
+  return { enabled: i.enabled, tone: 'ok', headline: 'Watching your app. No open incidents', detail: 'Traffic signals are arriving and each batch is checked. Ari records what it would do and waits for your authorization to act.', stages };
 }

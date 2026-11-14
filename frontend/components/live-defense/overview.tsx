@@ -15,22 +15,19 @@ import Link from 'next/link';
 import { DefenseMap } from '@/components/defense-map';
 import { DefenseSwitch } from '@/components/defense-switch';
 import { HealthUnknownNote, SimulationCaveat, SourceTag } from '@/components/live-defense/common';
-import { Async, Badge, Details, Empty, Mono, Panel, StatGrid, Tag, Time } from '@/components/ui';
+import { Async, Details, Empty, Mono, Panel, Tag, Time } from '@/components/ui';
 import {
   actionInWords,
   defenseStatus,
-  eventIncidentIds,
   isOpenIncidentState,
   liveDefenseHref,
   liveDefenseOverviewCopy,
   MISSING_LIVE_APIS,
-  provenanceLabel,
   USED_LIVE_APIS,
   type LiveDefenseMode,
 } from '@/lib/live-defense';
 import { PREVIEW_EVENTS, PREVIEW_INCIDENTS, PREVIEW_LINKS, PREVIEW_NODES, PREVIEW_RECOMMENDATIONS, PREVIEW_STATES } from '@/lib/live-defense-preview';
 import { STATE_LABEL } from '@/lib/incidents';
-import { EVENT_STATUS } from '@/lib/status';
 import type { Resource } from '@/lib/use-resource';
 
 export function LiveOverview({
@@ -123,72 +120,35 @@ function LiveOverviewRecords({
     openIncidents: incidents?.status === 'ready' ? open.length : null,
     suggestions: recs?.status === 'ready' && decisions?.status === 'ready' ? recItems.length + decisionItems.length : null,
   });
-  const pushes = eventItems.filter(item => item.source === 'github').length;
+  const action = !status.enabled ? null : open.length > 0 ? { tab: 'incidents' as const, label: 'View incidents' } : appCount === 0 ? { tab: 'apps' as const, label: 'Connect an app' } : null;
   return (
     <div className="flex min-w-0 flex-col gap-6">
-      <section aria-label="Live Defense status" className="ld-status" data-testid="live-defense-status" data-tone={status.tone}>
+      <section aria-label="Live Defense status" className="flex min-w-0 flex-wrap items-start justify-between gap-4" data-testid="live-defense-status" data-tone={status.tone}>
         <div className="min-w-0">
-          <p className="ld-status-line"><span className="ld-status-dot" aria-hidden="true" />{status.headline}</p>
-          <p className="mt-2 max-w-2xl text-sm text-muted">{status.detail}</p>
+          <h2 className="text-xl font-semibold tracking-tight">{status.headline}</h2>
+          <p className="mt-2 max-w-3xl text-sm text-muted">{status.detail}</p>
+          {action && <div className="mt-4"><Link href={liveDefenseHref(projectId, action.tab)} className="inline-flex items-center rounded-lg bg-brand px-4 py-2 text-sm font-medium text-on-brand hover:bg-brand-deep" data-testid="live-defense-connect">{action.label}</Link></div>}
         </div>
         {project && reloadProject && <DefenseSwitch project={project} onChange={() => reloadProject()} />}
       </section>
 
-      <Panel title="How Live Defense works, and what is running for this project">
-        <ol className="ld-flow" data-testid="live-defense-flow">
-          {status.stages.map((stage, index) => (
-            <li key={stage.id} className="ld-stage" data-state={stage.state}>
-              <span className="ld-stage-step">{index + 1}</span>
-              <span className="ld-stage-title">{stage.title}</span>
-              <span className="ld-stage-state">{stage.state === 'on' ? 'Running' : stage.state === 'manual' ? 'Your call' : 'Not yet'}</span>
-              <span className="ld-stage-fact">{stage.fact}</span>
-            </li>
+      <Panel title="Activity">
+        <div className="grid grid-cols-2 sm:grid-cols-4" data-testid="live-defense-stats">
+          {([
+            ['Apps connected', appCount],
+            ['Open incidents', incidents?.status === 'ready' ? open.length : null],
+            ['Suggested responses, none applied', recs?.status === 'ready' && decisions?.status === 'ready' ? recItems.length + decisionItems.length : null],
+            ['Code re-checks requested', reassess?.status === 'ready' ? reassess.data.items.length : null],
+          ] as const).map(([label, value], index) => (
+            <div key={label} className={`min-w-0 px-4 py-3 ${index % 2 ? 'border-l border-line' : ''} ${index > 1 ? 'border-t border-line sm:border-t-0' : ''} ${index > 0 ? 'sm:border-l' : ''}`}>
+              <p className="font-mono text-2xl font-semibold text-ink">{value === null ? '…' : value.toLocaleString()}</p>
+              <p className="mt-1 text-xs text-muted">{label}</p>
+            </div>
           ))}
-        </ol>
-        {appCount === 0 && (
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4" data-testid="live-defense-connect">
-            <p className="max-w-2xl text-sm text-muted"><span className="text-ink">Connect your running app to start step 1.</span> Register the app, add the token to it, and it starts sending traffic counts. Ari never sees request bodies or secrets.</p>
-            <Link className="inline-flex items-center rounded-lg bg-brand px-4 py-2 text-sm font-medium text-on-brand hover:bg-brand-deep" href={liveDefenseHref(projectId, 'apps')}>Connect an app</Link>
-          </div>
-        )}
+        </div>
       </Panel>
 
-        {graph ? (
-        <Async resource={graph} label="recorded topology">
-          {item => item.nodes.length === 0 ? null : (
-            <Panel title="Connected apps and routes"><div data-testid="live-defense-graph">
-              <p className="mb-2 text-xs text-muted">{item.note}</p>
-              <ul className="flex flex-col gap-2">
-                {item.nodes.map(node => {
-                  const obs = item.observations.find(entry => entry.node_id === node.id);
-                  return (
-                    <li key={node.id} className="rounded-md border border-line bg-panel-2 p-2.5 text-sm text-ink">
-                      <span className="font-medium">{node.label}</span>
-                      <span className="mt-1 flex flex-wrap gap-1 text-xs">
-                        <Tag>{node.kind}</Tag>
-                        <Tag tone={obs?.state === 'attention' ? 'warn' : 'neutral'}>{obs?.state ?? 'unknown'}</Tag>
-                        {obs?.simulated && <Tag tone="warn">simulated source</Tag>}
-                        {obs?.last_checked_at && <span className="text-muted">last window <Time iso={obs.last_checked_at} /></span>}
-                      </span>
-                      {obs?.note && <p className="mt-1 text-xs text-muted">{obs.note}</p>}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div></Panel>
-          )}
-        </Async>
-      ) : null}
-      <section aria-label="Live Defense activity">
-        <StatGrid items={[
-          { label: 'Open incidents', value: incidents?.status === 'ready' ? open.length : '…' },
-          { label: 'Suggested responses, none applied', value: recs?.status === 'ready' && decisions?.status === 'ready' ? recItems.length + decisionItems.length : '…' },
-          { label: 'Code pushes seen (latest loaded)', value: events?.status === 'ready' ? pushes : '…' },
-          { label: 'Code re-checks requested', value: reassess?.status === 'ready' ? reassess.data.items.length : '…' },
-        ]} />
-      </section>
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <Panel title="Open incidents" actions={<Link className="text-xs text-accent hover:underline" href={liveDefenseHref(projectId, 'incidents')}>All incidents</Link>}>
           {incidents ? (
             <Async resource={incidents} label="incidents">
@@ -215,37 +175,7 @@ function LiveOverviewRecords({
             </Async>
           ) : <Empty>Incidents were not requested.</Empty>}
         </Panel>
-        <Panel title="Recent activity">
-          {events ? (
-            <Async resource={events} label="monitoring events">
-              {page => page.items.length === 0 ? <Empty>Nothing received yet. Signed GitHub deliveries and signals from a connected app appear here.</Empty> : (
-                <ol className="divide-y divide-line">
-                  {page.items.slice(0, 8).map(event => {
-                    const linked = eventIncidentIds(event.id, incidentItems);
-                    return (
-                      <li key={event.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-2.5 text-sm text-ink">
-                        <span className="flex min-w-0 flex-wrap items-center gap-2">
-                          <span>{event.source === 'github' ? 'GitHub' : event.source} {event.type.replaceAll('_', ' ')}</span>
-                          {(event.simulated || event.test_event) && <Tag tone="warn">{provenanceLabel(event)}</Tag>}
-                          {linked.map(id => (
-                            <Link key={id} className="text-xs text-accent hover:underline" href={`${liveDefenseHref(projectId, 'incidents')}/${id}`}>Incident</Link>
-                          ))}
-                        </span>
-                        <span className="flex items-center gap-3 text-xs text-muted">
-                          <Badge view={EVENT_STATUS[event.status]} />
-                          <Time iso={event.received_at} />
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ol>
-              )}
-            </Async>
-          ) : <Empty>Events were not requested.</Empty>}
-        </Panel>
-      </div>
-
-      <Panel title="What Ari would do" actions={<Link className="text-xs text-accent hover:underline" href={liveDefenseHref(projectId, 'controls')}>Controls</Link>}>
+        <Panel title="What Ari would do" actions={<Link className="text-xs text-accent hover:underline" href={liveDefenseHref(projectId, 'controls')}>Controls</Link>}>
         <p className="mb-3 text-sm text-muted">Suggestions only. None of these was applied. To act on one, authorize a temporary control on the Controls tab.</p>
         {decisions ? (
           <Async resource={decisions} label="shadow decisions">
@@ -285,6 +215,47 @@ function LiveOverviewRecords({
         ) : null}
         {recs?.status === 'ready' && decisions?.status === 'ready' && recItems.length + decisionItems.length === 0 && <Empty>No suggestion yet. They appear once a connected app sends traffic.</Empty>}
       </Panel>
+
+      </div>
+
+      {graph ? (
+        <Async resource={graph} label="recorded topology">
+          {item => item.nodes.length === 0 ? null : (
+            <Panel title="Connected apps and routes"><div data-testid="live-defense-graph">
+              <p className="mb-2 text-xs text-muted">{item.note}</p>
+              <ul className="flex flex-col gap-2">
+                {item.nodes.map(node => {
+                  const obs = item.observations.find(entry => entry.node_id === node.id);
+                  return (
+                    <li key={node.id} className="rounded-md border border-line bg-panel-2 p-2.5 text-sm text-ink">
+                      <span className="font-medium">{node.label}</span>
+                      <span className="mt-1 flex flex-wrap gap-1 text-xs">
+                        <Tag>{node.kind}</Tag>
+                        <Tag tone={obs?.state === 'attention' ? 'warn' : 'neutral'}>{obs?.state ?? 'unknown'}</Tag>
+                        {obs?.simulated && <Tag tone="warn">simulated source</Tag>}
+                        {obs?.last_checked_at && <span className="text-muted">last window <Time iso={obs.last_checked_at} /></span>}
+                      </span>
+                      {obs?.note && <p className="mt-1 text-xs text-muted">{obs.note}</p>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div></Panel>
+          )}
+        </Async>
+      ) : null}
+      <Details summary="How it works">
+        <ol className="ld-flow" data-testid="live-defense-flow">
+          {status.stages.map((stage, index) => (
+            <li key={stage.id} className="ld-stage" data-state={stage.state}>
+              <span className="ld-stage-step">{index + 1}</span>
+              <span className="ld-stage-title">{stage.title}</span>
+              <span className="ld-stage-state">{stage.state === 'on' ? 'Running' : stage.state === 'manual' ? 'Your call' : 'Not yet'}</span>
+              <span className="ld-stage-fact">{stage.fact}</span>
+            </li>
+          ))}
+        </ol>
+      </Details>
 
       <Details summary="Engineering details">
         <p className="text-xs text-muted" data-testid="live-defense-summary">{copy}</p>
