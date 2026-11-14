@@ -33,7 +33,7 @@ test('Live Defense shadow pilot: staging app, ingest, unknown health, review wit
   await expect(page.getByTestId('defense-map')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /^(apply|isolate|rate-limit|block source)$/i })).toHaveCount(0);
 
-  await page.getByRole('link', { name: 'Apps', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Live Defense' }).getByRole('link', { name: 'Apps', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/projects/${pid}/live-defense/apps`));
   await expect(page.getByTestId('live-defense-shadow-mode')).toContainText('Shadow mode');
   await page.getByLabel('Name').fill('payments-lite staging');
@@ -95,7 +95,7 @@ test('Live Defense shadow pilot: staging app, ingest, unknown health, review wit
   await expect(page.getByTestId('live-defense-graph')).toBeVisible();
   await evidenceShot(page, 'live-defense-overview');
 
-  await page.getByRole('link', { name: 'Incidents', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Live Defense' }).getByRole('link', { name: 'Incidents', exact: true }).click();
   await expect(page.getByTestId(`live-defense-incident-${incident.id}`)).toContainText('Staging ingest spike');
   await evidenceShot(page, 'live-defense-investigation');
   await page.getByTestId(`live-defense-incident-${incident.id}`).click();

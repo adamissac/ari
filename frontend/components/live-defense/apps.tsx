@@ -45,15 +45,13 @@ export function StagingApps({
   if (!projectId) return <Empty>Choose a project to register a staging app.</Empty>;
   return (
     <div className="flex min-w-0 flex-col gap-6" data-testid="live-defense-apps">
-      <OwnedTestBanner />
-      <ShadowModeNote />
+      <p className="max-w-3xl text-sm text-muted" data-testid="live-defense-tab-intro">Connect the app you want watched. Three steps: register it, copy its token into the app, and it starts sending traffic counts. Ari gets counts per route only, never request bodies or secrets.</p>
       <RegisterApp projectId={projectId} onChange={onChange} />
-      <GrantForm projectId={projectId} apps={apps} grants={grants} onChange={onChange} />
-      <Panel title="Registered staging apps" actions={<SourceTag mode="live" />}>
+      <Panel title="Your apps" actions={<SourceTag mode="live" />}>
         {apps ? (
           <Async resource={apps} label="staging apps">
             {page => page.items.length === 0 ? (
-              <Empty>No staging app yet. Only sandbox and owned-test environments are allowed. Production enforcement grants are not offered.</Empty>
+              <Empty>No app connected yet. Register one above to start.</Empty>
             ) : (
               <ul className="flex flex-col gap-3">
                 {page.items.map(app => (
@@ -64,8 +62,11 @@ export function StagingApps({
           </Async>
         ) : <Empty>Apps were not requested.</Empty>}
       </Panel>
+      <GrantForm projectId={projectId} apps={apps} grants={grants} onChange={onChange} />
+      <OwnedTestBanner />
+      <ShadowModeNote />
       <PilotReportPanel projectId={projectId} />
-      <Panel title="Ingest guidance">
+      <Panel title="Send traffic signals">
         <p className="text-sm text-ink">Send aggregated per-route counters to the existing ingest endpoint. Never put raw logs, payloads, or secrets in the batch.</p>
         <pre className="mt-3 overflow-x-auto rounded-md border border-line bg-panel-2 p-3 text-xs text-ink">{ingestCurl(projectId)}</pre>
         <p className="mt-2 text-xs text-muted">The token is shown once at issuance. Later lists return metadata only (id, last used, revoked). Owners revoke from this page.</p>
@@ -104,9 +105,9 @@ function RegisterApp({ projectId, onChange }: { projectId: string; onChange?: ()
     }
   };
   return (
-    <Panel title="Register an application">
+    <Panel title="1. Register your app">
       <p className="mb-3 text-sm text-muted">
-        Identity and environment only. A production app gets controls only after you grant each kind and click to authorize each control.
+        A name and an environment. Registering changes nothing in your app. Ari can act on it only after you allow each kind of control below and then authorize each one yourself.
       </p>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <Field label="Name">
@@ -301,8 +302,8 @@ function GrantForm({
     }
   };
   return (
-    <Panel title="Owner grant (exact kinds on one app)">
-      <p className="mb-3 text-sm text-muted">Grants do not execute. They bound later authorizations to this app, these kinds, and this duration ceiling.</p>
+    <Panel title="Allow Ari to act on an app">
+      <p className="mb-3 text-sm text-muted">Optional. Pick which temporary controls Ari may apply to one app, and for how long at most. Allowing does not apply anything: each control still needs your click on the Controls tab.</p>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <Field label="Application">
           <select className={inputClass} value={selectedAppId} onChange={e => setAppId(e.target.value)}>
@@ -444,7 +445,7 @@ function PilotReportPanel({ projectId }: { projectId: string }) {
     }
   };
   return (
-    <Panel title="Exportable pilot report">
+    <Panel title="Download a report">
       <p className="text-sm text-ink">
         Downloads recorded staging-app, ingest, shadow-decision, and review counts.
         HTTP 200 is not attack success. This report never claims that shadow mode prevented breaches.

@@ -45,6 +45,7 @@ export function ControlsDashboard({
   const unresolved = items.filter(item => item.unresolved);
   return (
     <div className="flex min-w-0 flex-col gap-6" data-testid="live-defense-controls">
+      <p className="max-w-3xl text-sm text-muted" data-testid="live-defense-tab-intro">A control is a temporary action on your app, such as slowing a noisy source or blocking it. Nothing runs by itself: you authorize each one here, Ari applies it, tests that it worked, and removes it when it expires or you roll it back.</p>
       <OwnedTestBanner />
       <p className="rounded-xl border border-line bg-panel-2 px-4 py-3 text-sm text-ink" data-testid="live-defense-controls-gated-note">
         RL-gated shadow-only apps do not appear here for authorization. The server refuses grants, channels, and execute for those apps even if this form is used.
@@ -54,28 +55,28 @@ export function ControlsDashboard({
           Unresolved failed control(s) block further actions until rollback or emergency stop is verified.
         </p>
       )}
-      <Panel title="Authorize a temporary owned-test control" actions={<SourceTag mode="live" />}>
+      <Panel title="Apply a temporary control" actions={<SourceTag mode="live" />}>
         {apps ? (
           <Async resource={apps} label="staging apps">
             {page => <AuthorizeControlForm apps={page.items} onSaved={onChange} />}
           </Async>
         ) : <Empty>Apps were not requested.</Empty>}
       </Panel>
-      <Panel title="Pending queue">
-        <p className="mb-2 text-xs text-muted">LiveControl statuses, not NIST incident states. Authorized is not executing.</p>
+      <Panel title="Waiting to run">
+        <p className="mb-2 text-xs text-muted">Authorized by you, not applied yet.</p>
         {controls ? (
           <Async resource={controls} label="pending controls">
             {page => {
               const queued = page.items.filter(item => isPendingControl(item.status));
-              return queued.length === 0 ? <Empty>No pending owned-test control.</Empty> : (
+              return queued.length === 0 ? <Empty>Nothing waiting.</Empty> : (
                 <ul className="flex flex-col gap-2">{queued.map(item => <ControlCard key={item.id} control={item} onChange={onChange} />)}</ul>
               );
             }}
           </Async>
         ) : <Empty>Controls were not requested.</Empty>}
       </Panel>
-      <Panel title="Active controls">
-        <p className="mb-2 text-xs text-muted">Verified on the owned-test app with real probe requests. Adapter HTTP 200 is not effectiveness.</p>
+      <Panel title="Running now">
+        <p className="mb-2 text-xs text-muted">Applied and tested with real requests against the app. Adapter HTTP 200 is not effectiveness: only the test result counts.</p>
         {controls ? (
           <Async resource={controls} label="active controls">
             {page => {
@@ -83,7 +84,7 @@ export function ControlsDashboard({
               return (
                 <>
                   <p className="mb-2 text-xs text-muted">Backend label: {page.label}</p>
-                  {live.length === 0 ? <Empty>No verified owned-test control is active.</Empty> : (
+                  {live.length === 0 ? <Empty>No control is running.</Empty> : (
                     <ul className="flex flex-col gap-2">{live.map(item => <ControlCard key={item.id} control={item} onChange={onChange} />)}</ul>
                   )}
                 </>
@@ -92,13 +93,13 @@ export function ControlsDashboard({
           </Async>
         ) : <Empty>Controls were not requested.</Empty>}
       </Panel>
-      <Panel title="Ended controls">
-        <p className="mb-2 text-xs text-muted">Rejected, failed, expired, rolled back, escalated, or emergency-stopped. Distinct from shadow recommendations.</p>
+      <Panel title="Finished">
+        <p className="mb-2 text-xs text-muted">Expired, rolled back, rejected, failed or stopped.</p>
         {controls ? (
           <Async resource={controls} label="ended controls">
             {page => {
               const ended = page.items.filter(item => !isPendingControl(item.status) && !isActiveControl(item.status));
-              return ended.length === 0 ? <Empty>No ended LiveControl yet.</Empty> : (
+              return ended.length === 0 ? <Empty>Nothing finished yet.</Empty> : (
                 <ul className="flex flex-col gap-2">{ended.map(item => <ControlCard key={item.id} control={item} onChange={onChange} />)}</ul>
               );
             }}
@@ -187,10 +188,9 @@ function EmergencyStopPanel({
   };
   const active = stops?.status === 'ready' ? stops.data.active : false;
   return (
-    <Panel title="Emergency stop (kill switch)">
+    <Panel title="Emergency stop">
       <p className="text-sm text-muted">
-        Rejects new controls, tries to remove active ones on the owned-test app, and records the attempt.
-        Success is not claimed until removal is verified.
+        Stops everything: refuses new controls and removes the running ones. Ari reports it as done only after it has checked the controls are gone.
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
         <Field label="Note (optional)">

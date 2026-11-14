@@ -38,9 +38,9 @@ export function InvestigationList({
     );
   }
   return (
-    <Panel title="Incidents available to investigate" actions={<SourceTag mode="live" />}>
-      <p className="mb-3 text-xs text-muted">
-        NIST SP 800-61 incident records. Triage and closure happen on the{' '}
+    <Panel title="Incidents" actions={<SourceTag mode="live" />}>
+      <p className="mb-3 text-sm text-muted">
+        An incident is suspicious activity Ari recorded, with its evidence and suggested response. Open one to see what happened. Assigning and closing happen on the{' '}
         {projectId ? <Link className="text-accent hover:underline" href={`/projects/${projectId}/incidents`}>Incidents</Link> : 'Incidents'} page.
       </p>
       <div className="mb-3 flex flex-wrap gap-2 text-sm">
@@ -67,7 +67,7 @@ export function InvestigationList({
               if (originFilter === 'recorded' && item.simulated) return false;
               return true;
             });
-            if (page.items.length === 0) return <Empty>No incidents. Open one from Monitoring or the Incidents page.</Empty>;
+            if (page.items.length === 0) return <Empty>No incidents. Nothing suspicious has been recorded.</Empty>;
             if (items.length === 0) return <Empty>No incidents match these filters.</Empty>;
             return (
             <ul className="flex flex-col gap-2">
@@ -78,7 +78,7 @@ export function InvestigationList({
                       <span className="font-medium">{item.title}</span>
                       <span className="flex gap-1">{item.simulated && <Tag tone="warn">Synthetic</Tag>}<Tag>{STATE_LABEL[item.state]}</Tag></span>
                     </div>
-                    <p className="mt-1 text-xs text-muted">CSF {item.csf_function} · {item.severity ?? 'unscored'} · opened <Time iso={item.opened_at} /> · {item.monitoring_event_ids.length} linked events · {item.recommendation_ids.length} linked recommendations</p>
+                    <p className="mt-1 text-xs text-muted">{item.severity ?? 'Severity not set'} · opened <Time iso={item.opened_at} /> · {item.monitoring_event_ids.length} linked events · {item.recommendation_ids.length} linked recommendations</p>
                   </Link>
                 </li>
               ))}
@@ -161,13 +161,13 @@ export function InvestigationDetail({
                 <p className="mt-3 text-sm text-muted">
                   To triage, assign, or close this incident, use the{' '}
                   {projectId ? <Link className="text-accent hover:underline" href={`/projects/${projectId}/incidents`}>Incidents workspace</Link> : 'Incidents workspace'}.
-                  Live Defense review of a recommendation is not an enforcement approval.
+                  Reviewing a suggestion here does not apply it.
                 </p>
               </Panel>
-              <Panel title="Linked evidence">
+              <Panel title="Evidence">
                 <EvidenceLinks projectId={projectId} incident={incident} events={events} recs={recs} />
               </Panel>
-              <Panel title="Recorded timeline">
+              <Panel title="Timeline">
                 {incident.timeline.length === 0 ? <Empty>No timeline entries.</Empty> : (
                   <ol className="flex flex-col gap-2">
                     {incident.timeline.map((entry, index) => (
@@ -188,7 +188,7 @@ export function InvestigationDetail({
           )}
         </Async>
       ) : <Empty>Incident detail was not requested.</Empty>}
-      <Link className="text-sm text-accent hover:underline" href={liveDefenseHref(projectId, 'incidents')}>Back to investigation list</Link>
+      <Link className="text-sm text-accent hover:underline" href={liveDefenseHref(projectId, 'incidents')}>Back to incidents</Link>
     </div>
   );
 }
