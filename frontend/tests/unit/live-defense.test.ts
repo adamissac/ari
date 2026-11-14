@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  defenseStatus,
   actionInWords,
   assertSingleSource,
   EVIDENCE_STATES,
@@ -180,5 +181,31 @@ describe('source isolation', () => {
       'Failed',
       'Rolled back',
     ]);
+  });
+});
+
+describe('defenseStatus', () => {
+  const base = { enabled: true, apps: 0, lastIngestAt: null, openIncidents: 0, suggestions: 0 };
+  const lit = (s: ReturnType<typeof defenseStatus>) => s.stages.filter(stage => stage.state === 'on').map(stage => stage.id);
+
+  it('never lights a stage the records do not show', () => {
+    const none = defenseStatus(base);
+    expect(none.headline).toMatch(/No running app is connected/);
+    expect(lit(none)).toEqual([]);
+    const registered = defenseStatus({ ...base, apps: 1 });
+    expect(registered.headline).toMatch(/Waiting for its first traffic/);
+    expect(lit(registered)).toEqual(['app']);
+    const watching = defenseStatus({ ...base, apps: 2, lastIngestAt: '2026-11-14T00:00:00Z', suggestions: 3 });
+    expect(watching.tone).toBe('ok');
+    expect(lit(watching)).toEqual(['app', 'signals', 'detect', 'suggest']);
+    expect(watching.stages.find(stage => stage.id === 'suggest')?.fact).toBe('3 suggestions recorded, none applied');
+  });
+
+  it('approval and action are always the owner\'s call, and incidents and off win the headline', () => {
+    const s = defenseStatus({ ...base, apps: 1, lastIngestAt: '2026-11-14T00:00:00Z', openIncidents: 1 });
+    expect(s.tone).toBe('warn');
+    expect(s.headline).toBe('1 open incident to look at');
+    expect(s.stages.filter(stage => stage.state === 'manual').map(stage => stage.id)).toEqual(['approve', 'act']);
+    expect(defenseStatus({ ...base, enabled: false, openIncidents: 4 }).headline).toBe('Live Defense is off');
   });
 });

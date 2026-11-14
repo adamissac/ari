@@ -38,7 +38,7 @@ test('Live Defense e2e: OFF mode stops investigation and renders honestly', asyn
   await page.getByRole('button', { name: 'Set mode' }).click();
   await expect(page.getByTestId('live-defense-fr-intent')).toContainText('monitor');
 
-  await page.getByRole('navigation', { name: 'Live Defense' }).getByRole('link', { name: 'Staging apps' }).click();
+  await page.getByRole('navigation', { name: 'Live Defense' }).getByRole('link', { name: 'Apps', exact: true }).click();
   await page.getByLabel('Name').fill('e2e owned staging');
   await page.getByLabel('Environment').selectOption('owned_test');
   await page.getByRole('button', { name: 'Register app' }).click();

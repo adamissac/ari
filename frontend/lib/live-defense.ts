@@ -315,3 +315,31 @@ export function ttlRemaining(expiresAt: string | null, nowMs = Date.now()): stri
 export function ingestCurl(projectId: string): string {
   return `curl -X POST "$ARI_API/api/v1/ingest/runtime/${projectId}" \\\n  -H "Authorization: Bearer $INGEST_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"source":"owned_staging","window_start":"<utc>","window_end":"<utc>","routes":[{"route":"GET /health","requests":1}]}'`;
 }
+
+/** One step of the runtime-defense pipeline, lit only by what is recorded for this project. */
+export interface DefenseStage { id: string; title: string; state: 'on' | 'waiting' | 'manual'; fact: string }
+export interface DefenseStatus { tone: 'ok' | 'warn' | 'neutral'; headline: string; detail: string; stages: DefenseStage[] }
+
+/** Plain-language status and pipeline. Counts are null while loading or when the request failed. */
+export function defenseStatus(i: {
+  enabled: boolean; apps: number | null; lastIngestAt: string | null | undefined;
+  openIncidents: number | null; suggestions: number | null;
+}): DefenseStatus {
+  const connected = (i.apps ?? 0) > 0;
+  const receiving = connected && !!i.lastIngestAt;
+  const open = i.openIncidents ?? 0;
+  const n = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
+  const stages: DefenseStage[] = [
+    { id: 'app', title: 'Your app', state: connected ? 'on' : 'waiting', fact: i.apps === null ? 'Not loaded' : connected ? `${n(i.apps, 'app')} connected` : 'No app connected' },
+    { id: 'signals', title: 'Signals', state: receiving ? 'on' : 'waiting', fact: receiving ? 'Traffic counts arriving' : connected ? 'No traffic received yet' : 'Starts when an app is connected' },
+    { id: 'detect', title: 'Detection', state: receiving ? 'on' : 'waiting', fact: receiving ? 'Every batch is checked for attack patterns' : 'Starts when traffic arrives' },
+    { id: 'suggest', title: 'Suggested response', state: (i.suggestions ?? 0) > 0 ? 'on' : 'waiting', fact: i.suggestions === null ? 'Not loaded' : i.suggestions > 0 ? `${n(i.suggestions, 'suggestion')} recorded, none applied` : 'None yet' },
+    { id: 'approve', title: 'Your approval', state: 'manual', fact: 'Nothing acts until you authorize it' },
+    { id: 'act', title: 'Action and proof', state: 'manual', fact: 'A control is applied, then tested, and can be rolled back' },
+  ];
+  if (!i.enabled) return { tone: 'neutral', headline: 'Live Defense is off', detail: 'Turn it on to have Ari re-check your code on every push and watch a connected app.', stages };
+  if (open > 0) return { tone: 'warn', headline: `${n(open, 'open incident')} to look at`, detail: 'Ari recorded suspicious activity. Open the incident to see the evidence and the suggested response.', stages };
+  if (!connected) return { tone: 'neutral', headline: 'Watching your code. No running app is connected yet', detail: 'Ari re-checks every push. To watch for live attacks it needs traffic signals from your running app.', stages };
+  if (!receiving) return { tone: 'neutral', headline: 'App connected. Waiting for its first traffic signals', detail: 'Nothing has been received from the app yet, so there is nothing to check.', stages };
+  return { tone: 'ok', headline: 'Watching your app. No open incidents', detail: 'Traffic signals are arriving and each batch is checked. Ari records what it would do and waits for your authorization to act.', stages };
+}

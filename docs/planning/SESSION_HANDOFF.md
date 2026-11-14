@@ -2995,3 +2995,8 @@ Canonical main 9437e217d65aa1be22fa7b4f54f723200cd428c8; external pilot NO-GO. S
 - `GET /projects/{id}/findings?dedupe=true`: read-side only. An unproven finding (hypothesis, inconclusive) is returned only from the newest assessment that raised the same suspicion in the same repository (kind + CWE + first cited file, else kind + title). Nothing is deleted or re-statused; the default response is unchanged. The findings page and the analytics page pass it; the commits page does not, so each commit still shows its own suspicions.
 - Limit: a reworded suspicion with no CWE, or one whose first cited file differs, stays separate.
 - Railway production (names only, values redacted): no `JOB_MAX_RUNNING_PER_PROJECT` or `WORKER_PROCESSES`, so the defaults (12 and 12) apply.
+
+## 2026-11-14 — Live Defense overview in plain words (`feat/adam/live-defense-clarity`)
+- Shell: plain headline; tabs cut to Overview / Incidents / Apps / Controls, with Explainability, First responder, Readiness and Executions under "Advanced" in the same nav. No route removed. E2E link names updated (`Staging apps` → `Apps`, `Investigation` → `Incidents`).
+- Overview: one status line and a six-step pipeline (`defenseStatus` in `frontend/lib/live-defense.ts`). A step is lit only from the project's own records; approval and action are always marked as the owner's call. Health, topology, the summary sentence and the API list moved into an "Engineering details" fold (test ids kept).
+- Not done: the sub-tabs (Incidents, Apps, Controls and the advanced ones) keep their old copy. Playwright e2e not run locally.

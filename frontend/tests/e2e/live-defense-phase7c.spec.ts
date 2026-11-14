@@ -34,7 +34,7 @@ test('Live Defense Phase 7C: Scout executes, Probe is not expanded, no AUTO-EXEC
   await page.getByRole('button', { name: 'Set mode' }).click();
   await expect(page.getByTestId('live-defense-fr-intent')).toContainText('monitor');
 
-  await page.getByRole('navigation', { name: 'Live Defense' }).getByRole('link', { name: 'Staging apps' }).click();
+  await page.getByRole('navigation', { name: 'Live Defense' }).getByRole('link', { name: 'Apps', exact: true }).click();
   await page.getByLabel('Name').fill('phase7c staging');
   await page.getByLabel('Environment').selectOption('owned_test');
   await page.getByRole('button', { name: 'Register app' }).click();
