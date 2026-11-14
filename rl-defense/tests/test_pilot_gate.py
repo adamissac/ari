@@ -123,3 +123,15 @@ def test_v11_validation_screen_needs_the_floor_and_no_trailing_scenario():
     assert not trailing["eligible_for_gate"] and trailing["trailing_scenarios"] == {
         "b": [-3.5, -3.0]
     }
+
+
+def test_a_rule_candidate_records_decisions_without_q_values():
+    sc = load_scenarios("train", subdir="train_v3")[:1]
+    rows, access, decisions = pg.run_policy(
+        pg.FIXED_RULES["always_block_principal_long"], sc, episodes=1, record_decisions=True
+    )
+    assert len(decisions) == rows[0].steps and all(d["q_margin"] is None for d in decisions)
+    assert any(d["acted"] for d in decisions)
+    unc = pg.uncertainty(decisions)
+    assert "not_applicable" in unc and "harm_rate" not in unc
+    assert pg.abstention(decisions)["windows_without_flagged_principal"] >= 0
