@@ -125,3 +125,20 @@ def test_percent_encoded_ids_resolve_to_the_same_owner():
     controls = DefenseControls(blocked_principals={DAVE: ["payments"]}, block_scope="ungranted")
     with _gateway(controls) as gw:
         assert _get(gw, "/payments/pay%5Fc1").blocked_reason == "ungranted_blocked"
+
+
+def test_the_app_is_sent_the_route_the_decision_was_made_on():
+    with _gateway(DefenseControls()) as gw:
+        seen: list[str] = []
+        real = gw._client.request
+
+        def spy(method, url, **kw):  # noqa: ANN001, ANN003, ANN202
+            seen.append(url)
+            return real(method, url, **kw)
+
+        gw._client.request = spy
+        rec = _get(gw, "/payments/unused/../pay_a1?x=1#frag")
+        assert seen == ["/payments/pay_a1?x=1"] and rec.status == 200
+        assert rec.path == "/payments/unused/../pay_a1?x=1#frag"  # the record keeps what was asked
+        _get(gw, "/me")
+        assert seen[-1] == "/me"

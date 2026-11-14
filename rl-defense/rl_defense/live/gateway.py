@@ -155,8 +155,11 @@ class DefensiveGateway:
     ) -> RequestRecord:
         # Classify and look up ownership on the route the app will actually serve: without
         # this, "/payments/pay_c1?x=1" has no owner here, is never flagged, and passes a
-        # grant-scoped block. The request is forwarded unchanged.
+        # grant-scoped block. The same normalized route is what gets forwarded (with the
+        # original query), so the decision and the app cannot disagree about the path.
         route = _route(path)
+        query = path.split("#", 1)[0].partition("?")[2]
+        forward = f"{route}?{query}" if query else route
         node = self._topology.node_for(method, route)
         headers = {"Authorization": f"Bearer {token}"} if token else {}
         principal = self._inst.principal(token)
@@ -191,7 +194,7 @@ class DefensiveGateway:
                 return blocked(429, "rate_limited")
 
         # --- forward to the real app ---
-        resp = self._client.request(method, path, headers=headers)
+        resp = self._client.request(method, forward, headers=headers)
         compromised = self._is_compromise(principal, resp)
         rec = RequestRecord(
             node,
