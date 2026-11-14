@@ -7,6 +7,13 @@ adds an entry before ending.
 - Did: `monitoring/monitoring/proxy.py` sidecar reverse proxy (httpx + uvicorn, `proxy` extra) wrapping `AriCollector` and `AriControls`; collector gained owner route templates and skip paths. Tests: `monitoring/tests/test_proxy.py` (proxy as a real process in front of a Node server) and `test_ari_controls_a_node_app_through_the_sidecar_proxy` (API + worker -> proxy -> Node).
 - Known gaps: controls are per proxy process (run one instance); WebSockets and serverless not covered; no published image or package for customers outside this repo.
 
+### 2026-11-14 — Claude (agent, for Alan) — grant-scoped block control (lab)
+
+- Added `DefenseControls.block_scope` / `LoopConfig.block_scope` (`"principal"` default = unchanged; `"ungranted"` refuses only requests no grant covers), gateway reason `ungranted_blocked`, `rl_defense/live/scope_study.py`, `tests/test_grant_scoped_block.py`.
+- Diagnostic on `val_v11` and both exposed gate sets: availability and delegated success 1.000 for every policy, compromise unchanged. Not a gate result; the lab grant table is perfect.
+- Lab only. No backend, contract or readiness change. A new gate would need fresh scenarios including an incomplete grant table.
+- Tests run locally: `tests/test_grant_scoped_block.py`, `test_live_gateway.py`, `test_pilot_gate.py` (20 passed). Full suites: CI.
+
 ### 2026-11-14 — Claude (agent, for Alan) — gate v2 run on the deterministic long-block rule: FAIL
 
 - Owner decision (Alan): spend `pilot_gate_v2` on `always_block_principal_long` as the pilot control. Pre-registered in `5fe2d147`, run once.

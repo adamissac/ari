@@ -1,0 +1,2173 @@
+{
+ "caveat": "Measured against the owned demo app (examples/payments-lite) in an isolated, in-process lab. Lab evidence only; not proof of real-world effectiveness (RQ-005).",
+ "git_sha": "1d09da63ca2b884fdd4828956c8f4faffb0cc1de",
+ "kind": "diagnostic on validation and already-exposed gate scenarios; not a gate",
+ "sets": {
+  "pilot_gate": {
+   "always_block_principal": {
+    "principal": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.3333333333333333,
+       "availability": 0.862,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 0.8275,
+       "reward": -4.34,
+       "reward_ci95": [
+        -4.6466666666666665,
+        -4.033333333333334
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.18666666666666668,
+       "availability": 0.8405531489503499,
+       "compromise_rate": 0.2546916890080429,
+       "delegated_success": 0.735273492286115,
+       "episodes": 30,
+       "false_disruption": 0.11474947071277347,
+       "no_attack_defense_duty": 0.396584440227704,
+       "own_traffic_success": 0.9358730158730159,
+       "reward": -9.078666666666669,
+       "reward_ci95": [
+        -9.989037878787881,
+        -8.116780303030305
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.18333333333333332,
+       "availability": 0.9266521423384169,
+       "compromise_rate": 0.12378640776699029,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.020850040096230954,
+       "no_attack_defense_duty": 0.09631147540983606,
+       "own_traffic_success": 0.9064814814814814,
+       "reward": -4.214761904761904,
+       "reward_ci95": [
+        -4.923157142857144,
+        -3.4314047619047616
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.05444444444444444,
+       "availability": 1.0,
+       "compromise_rate": 0.4777777777777778,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.4660000000000006,
+       "reward_ci95": [
+        -1.7406833333333334,
+        -1.188683333333337
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.18944444444444444,
+      "availability": 0.9249178789300798,
+      "compromise_rate": 0.12033031852143138,
+      "delegated_success": 0.9116390660658903,
+      "episodes": 120,
+      "false_disruption": 0.03403361344537815,
+      "no_attack_defense_duty": 0.14027397260273972,
+      "own_traffic_success": 0.9346153846153846,
+      "reward": -4.774857142857142,
+      "reward_ci95": [
+       -5.366413474025974,
+       -4.21461158008658
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.3333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.20000000000000007,
+       "reward_ci95": [
+        -0.20000000000000007,
+        -0.20000000000000007
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.18666666666666668,
+       "availability": 1.0,
+       "compromise_rate": 0.2546916890080429,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -3.2786666666666666,
+       "reward_ci95": [
+        -3.641366666666667,
+        -2.93065
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.18333333333333332,
+       "availability": 1.0,
+       "compromise_rate": 0.12378640776699029,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.8099999999999998,
+       "reward_ci95": [
+        -2.0633714285714286,
+        -1.5211857142857148
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.05444444444444444,
+       "availability": 1.0,
+       "compromise_rate": 0.4777777777777778,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.4660000000000006,
+       "reward_ci95": [
+        -1.7406833333333334,
+        -1.188683333333337
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.18944444444444444,
+      "availability": 1.0,
+      "compromise_rate": 0.12033031852143138,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -1.6886666666666665,
+      "reward_ci95": [
+       -1.9398749999999998,
+       -1.461666666666667
+      ]
+     }
+    }
+   },
+   "always_block_principal_long": {
+    "principal": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.16666666666666666,
+       "availability": 0.862,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 0.8275,
+       "reward": -4.24,
+       "reward_ci95": [
+        -4.546666666666667,
+        -3.933333333333334
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.1111111111111111,
+       "availability": 0.7620793068977008,
+       "compromise_rate": 0.10723860589812333,
+       "delegated_success": 0.6072931276297335,
+       "episodes": 30,
+       "false_disruption": 0.21764290755116444,
+       "no_attack_defense_duty": 0.74573055028463,
+       "own_traffic_success": 0.9022222222222223,
+       "reward": -10.054545454545453,
+       "reward_ci95": [
+        -10.760628787878785,
+        -9.312098484848484
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.09555555555555556,
+       "availability": 0.9115468409586056,
+       "compromise_rate": 0.07871012482662969,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.04490777866880513,
+       "no_attack_defense_duty": 0.22540983606557377,
+       "own_traffic_success": 0.8872222222222222,
+       "reward": -4.038285714285714,
+       "reward_ci95": [
+        -4.642230952380952,
+        -3.349285714285714
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.043333333333333335,
+       "availability": 1.0,
+       "compromise_rate": 0.4111111111111111,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.2593333333333336,
+       "reward_ci95": [
+        -1.4966666666666668,
+        -1.0533333333333332
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.10416666666666667,
+      "availability": 0.8990837017461533,
+      "compromise_rate": 0.0656704679512387,
+      "delegated_success": 0.8689215284686055,
+      "episodes": 120,
+      "false_disruption": 0.0653170359052712,
+      "no_attack_defense_duty": 0.2756164383561644,
+      "own_traffic_success": 0.9211111111111111,
+      "reward": -4.898041125541125,
+      "reward_ci95": [
+       -5.536192640692641,
+       -4.287219318181817
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.16666666666666666,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.10000000000000003,
+       "reward_ci95": [
+        -0.10000000000000003,
+        -0.10000000000000003
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.1111111111111111,
+       "availability": 1.0,
+       "compromise_rate": 0.10723860589812333,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.4,
+       "reward_ci95": [
+        -1.664683333333333,
+        -1.1373333333333335
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.09555555555555556,
+       "availability": 1.0,
+       "compromise_rate": 0.07871012482662969,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.1382857142857143,
+       "reward_ci95": [
+        -1.3320976190476193,
+        -0.9428285714285716
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.043333333333333335,
+       "availability": 1.0,
+       "compromise_rate": 0.4111111111111111,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.2593333333333336,
+       "reward_ci95": [
+        -1.4966666666666668,
+        -1.0533333333333332
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.10416666666666667,
+      "availability": 1.0,
+      "compromise_rate": 0.0656704679512387,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -0.9744047619047618,
+      "reward_ci95": [
+       -1.118017857142857,
+       -0.8391113095238096
+      ]
+     }
+    }
+   },
+   "frozen_v6": {
+    "principal": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.2,
+       "availability": 0.862,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 0.8275,
+       "reward": -4.26,
+       "reward_ci95": [
+        -4.566666666666666,
+        -3.9533333333333336
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.1322222222222222,
+       "availability": 0.7682439186937687,
+       "compromise_rate": 0.1260053619302949,
+       "delegated_success": 0.6181626928471248,
+       "episodes": 30,
+       "false_disruption": 0.2100211714890614,
+       "no_attack_defense_duty": 0.7115749525616698,
+       "own_traffic_success": 0.9041269841269841,
+       "reward": -10.07630303030303,
+       "reward_ci95": [
+        -10.771516666666667,
+        -9.306153030303033
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.1111111111111111,
+       "availability": 0.914887436456064,
+       "compromise_rate": 0.1289875173370319,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.04330392943063352,
+       "no_attack_defense_duty": 0.2151639344262295,
+       "own_traffic_success": 0.8914814814814814,
+       "reward": -4.628571428571429,
+       "reward_ci95": [
+        -5.391038095238096,
+        -3.797833333333335
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.051111111111111114,
+       "availability": 1.0,
+       "compromise_rate": 0.4444444444444444,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.3640000000000005,
+       "reward_ci95": [
+        -1.6060166666666669,
+        -1.0966333333333333
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.12361111111111112,
+      "availability": 0.9014794141618712,
+      "compromise_rate": 0.09005112072355485,
+      "delegated_success": 0.8725495933056352,
+      "episodes": 120,
+      "false_disruption": 0.06302521008403361,
+      "no_attack_defense_duty": 0.26301369863013696,
+      "own_traffic_success": 0.9226068376068376,
+      "reward": -5.082218614718615,
+      "reward_ci95": [
+       -5.718888798701298,
+       -4.463386093073595
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.2,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.12000000000000002,
+       "reward_ci95": [
+        -0.12000000000000002,
+        -0.12000000000000002
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.1322222222222222,
+       "availability": 1.0,
+       "compromise_rate": 0.1260053619302949,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.6460000000000004,
+       "reward_ci95": [
+        -1.908,
+        -1.3513166666666667
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.1111111111111111,
+       "availability": 1.0,
+       "compromise_rate": 0.1289875173370319,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.8380952380952384,
+       "reward_ci95": [
+        -2.240871428571429,
+        -1.4525047619047624
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.051111111111111114,
+       "availability": 1.0,
+       "compromise_rate": 0.4444444444444444,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.3640000000000005,
+       "reward_ci95": [
+        -1.6060166666666669,
+        -1.0966333333333333
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.12361111111111112,
+      "availability": 1.0,
+      "compromise_rate": 0.09005112072355485,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -1.2420238095238096,
+      "reward_ci95": [
+       -1.4325797619047618,
+       -1.0752136904761904
+      ]
+     }
+    }
+   },
+   "threshold_rules": {
+    "principal": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.18777777777777777,
+       "availability": 0.8624444444444445,
+       "compromise_rate": 0.006666666666666667,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 0.8280555555555555,
+       "reward": -4.439333333333333,
+       "reward_ci95": [
+        -4.7400166666666665,
+        -4.1393
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.08555555555555555,
+       "availability": 0.8975341552815728,
+       "compromise_rate": 0.546916890080429,
+       "delegated_success": 0.8327489481065918,
+       "episodes": 30,
+       "false_disruption": 0.07607621736062103,
+       "no_attack_defense_duty": 0.2504743833017078,
+       "own_traffic_success": 0.9561904761904761,
+       "reward": -10.578606060606061,
+       "reward_ci95": [
+        -11.878275757575757,
+        -9.261551515151519
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.2677777777777778,
+       "availability": 0.9166303558460421,
+       "compromise_rate": 0.10020804438280166,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.03742314889067094,
+       "no_attack_defense_duty": 0.19672131147540983,
+       "own_traffic_success": 0.8937037037037037,
+       "reward": -4.270190476190476,
+       "reward_ci95": [
+        -4.956145238095238,
+        -3.5484571428571425
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.0,
+       "availability": 1.0,
+       "compromise_rate": 1.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -3.0,
+       "reward_ci95": [
+        -4.266666666666667,
+        -1.9666666666666666
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.13527777777777777,
+      "availability": 0.9401565857393366,
+      "compromise_rate": 0.19753571896709923,
+      "delegated_success": 0.9441746152495758,
+      "episodes": 120,
+      "false_disruption": 0.025935828877005348,
+      "no_attack_defense_duty": 0.12493150684931507,
+      "own_traffic_success": 0.9372222222222222,
+      "reward": -5.572032467532467,
+      "reward_ci95": [
+       -6.280194751082251,
+       -4.885381006493507
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "pilot_always_on_customer": {
+       "actions_per_step": 0.18777777777777777,
+       "availability": 1.0,
+       "compromise_rate": 0.006666666666666667,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.31266666666666665,
+       "reward_ci95": [
+        -0.5086833333333333,
+        -0.178
+       ]
+      },
+      "pilot_insider_three_victims": {
+       "actions_per_step": 0.08555555555555555,
+       "availability": 1.0,
+       "compromise_rate": 0.546916890080429,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -6.851333333333333,
+       "reward_ci95": [
+        -7.923116666666667,
+        -5.863116666666667
+       ]
+      },
+      "pilot_outsider_trio_rotation": {
+       "actions_per_step": 0.2677777777777778,
+       "availability": 1.0,
+       "compromise_rate": 0.10020804438280166,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.536857142857143,
+       "reward_ci95": [
+        -1.8110619047619052,
+        -1.2726285714285719
+       ]
+      },
+      "pilot_quiet_heavy_books": {
+       "actions_per_step": 0.0,
+       "availability": 1.0,
+       "compromise_rate": 1.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -3.0,
+       "reward_ci95": [
+        -4.266666666666667,
+        -1.9666666666666666
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.13527777777777777,
+      "availability": 1.0,
+      "compromise_rate": 0.19753571896709923,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -2.9252142857142855,
+      "reward_ci95": [
+       -3.5537833333333335,
+       -2.392356547619048
+      ]
+     }
+    }
+   }
+  },
+  "pilot_gate_v2": {
+   "always_block_principal": {
+    "principal": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.2833333333333333,
+       "availability": 0.7576512455516015,
+       "compromise_rate": 0.6182266009852216,
+       "delegated_success": 0.583065693430657,
+       "episodes": 30,
+       "false_disruption": 0.15010378827192528,
+       "no_attack_defense_duty": 0.37449392712550605,
+       "own_traffic_success": 0.92375,
+       "reward": -17.995,
+       "reward_ci95": [
+        -19.700183333333335,
+        -16.118633333333335
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.09333333333333334,
+       "availability": 0.9851351351351352,
+       "compromise_rate": 0.32972972972972975,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.00996523754345307,
+       "no_attack_defense_duty": 0.11048951048951049,
+       "own_traffic_success": 0.9731111111111111,
+       "reward": -2.6655238095238096,
+       "reward_ci95": [
+        -3.165004761904762,
+        -2.1793166666666663
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.3333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.20000000000000007,
+       "reward_ci95": [
+        -0.20000000000000007,
+        -0.20000000000000007
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.17555555555555555,
+       "availability": 0.907707622298066,
+       "compromise_rate": 0.1536827195467422,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.027045931452553042,
+       "no_attack_defense_duty": 0.11151736745886655,
+       "own_traffic_success": 0.8798148148148148,
+       "reward": -5.004142857142857,
+       "reward_ci95": [
+        -5.76287380952381,
+        -4.26359642857143
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.22138888888888889,
+      "availability": 0.900396466578563,
+      "compromise_rate": 0.18624023035787743,
+      "delegated_success": 0.8323057953144266,
+      "episodes": 120,
+      "false_disruption": 0.05621040814690081,
+      "no_attack_defense_duty": 0.18507972665148065,
+      "own_traffic_success": 0.9448275862068966,
+      "reward": -6.466166666666667,
+      "reward_ci95": [
+       -7.818244890873016,
+       -5.152478273809526
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.2833333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.6182266009852216,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -8.536666666666667,
+       "reward_ci95": [
+        -9.415366666666669,
+        -7.617316666666667
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.09333333333333334,
+       "availability": 1.0,
+       "compromise_rate": 0.32972972972972975,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.0893333333333333,
+       "reward_ci95": [
+        -2.4680166666666663,
+        -1.7106666666666668
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.3333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.20000000000000007,
+       "reward_ci95": [
+        -0.20000000000000007,
+        -0.20000000000000007
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.17555555555555555,
+       "availability": 1.0,
+       "compromise_rate": 0.1536827195467422,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.9136666666666668,
+       "reward_ci95": [
+        -2.192066666666667,
+        -1.6588250000000002
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.22138888888888889,
+      "availability": 1.0,
+      "compromise_rate": 0.18624023035787743,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -3.184916666666667,
+      "reward_ci95": [
+       -3.8131083333333335,
+       -2.575214583333333
+      ]
+     }
+    }
+   },
+   "always_block_principal_long": {
+    "principal": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.18,
+       "availability": 0.5785053380782919,
+       "compromise_rate": 0.19950738916256158,
+       "delegated_success": 0.2821897810218978,
+       "episodes": 30,
+       "false_disruption": 0.3554748313440581,
+       "no_attack_defense_duty": 0.6700404858299596,
+       "own_traffic_success": 0.8604166666666667,
+       "reward": -19.258,
+       "reward_ci95": [
+        -20.96548333333333,
+        -17.358322222222224
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.06555555555555556,
+       "availability": 0.9705773955773955,
+       "compromise_rate": 0.2,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.02618771726535342,
+       "no_attack_defense_duty": 0.3020979020979021,
+       "own_traffic_success": 0.9467777777777778,
+       "reward": -2.4131428571428573,
+       "reward_ci95": [
+        -2.745333333333334,
+        -2.0659904761904766
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.16666666666666666,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.10000000000000003,
+       "reward_ci95": [
+        -0.10000000000000003,
+        -0.10000000000000003
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.10333333333333333,
+       "availability": 0.875995449374289,
+       "compromise_rate": 0.11791784702549575,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.07321053858708323,
+       "no_attack_defense_duty": 0.29981718464351004,
+       "own_traffic_success": 0.8385185185185186,
+       "reward": -5.601880952380952,
+       "reward_ci95": [
+        -6.3319303571428565,
+        -4.899421428571429
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.1288888888888889,
+      "availability": 0.8313741856205513,
+      "compromise_rate": 0.08350473056355409,
+      "delegated_success": 0.7112911749163291,
+      "episodes": 120,
+      "false_disruption": 0.1360356025980274,
+      "no_attack_defense_duty": 0.4048974943052392,
+      "own_traffic_success": 0.9097318007662836,
+      "reward": -6.843255952380952,
+      "reward_ci95": [
+       -8.270975942460318,
+       -5.43486259920635
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.18,
+       "availability": 1.0,
+       "compromise_rate": 0.19950738916256158,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.8080000000000003,
+       "reward_ci95": [
+        -3.100683333333334,
+        -2.5113000000000003
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.06555555555555556,
+       "availability": 1.0,
+       "compromise_rate": 0.2,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.272666666666667,
+       "reward_ci95": [
+        -1.444666666666667,
+        -1.1006666666666665
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.16666666666666666,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.10000000000000003,
+       "reward_ci95": [
+        -0.10000000000000003,
+        -0.10000000000000003
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.10333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.11791784702549575,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.4495,
+       "reward_ci95": [
+        -1.618025,
+        -1.2921625
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.1288888888888889,
+      "availability": 1.0,
+      "compromise_rate": 0.08350473056355409,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -1.4075416666666667,
+      "reward_ci95": [
+       -1.5960114583333331,
+       -1.21825
+      ]
+     }
+    }
+   },
+   "frozen_v6": {
+    "principal": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.15444444444444444,
+       "availability": 0.7445551601423488,
+       "compromise_rate": 0.5172413793103449,
+       "delegated_success": 0.5626277372262773,
+       "episodes": 30,
+       "false_disruption": 0.20173845355474831,
+       "no_attack_defense_duty": 0.6295546558704453,
+       "own_traffic_success": 0.9176388888888889,
+       "reward": -17.06211111111111,
+       "reward_ci95": [
+        -18.549455555555554,
+        -15.278897222222225
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.058888888888888886,
+       "availability": 0.9808353808353808,
+       "compromise_rate": 0.3945945945945946,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.015681730397837004,
+       "no_attack_defense_duty": 0.18181818181818182,
+       "own_traffic_success": 0.9653333333333334,
+       "reward": -3.21152380952381,
+       "reward_ci95": [
+        -3.74887380952381,
+        -2.7143714285714284
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.2,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.12000000000000002,
+       "reward_ci95": [
+        -0.12000000000000002,
+        -0.12000000000000002
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.13444444444444445,
+       "availability": 0.8910693970420933,
+       "compromise_rate": 0.16890934844192634,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.057122872464443926,
+       "no_attack_defense_duty": 0.24680073126142596,
+       "own_traffic_success": 0.8581481481481481,
+       "reward": -5.715785714285714,
+       "reward_ci95": [
+        -6.562497619047619,
+        -4.92466488095238
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.13694444444444445,
+      "availability": 0.8917947647863486,
+      "compromise_rate": 0.17204853969559852,
+      "delegated_success": 0.8240854911631731,
+      "episodes": 120,
+      "false_disruption": 0.0803063106406864,
+      "no_attack_defense_duty": 0.32801822323462415,
+      "own_traffic_success": 0.9359770114942528,
+      "reward": -6.527355158730161,
+      "reward_ci95": [
+       -7.787964533730159,
+       -5.2865592757936515
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.15444444444444444,
+       "availability": 1.0,
+       "compromise_rate": 0.5172413793103449,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -7.092666666666667,
+       "reward_ci95": [
+        -7.895349999999999,
+        -6.251933333333334
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.058888888888888886,
+       "availability": 1.0,
+       "compromise_rate": 0.3945945945945946,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.468666666666667,
+       "reward_ci95": [
+        -3.0300166666666675,
+        -1.9726333333333337
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.2,
+       "availability": 1.0,
+       "compromise_rate": 0.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.12000000000000002,
+       "reward_ci95": [
+        -0.12000000000000002,
+        -0.12000000000000002
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.13444444444444445,
+       "availability": 1.0,
+       "compromise_rate": 0.16890934844192634,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.068166666666667,
+       "reward_ci95": [
+        -2.4422208333333333,
+        -1.7384958333333331
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.13694444444444445,
+      "availability": 1.0,
+      "compromise_rate": 0.17204853969559852,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -2.9373750000000003,
+      "reward_ci95": [
+       -3.468629166666667,
+       -2.420638541666667
+      ]
+     }
+    }
+   },
+   "threshold_rules": {
+    "principal": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.07333333333333333,
+       "availability": 0.9264768683274022,
+       "compromise_rate": 0.8891625615763546,
+       "delegated_success": 0.8747445255474453,
+       "episodes": 30,
+       "false_disruption": 0.05578619615983394,
+       "no_attack_defense_duty": 0.14979757085020243,
+       "own_traffic_success": 0.9756944444444444,
+       "reward": -14.946777777777779,
+       "reward_ci95": [
+        -16.686175000000002,
+        -13.130925000000001
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.0,
+       "availability": 1.0,
+       "compromise_rate": 1.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -6.166666666666667,
+       "reward_ci95": [
+        -7.666666666666667,
+        -4.7
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.1988888888888889,
+       "availability": 1.0,
+       "compromise_rate": 0.0011111111111111111,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.15266666666666667,
+       "reward_ci95": [
+        -0.21800000000000003,
+        -0.12000000000000002
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.2677777777777778,
+       "availability": 0.8905005688282139,
+       "compromise_rate": 0.1359773371104816,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.05199347167171835,
+       "no_attack_defense_duty": 0.2340036563071298,
+       "own_traffic_success": 0.8574074074074074,
+       "reward": -5.427333333333333,
+       "reward_ci95": [
+        -6.157763095238096,
+        -4.719496428571428
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.135,
+      "availability": 0.9581971204006399,
+      "compromise_rate": 0.26367749897161663,
+      "delegated_success": 0.9496212788444601,
+      "episodes": 120,
+      "false_disruption": 0.02618073931521129,
+      "no_attack_defense_duty": 0.11503416856492027,
+      "own_traffic_success": 0.9637931034482758,
+      "reward": -6.673361111111112,
+      "reward_ci95": [
+       -7.836476240079366,
+       -5.548152083333333
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "gate2_both_bookkeepers_rogue": {
+       "actions_per_step": 0.07333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.8891625615763546,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -12.077333333333332,
+       "reward_ci95": [
+        -13.314033333333331,
+        -10.802616666666669
+       ]
+      },
+      "gate2_busy_day_faint_insider": {
+       "actions_per_step": 0.0,
+       "availability": 1.0,
+       "compromise_rate": 1.0,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -6.166666666666667,
+       "reward_ci95": [
+        -7.666666666666667,
+        -4.7
+       ]
+      },
+      "gate2_outsider_from_start": {
+       "actions_per_step": 0.1988888888888889,
+       "availability": 1.0,
+       "compromise_rate": 0.0011111111111111111,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": null,
+       "no_attack_defense_duty": null,
+       "own_traffic_success": 1.0,
+       "reward": -0.15266666666666667,
+       "reward_ci95": [
+        -0.21800000000000003,
+        -0.12000000000000002
+       ]
+      },
+      "gate2_switching_quartet": {
+       "actions_per_step": 0.2677777777777778,
+       "availability": 1.0,
+       "compromise_rate": 0.1359773371104816,
+       "delegated_success": 1.0,
+       "episodes": 30,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.7606666666666664,
+       "reward_ci95": [
+        -2.00135,
+        -1.5369916666666665
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.135,
+      "availability": 1.0,
+      "compromise_rate": 0.26367749897161663,
+      "delegated_success": 1.0,
+      "episodes": 120,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -5.039333333333333,
+      "reward_ci95": [
+       -6.039389583333333,
+       -4.083677083333333
+      ]
+     }
+    }
+   }
+  },
+  "val_v11": {
+   "always_block_principal": {
+    "principal": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.19333333333333333,
+       "availability": 0.8288851031610827,
+       "compromise_rate": 0.21,
+       "delegated_success": 0.7173828881145954,
+       "episodes": 15,
+       "false_disruption": 0.1091344509066028,
+       "no_attack_defense_duty": 0.384,
+       "own_traffic_success": 0.9355555555555556,
+       "reward": -8.942666666666668,
+       "reward_ci95": [
+        -9.9067,
+        -7.954266666666668
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.20222222222222222,
+       "availability": 0.913604766633565,
+       "compromise_rate": 0.18854166666666666,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0389554794520548,
+       "no_attack_defense_duty": 0.19767441860465115,
+       "own_traffic_success": 0.8895238095238095,
+       "reward": -5.434666666666668,
+       "reward_ci95": [
+        -6.354691666666666,
+        -4.408650000000001
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.28888888888888886,
+       "availability": 0.9769743920809124,
+       "compromise_rate": 0.6009174311926605,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.011710581346716854,
+       "no_attack_defense_duty": 0.11206896551724138,
+       "own_traffic_success": 0.966031746031746,
+       "reward": -9.69925925925926,
+       "reward_ci95": [
+        -10.977337037037037,
+        -8.52967777777778
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.2288888888888889,
+       "availability": 0.8661728395061729,
+       "compromise_rate": 0.2584158415841584,
+       "delegated_success": 0.68,
+       "episodes": 15,
+       "false_disruption": 0.11827956989247312,
+       "no_attack_defense_duty": 0.5604838709677419,
+       "own_traffic_success": 0.9193650793650794,
+       "reward": -7.632148148148149,
+       "reward_ci95": [
+        -8.310874074074075,
+        -7.009085185185185
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.35777777777777775,
+       "availability": 0.9385491606714629,
+       "compromise_rate": 0.5588235294117647,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.04242424242424243,
+       "no_attack_defense_duty": 0.20786516853932585,
+       "own_traffic_success": 0.924074074074074,
+       "reward": -12.300380952380952,
+       "reward_ci95": [
+        -13.56827142857143,
+        -11.043619047619048
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.17555555555555555,
+       "availability": 0.9651293588301463,
+       "compromise_rate": 0.11627906976744186,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.00995732574679943,
+       "no_attack_defense_duty": 0.09787234042553192,
+       "own_traffic_success": 0.9483333333333334,
+       "reward": -3.0120000000000005,
+       "reward_ci95": [
+        -3.6533666666666664,
+        -2.3772666666666673
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.2411111111111111,
+      "availability": 0.9140865132318765,
+      "compromise_rate": 0.3669545380479061,
+      "delegated_success": 0.8762761302868255,
+      "episodes": 90,
+      "false_disruption": 0.056086770372484655,
+      "no_attack_defense_duty": 0.26552462526766596,
+      "own_traffic_success": 0.9309485094850949,
+      "reward": -7.836853615520283,
+      "reward_ci95": [
+       -8.594822200176367,
+       -7.122427050264549
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.19333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.21,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.916,
+       "reward_ci95": [
+        -3.452,
+        -2.444000000000001
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.20222222222222222,
+       "availability": 1.0,
+       "compromise_rate": 0.18854166666666666,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.534666666666667,
+       "reward_ci95": [
+        -2.9588000000000005,
+        -2.110566666666667
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.28888888888888886,
+       "availability": 1.0,
+       "compromise_rate": 0.6009174311926605,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -8.906666666666666,
+       "reward_ci95": [
+        -10.063999999999998,
+        -7.822633333333332
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.2288888888888889,
+       "availability": 1.0,
+       "compromise_rate": 0.2584158415841584,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -3.617333333333333,
+       "reward_ci95": [
+        -4.2533666666666665,
+        -2.9653333333333327
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.35777777777777775,
+       "availability": 1.0,
+       "compromise_rate": 0.5588235294117647,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -10.347999999999997,
+       "reward_ci95": [
+        -11.436066666666667,
+        -9.194666666666668
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.17555555555555555,
+       "availability": 1.0,
+       "compromise_rate": 0.11627906976744186,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.772,
+       "reward_ci95": [
+        -2.1800333333333333,
+        -1.3559666666666663
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.2411111111111111,
+      "availability": 1.0,
+      "compromise_rate": 0.3669545380479061,
+      "delegated_success": 1.0,
+      "episodes": 90,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -5.015777777777779,
+      "reward_ci95": [
+       -5.803572222222221,
+       -4.267494444444444
+      ]
+     }
+    }
+   },
+   "always_block_principal_long": {
+    "principal": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.1111111111111111,
+       "availability": 0.7459776642059436,
+       "compromise_rate": 0.07,
+       "delegated_success": 0.5838172667440961,
+       "episodes": 15,
+       "false_disruption": 0.22579541566883338,
+       "no_attack_defense_duty": 0.728,
+       "own_traffic_success": 0.9011111111111111,
+       "reward": -9.946666666666667,
+       "reward_ci95": [
+        -10.873400000000002,
+        -8.961333333333332
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.11555555555555555,
+       "availability": 0.8778550148957299,
+       "compromise_rate": 0.08958333333333333,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.07876712328767123,
+       "no_attack_defense_duty": 0.4069767441860465,
+       "own_traffic_success": 0.8438095238095238,
+       "reward": -5.316000000000001,
+       "reward_ci95": [
+        -5.989091666666668,
+        -4.533825000000002
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.18444444444444444,
+       "availability": 0.9567462879276953,
+       "compromise_rate": 0.18807339449541285,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.03680468423253869,
+       "no_attack_defense_duty": 0.30603448275862066,
+       "own_traffic_success": 0.9361904761904762,
+       "reward": -4.332888888888889,
+       "reward_ci95": [
+        -4.865677777777778,
+        -3.8251703703703703
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.12666666666666668,
+       "availability": 0.8091358024691357,
+       "compromise_rate": 0.060396039603960394,
+       "delegated_success": 0.5355555555555556,
+       "episodes": 15,
+       "false_disruption": 0.19130824372759855,
+       "no_attack_defense_duty": 0.9233870967741935,
+       "own_traffic_success": 0.8873015873015873,
+       "reward": -6.615259259259259,
+       "reward_ci95": [
+        -6.9313222222222235,
+        -6.322933333333332
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.22666666666666666,
+       "availability": 0.9028776978417266,
+       "compromise_rate": 0.11764705882352941,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0893939393939394,
+       "no_attack_defense_duty": 0.46629213483146065,
+       "own_traffic_success": 0.88,
+       "reward": -5.355047619047619,
+       "reward_ci95": [
+        -5.787809523809524,
+        -4.93047619047619
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.09333333333333334,
+       "availability": 0.9531308586426697,
+       "compromise_rate": 0.08372093023255814,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.030227596017069702,
+       "no_attack_defense_duty": 0.25957446808510637,
+       "own_traffic_success": 0.9305555555555556,
+       "reward": -2.9226666666666667,
+       "reward_ci95": [
+        -3.3600999999999996,
+        -2.433333333333334
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.14296296296296296,
+      "availability": 0.873228877726966,
+      "compromise_rate": 0.1065667264135571,
+      "delegated_success": 0.8185464268351968,
+      "episodes": 90,
+      "false_disruption": 0.11145996860282574,
+      "no_attack_defense_duty": 0.5217701641684511,
+      "own_traffic_success": 0.8976151761517616,
+      "reward": -5.748088183421516,
+      "reward_ci95": [
+       -6.301704254850089,
+       -5.258429960317462
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.1111111111111111,
+       "availability": 1.0,
+       "compromise_rate": 0.07,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.0000000000000002,
+       "reward_ci95": [
+        -1.2666666666666666,
+        -0.7333333333333335
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.11555555555555555,
+       "availability": 1.0,
+       "compromise_rate": 0.08958333333333333,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.216,
+       "reward_ci95": [
+        -1.5466666666666666,
+        -0.8825666666666672
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.18444444444444444,
+       "availability": 1.0,
+       "compromise_rate": 0.18807339449541285,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.8440000000000003,
+       "reward_ci95": [
+        -3.3053333333333326,
+        -2.382666666666667
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.12666666666666668,
+       "availability": 1.0,
+       "compromise_rate": 0.060396039603960394,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -0.8893333333333334,
+       "reward_ci95": [
+        -1.2186666666666666,
+        -0.5733333333333334
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.22666666666666666,
+       "availability": 1.0,
+       "compromise_rate": 0.11764705882352941,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.269333333333334,
+       "reward_ci95": [
+        -2.796,
+        -1.7453333333333336
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.09333333333333334,
+       "availability": 1.0,
+       "compromise_rate": 0.08372093023255814,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.2559999999999996,
+       "reward_ci95": [
+        -1.524,
+        -0.9866666666666667
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.14296296296296296,
+      "availability": 1.0,
+      "compromise_rate": 0.1065667264135571,
+      "delegated_success": 1.0,
+      "episodes": 90,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -1.5791111111111111,
+      "reward_ci95": [
+       -1.8056777777777777,
+       -1.3702111111111113
+      ]
+     }
+    }
+   },
+   "frozen_v6": {
+    "principal": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.13111111111111112,
+       "availability": 0.7529812606473595,
+       "compromise_rate": 0.095,
+       "delegated_success": 0.5934959349593496,
+       "episodes": 15,
+       "false_disruption": 0.2192952446117003,
+       "no_attack_defense_duty": 0.716,
+       "own_traffic_success": 0.9055555555555556,
+       "reward": -10.045333333333334,
+       "reward_ci95": [
+        -10.870666666666667,
+        -9.130500000000001
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.12,
+       "availability": 0.8885302879841113,
+       "compromise_rate": 0.16875,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.07148972602739725,
+       "no_attack_defense_duty": 0.3953488372093023,
+       "own_traffic_success": 0.8574603174603175,
+       "reward": -5.973666666666668,
+       "reward_ci95": [
+        -6.734433333333333,
+        -5.117275000000001
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.15777777777777777,
+       "availability": 0.9737465031202927,
+       "compromise_rate": 0.45871559633027525,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.020493517356754497,
+       "no_attack_defense_duty": 0.1853448275862069,
+       "own_traffic_success": 0.9612698412698413,
+       "reward": -7.665037037037037,
+       "reward_ci95": [
+        -8.489959259259258,
+        -6.694481481481482
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.14666666666666667,
+       "availability": 0.8140740740740741,
+       "compromise_rate": 0.08415841584158416,
+       "delegated_success": 0.5533333333333333,
+       "episodes": 15,
+       "false_disruption": 0.18413978494623656,
+       "no_attack_defense_duty": 0.875,
+       "own_traffic_success": 0.8885714285714286,
+       "reward": -6.79911111111111,
+       "reward_ci95": [
+        -7.201199999999999,
+        -6.4616740740740735
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.18444444444444444,
+       "availability": 0.927158273381295,
+       "compromise_rate": 0.38235294117647056,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.06439393939393939,
+       "no_attack_defense_duty": 0.34269662921348315,
+       "own_traffic_success": 0.91,
+       "reward": -9.358285714285715,
+       "reward_ci95": [
+        -10.273904761904761,
+        -8.382857142857143
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.12222222222222222,
+       "availability": 0.9518185226846644,
+       "compromise_rate": 0.07906976744186046,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.031650071123755334,
+       "no_attack_defense_duty": 0.26382978723404255,
+       "own_traffic_success": 0.9286111111111112,
+       "reward": -2.9200000000000004,
+       "reward_ci95": [
+        -3.4187333333333334,
+        -2.4265333333333343
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.1437037037037037,
+      "availability": 0.8827123472524178,
+      "compromise_rate": 0.24409320514909566,
+      "delegated_success": 0.8235294117647058,
+      "episodes": 90,
+      "false_disruption": 0.1028971028971029,
+      "no_attack_defense_duty": 0.4739471805852962,
+      "own_traffic_success": 0.9091056910569105,
+      "reward": -7.126905643738976,
+      "reward_ci95": [
+       -7.686064043209876,
+       -6.598342372134039
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.13111111111111112,
+       "availability": 1.0,
+       "compromise_rate": 0.095,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.3453333333333337,
+       "reward_ci95": [
+        -1.7440000000000002,
+        -0.9440000000000001
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.12,
+       "availability": 1.0,
+       "compromise_rate": 0.16875,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.2319999999999998,
+       "reward_ci95": [
+        -2.6547,
+        -1.7893333333333337
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.15777777777777777,
+       "availability": 1.0,
+       "compromise_rate": 0.45871559633027525,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -6.761333333333334,
+       "reward_ci95": [
+        -7.497366666666665,
+        -5.896000000000001
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.14666666666666667,
+       "availability": 1.0,
+       "compromise_rate": 0.08415841584158416,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.2213333333333336,
+       "reward_ci95": [
+        -1.5520333333333338,
+        -0.8893333333333333
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.18444444444444444,
+       "availability": 1.0,
+       "compromise_rate": 0.38235294117647056,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -7.043999999999999,
+       "reward_ci95": [
+        -7.778666666666667,
+        -6.242633333333332
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.12222222222222222,
+       "availability": 1.0,
+       "compromise_rate": 0.07906976744186046,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -1.2066666666666668,
+       "reward_ci95": [
+        -1.4746666666666666,
+        -0.9935666666666728
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.1437037037037037,
+      "availability": 1.0,
+      "compromise_rate": 0.24409320514909566,
+      "delegated_success": 1.0,
+      "episodes": 90,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -3.301777777777778,
+      "reward_ci95": [
+       -3.8929722222222223,
+       -2.7514722222222225
+      ]
+     }
+    }
+   },
+   "threshold_rules": {
+    "principal": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.07333333333333333,
+       "availability": 0.9114139693356048,
+       "compromise_rate": 0.635,
+       "delegated_success": 0.8505613627564848,
+       "episodes": 15,
+       "false_disruption": 0.07115976736229901,
+       "no_attack_defense_duty": 0.228,
+       "own_traffic_success": 0.9696296296296296,
+       "reward": -11.630666666666666,
+       "reward_ci95": [
+        -13.176399999999997,
+        -10.183933333333332
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.23555555555555555,
+       "availability": 0.8934955312810328,
+       "compromise_rate": 0.165625,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0663527397260274,
+       "no_attack_defense_duty": 0.35658914728682173,
+       "own_traffic_success": 0.8638095238095238,
+       "reward": -5.836333333333333,
+       "reward_ci95": [
+        -6.738441666666667,
+        -4.803116666666668
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.2222222222222222,
+       "availability": 0.9718097697439209,
+       "compromise_rate": 0.40825688073394495,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.021748222501045588,
+       "no_attack_defense_duty": 0.1853448275862069,
+       "own_traffic_success": 0.9584126984126984,
+       "reward": -7.037037037037036,
+       "reward_ci95": [
+        -8.059307407407406,
+        -6.061892592592591
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.30444444444444446,
+       "availability": 0.8303703703703704,
+       "compromise_rate": 0.15841584158415842,
+       "delegated_success": 0.5933333333333334,
+       "episodes": 15,
+       "false_disruption": 0.16577060931899643,
+       "no_attack_defense_duty": 0.7862903225806451,
+       "own_traffic_success": 0.8980952380952381,
+       "reward": -7.404888888888889,
+       "reward_ci95": [
+        -7.92272962962963,
+        -6.893925925925926
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.3111111111111111,
+       "availability": 0.9046762589928058,
+       "compromise_rate": 0.14338235294117646,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0893939393939394,
+       "no_attack_defense_duty": 0.4606741573033708,
+       "own_traffic_success": 0.8822222222222222,
+       "reward": -5.8152380952380955,
+       "reward_ci95": [
+        -6.228766666666667,
+        -5.414090476190476
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.028888888888888888,
+       "availability": 0.9953130858642669,
+       "compromise_rate": 0.8604651162790697,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.00035561877667140827,
+       "no_attack_defense_duty": 0.00425531914893617,
+       "own_traffic_success": 0.9930555555555556,
+       "reward": -12.517333333333333,
+       "reward_ci95": [
+        -15.7136,
+        -9.606200000000001
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.19592592592592592,
+      "availability": 0.9228577854411875,
+      "compromise_rate": 0.33583183966107216,
+      "delegated_success": 0.9086047642197375,
+      "episodes": 90,
+      "false_disruption": 0.0645069216497788,
+      "no_attack_defense_duty": 0.33547466095645967,
+      "own_traffic_success": 0.9292140921409214,
+      "reward": -8.373582892416225,
+      "reward_ci95": [
+       -9.217042482363317,
+       -7.553333641975309
+      ]
+     }
+    },
+    "ungranted": {
+     "by_scenario": {
+      "val11_delegate_two_victims": {
+       "actions_per_step": 0.07333333333333333,
+       "availability": 1.0,
+       "compromise_rate": 0.635,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -8.510666666666667,
+       "reward_ci95": [
+        -10.254533333333333,
+        -6.854633333333334
+       ]
+      },
+      "val11_trio_switch": {
+       "actions_per_step": 0.23555555555555555,
+       "availability": 1.0,
+       "compromise_rate": 0.165625,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.2613333333333334,
+       "reward_ci95": [
+        -2.8000333333333334,
+        -1.792
+       ]
+      },
+      "val3_mixed": {
+       "actions_per_step": 0.2222222222222222,
+       "availability": 1.0,
+       "compromise_rate": 0.40825688073394495,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -6.066666666666666,
+       "reward_ci95": [
+        -7.207833333333334,
+        -4.998666666666667
+       ]
+      },
+      "val4_rogue_delegate": {
+       "actions_per_step": 0.30444444444444446,
+       "availability": 1.0,
+       "compromise_rate": 0.15841584158415842,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.3160000000000003,
+       "reward_ci95": [
+        -2.7907333333333337,
+        -1.8199333333333338
+       ]
+      },
+      "val4_rotation_start": {
+       "actions_per_step": 0.3111111111111111,
+       "availability": 1.0,
+       "compromise_rate": 0.14338235294117646,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -2.7866666666666675,
+       "reward_ci95": [
+        -3.3840333333333334,
+        -2.253333333333333
+       ]
+      },
+      "val4_slow_insider": {
+       "actions_per_step": 0.028888888888888888,
+       "availability": 1.0,
+       "compromise_rate": 0.8604651162790697,
+       "delegated_success": 1.0,
+       "episodes": 15,
+       "false_disruption": 0.0,
+       "no_attack_defense_duty": 0.0,
+       "own_traffic_success": 1.0,
+       "reward": -12.350666666666665,
+       "reward_ci95": [
+        -15.550733333333337,
+        -9.421300000000002
+       ]
+      }
+     },
+     "pooled": {
+      "actions_per_step": 0.19592592592592592,
+      "availability": 1.0,
+      "compromise_rate": 0.33583183966107216,
+      "delegated_success": 1.0,
+      "episodes": 90,
+      "false_disruption": 0.0,
+      "no_attack_defense_duty": 0.0,
+      "own_traffic_success": 1.0,
+      "reward": -5.715333333333334,
+      "reward_ci95": [
+       -6.728133333333334,
+       -4.749922222222223
+      ]
+     }
+    }
+   }
+  }
+ }
+}
