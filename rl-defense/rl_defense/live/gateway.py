@@ -85,7 +85,9 @@ class RequestRecord:
     actor: str  # customer id of the caller (or "anon")
     is_attack: bool  # generator's label — METRICS ONLY, never used for telemetry
     status: int  # HTTP status actually returned (gateway 503/429 or the app's own)
-    blocked_reason: str | None  # "isolated" | "principal_blocked" | "rate_limited" | None
+    blocked_reason: (
+        str | None
+    )  # "isolated" | "principal_blocked" | "ungranted_blocked" | "rate_limited" | None
     compromised: bool  # really succeeded cross-tenant read (allowed, 200, foreign owner in body)
     # detector: token's principal != object owner (and, v4, no delegation grant covers it)
     cross_tenant_attempt: bool = False
@@ -161,7 +163,10 @@ class DefensiveGateway:
         if self.controls.isolated.get(node, False):
             return blocked(503, "isolated")
         if principal is not None and node in self.controls.blocked_principals.get(principal, ()):
-            return blocked(403, "principal_blocked")
+            if self.controls.block_scope == "principal":
+                return blocked(403, "principal_blocked")
+            if cross:  # "ungranted": only what no grant covers; own and delegated reads pass
+                return blocked(403, "ungranted_blocked")
         if self.controls.rate_limited.get(node, False):
             n = self._rl_counter.get(node, 0)
             self._rl_counter[node] = n + 1
