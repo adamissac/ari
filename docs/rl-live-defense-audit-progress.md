@@ -76,6 +76,7 @@ untrained one on 4.9% to 18.0% of states.
 | [#941](https://github.com/adamissac/ari-ai/pull/941) | Fail-closed gate, registry hardening, v6 shadow fix and tests, opt-in v1 reward and study, opt-in time-limit option | see GitHub |
 | [#941](https://github.com/adamissac/ari-ai/pull/941) merged | as above | d5a967bf |
 | [#945](https://github.com/adamissac/ari-ai/pull/945) | Guided exploration, `monitor_isolate` rule, evidence-policy study | dd73a920 |
+| [#961](https://github.com/adamissac/ari-ai/pull/961) | v11 candidate fails its validation prediction; gate v2 not run | 5120646a |
 | [#951](https://github.com/adamissac/ari-ai/pull/951) | Pilot gate run (v6 fails 1 of 9); readiness reports the evidence | e8cfc5b6 |
 | [#949](https://github.com/adamissac/ari-ai/pull/949) | Lab offers the two deterministic rules | c7b28b99 |
 | [#947](https://github.com/adamissac/ari-ai/pull/947) | 1M-step evidence-policy result | 8c8db5c0 |
@@ -191,6 +192,15 @@ episodes) was stopped at its first step because the teacher did not change. The 
 rule (-5.83) beats v6 (-7.35), the rules (-8.59) and v11 (-8.86), and on the first gate's
 saved episodes it meets all nine checks (post hoc, not a gate pass). Details:
 [`rl-defense/results/live-retrain-v11/REPORT.md`](../rl-defense/results/live-retrain-v11/REPORT.md).
+
+**Gate v2, deterministic rule (owner decision).** `always_block_principal_long` was run
+once on the four `pilot_gate_v2` scenarios and **failed 5 of 9 checks** (availability 0.831,
+delegated success 0.711, does not beat the re-tuned rules, -4.31 on one scenario). Its lead
+on validation did not generalise. The deciding case is an insider who is also a legitimate
+delegate: a principal-wide block stops the attack and the authorized reads together. That is
+a limit of the available control; the next step is a grant-scoped control, not another
+candidate. [`rl-defense/results/pilot-gate-v2/REPORT.md`](../rl-defense/results/pilot-gate-v2/REPORT.md).
+Both gate scenario sets are now exposed.
 
 ## Finding 7: analysis
 

@@ -90,3 +90,36 @@ repeated v11, so the run was stopped before online training and no v12 checkpoin
 `pilot_gate_v2` is still unexposed. No further candidate is pre-registered. What the evidence
 supports is in `results/live-retrain-v11/REPORT.md`: in this lab the learned policies track
 their teacher and do not exceed it, and the strongest policy on validation is a fixed rule.
+
+## Amendment 2 (2026-11-14, committed before the run): the gate is spent on a deterministic rule
+
+Decided by Alan (owner). No learned candidate is eligible (v11 failed its prediction, v12 was
+stopped). The `pilot_gate_v2` scenarios are used once to evaluate the fixed rule
+`always_block_principal_long` as the pilot **control**. This is not an RL result and does not
+change RL readiness: the rule is not a learned policy, and `rl-readiness` keeps reporting the
+first gate's failure for v6.
+
+- **Candidate:** `always_block_principal_long` (`rl_defense/live/evaluate.py`): whenever the
+  detector flags a principal and the long block is available, block every flagged principal
+  for the long window; otherwise do nothing. No parameters, nothing tuned.
+- **Why this rule:** it leads on the validation scenarios and, post hoc, on the first gate's
+  exposed episodes (`results/live-retrain-v11/REPORT.md`). Neither is a gate pass.
+- **Incumbent and thresholds: unchanged.** The rules re-tuned on `train_v11`
+  (`results/live-retrain-v11/rules_tuning.json`, sha256
+  `cb9b19a3a18b0fd19bb7370679ad0c008a618f54a0f415418eb2d7abc961c8cd`) and the eight checks of
+  `results/pilot-gate/PREREGISTRATION.md`, including delegated success >= 0.85 and no
+  per-scenario regression. Frozen v6 runs on the same episodes, reported only.
+- **Uncertainty** is not applicable (no Q-values); abstention is reported.
+
+```sh
+PYTHONPATH=.:../shared:../standards:../examples/payments-lite/target \
+  .venv/bin/python -m rl_defense.live.pilot_gate --out results/pilot-gate-v2 \
+  --scenario-dir pilot_gate_v2 --candidate-rule always_block_principal_long \
+  --rules-tuning results/live-retrain-v11/rules_tuning.json \
+  --rules-tuning-sha256 cb9b19a3a18b0fd19bb7370679ad0c008a618f54a0f415418eb2d7abc961c8cd \
+  --reference-v6
+```
+
+After this run the scenarios are exposed. A pass means the rule met the pilot thresholds in
+the lab on unseen scenarios. It does not enable enforcement anywhere; any use of the rule
+against a real application goes through the existing owner authorization and approval path.

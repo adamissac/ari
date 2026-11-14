@@ -1,0 +1,10 @@
+{
+  "candidate_checkpoint_sha256": null,
+  "candidate_rule": "always_block_principal_long",
+  "files": {
+    "episodes.json": "b819dc59c529fcf3c80dc5d73dfc562504ad193887d32aaef81820d0c0aacd48",
+    "summary.json": "2ecad31e3439e1777dac8066dc2866afa563818d89c5be70b47480d932ba3873"
+  },
+  "passed": false,
+  "schema": "pilot-gate/1"
+}

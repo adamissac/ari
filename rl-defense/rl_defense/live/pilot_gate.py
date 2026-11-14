@@ -41,6 +41,13 @@ SCHEMA = "pilot-gate/1"
 FLAGGED = FEATURE_INDEX["flagged_principals"]
 
 
+FIXED_RULES: dict[str, ev.PolicyFn] = {
+    "always_block_principal": ev.always_block_principal,
+    "always_block_principal_long": ev.always_block_principal_long,
+    "always_block_top_principal_long": ev.always_block_top_principal_long,
+}
+
+
 def _pinned(path: Path, expected: str) -> Path:
     if sha256_file(path) != expected:
         raise ValueError(f"{path.name} does not match its pinned sha256")
@@ -53,6 +60,7 @@ def run_policy(
     *,
     episodes: int | None = None,
     q_values=None,  # noqa: ANN001
+    record_decisions: bool = False,
 ) -> tuple[list[ev.EpisodeMetrics], list[dict[str, Any]], list[dict[str, Any]]]:
     """``ev.run_policy`` plus what it does not record: per-episode own-object and delegated
     request outcomes (from the gateway's records) and, with ``q_values``, per-step decisions."""
@@ -88,7 +96,7 @@ def run_policy(
                             delegated, delegated_ok = delegated + 1, delegated_ok + ok
                         else:
                             own, own_ok = own + 1, own_ok + ok
-                    if q_values is not None:
+                    if q_values is not None or record_decisions:
                         o = t.outcome
                         decisions.append(
                             {
@@ -148,6 +156,12 @@ def uncertainty(decisions: list[dict[str, Any]]) -> dict[str, Any]:
     shows whether a small margin goes with worse outcomes, nothing more."""
     margins = np.array([d["q_margin"] for d in decisions])
     harm = np.array([d["harm"] for d in decisions], dtype=float)
+    if any(m is None for m in margins):
+        return {
+            "q_values_are_not_probabilities": True,
+            "not_applicable": "the candidate is a deterministic rule and has no Q-values",
+            "overall_harm_rate": float(harm.mean()),
+        }
     lo, hi = np.quantile(margins, [1 / 3, 2 / 3])
     bins = {
         "low_margin": margins <= lo,
@@ -201,22 +215,28 @@ def run(
     rules_tuning: Path = RULES_TUNING,
     rules_tuning_sha256: str = RULES_TUNING_SHA256,
     references: dict[str, tuple[Path, str]] | None = None,
+    candidate_rule: str | None = None,
 ) -> dict[str, Any]:
     """Defaults are the first gate (frozen v6). ``references`` are other pinned checkpoints
-    run on the same episodes and reported only; they are not part of the gate."""
+    run on the same episodes and reported only; they are not part of the gate.
+    ``candidate_rule`` makes one of :data:`FIXED_RULES` the candidate instead of a checkpoint:
+    a deterministic control, not a learned policy."""
     out.mkdir(parents=True, exist_ok=True)
     scenarios = load_scenarios("holdout", subdir=scenario_dir)
-    agent, manifest = load_checkpoint(_pinned(candidate, candidate_sha256))
+    if candidate_rule is not None:
+        if candidate_rule not in FIXED_RULES:
+            raise ValueError(f"candidate_rule must be one of {sorted(FIXED_RULES)}")
+        agent, manifest = None, None
+    else:
+        agent, manifest = load_checkpoint(_pinned(candidate, candidate_sha256))
     rules_params = json.loads(_pinned(rules_tuning, rules_tuning_sha256).read_text())["selected"]
     criteria = ev.PromotionCriteria(
         **yaml.safe_load(_pinned(CRITERIA, CRITERIA_SHA256).read_text())
     )
     policies: dict[str, ev.PolicyFn] = {
-        "candidate": ev.dqn_policy(agent),
+        "candidate": FIXED_RULES[candidate_rule] if agent is None else ev.dqn_policy(agent),
         "threshold_rules": ev.rules_policy(rules_params),
-        "always_block_principal": ev.always_block_principal,
-        "always_block_principal_long": ev.always_block_principal_long,
-        "always_block_top_principal_long": ev.always_block_top_principal_long,
+        **{n: p for n, p in FIXED_RULES.items() if n != candidate_rule},
         "noop": ev.noop_policy,
     }
     for ref_name, (ref_path, ref_sha) in (references or {}).items():
@@ -225,8 +245,14 @@ def run(
     access: dict[str, list[dict[str, Any]]] = {}
     decisions: list[dict[str, Any]] = []
     for name, policy in policies.items():
-        q = agent.q_values if name == "candidate" else None
-        rows[name], access[name], d = run_policy(policy, scenarios, episodes=episodes, q_values=q)
+        is_candidate = name == "candidate"
+        rows[name], access[name], d = run_policy(
+            policy,
+            scenarios,
+            episodes=episodes,
+            q_values=agent.q_values if is_candidate and agent is not None else None,
+            record_decisions=is_candidate,
+        )
         decisions = d or decisions
         print(f"{name}: {ev.summarize(rows[name])['reward']:.3f}", flush=True)
 
@@ -247,7 +273,10 @@ def run(
         "schema": SCHEMA,
         "caveat": ev.CAVEAT,
         "git_sha": git_sha(),
-        "candidate": {
+        "candidate": {"kind": "deterministic_rule", "rule": candidate_rule, "learned": False}
+        if manifest is None
+        else {
+            "kind": "learned_checkpoint",
             "checkpoint_sha256": manifest["checkpoint_sha256"],
             "env_id": manifest["env_id"],
             "noop_margin": manifest["ddqn_config"].get("noop_margin"),
@@ -288,7 +317,8 @@ def run(
             f: hashlib.sha256((out / f).read_bytes()).hexdigest()
             for f in ("episodes.json", "summary.json")
         },
-        "candidate_checkpoint_sha256": manifest["checkpoint_sha256"],
+        "candidate_checkpoint_sha256": None if manifest is None else manifest["checkpoint_sha256"],
+        "candidate_rule": candidate_rule,
         "passed": result["gate"]["passed"],
     }
     (out / "EVIDENCE.json").write_text(json.dumps(evidence, indent=2, sort_keys=True))
@@ -305,6 +335,7 @@ def main() -> None:
     ap.add_argument("--rules-tuning", type=Path, default=RULES_TUNING)
     ap.add_argument("--rules-tuning-sha256", default=RULES_TUNING_SHA256)
     ap.add_argument("--reference-v6", action="store_true", help="also run frozen v6, reported only")
+    ap.add_argument("--candidate-rule", choices=sorted(FIXED_RULES))
     args = ap.parse_args()
     result = run(
         args.out,
@@ -315,6 +346,7 @@ def main() -> None:
         rules_tuning=args.rules_tuning,
         rules_tuning_sha256=args.rules_tuning_sha256,
         references={"frozen_v6": (CANDIDATE, CANDIDATE_SHA256)} if args.reference_v6 else None,
+        candidate_rule=args.candidate_rule,
     )
     print(json.dumps(result["gate"], indent=2))
 
