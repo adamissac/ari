@@ -28,7 +28,7 @@ import warnings
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Protocol
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 import httpx
 
@@ -102,13 +102,19 @@ class RequestRecord:
 
 
 def _route(path: str) -> str:
-    """The path the app will route: no query or fragment, percent-decoded, dot segments and
-    repeated or trailing slashes resolved. A lab-grade normalization for the demo app's
-    router; it is not a general defense against path confusion."""
-    # cut by hand: urlsplit would read "//payments//x" as a host named "payments"
-    raw = path.split("?", 1)[0].split("#", 1)[0]
-    decoded = unquote(raw)
-    return posixpath.normpath("/" + decoded.lstrip("/"))
+    """The one path both the decision and the app use: query and fragment cut, percent-decoded
+    until nothing changes (so ``%255F`` or an encoded ``?`` cannot survive one round), dot
+    segments and repeated or trailing slashes resolved. A lab-grade normalization for the demo
+    app's router; it is not a general defense against path confusion."""
+    raw = path
+    for _ in range(8):
+        # cut by hand: urlsplit would read "//payments//x" as a host named "payments"
+        raw = raw.split("?", 1)[0].split("#", 1)[0]
+        decoded = unquote(raw)
+        if decoded == raw:
+            break
+        raw = decoded
+    return posixpath.normpath("/" + raw.lstrip("/"))
 
 
 class DefensiveGateway:
@@ -159,7 +165,8 @@ class DefensiveGateway:
         # original query), so the decision and the app cannot disagree about the path.
         route = _route(path)
         query = path.split("#", 1)[0].partition("?")[2]
-        forward = f"{route}?{query}" if query else route
+        # re-encoded, so the app decodes it back to exactly ``route`` and nothing else
+        forward = quote(route, safe="/") + (f"?{query}" if query else "")
         node = self._topology.node_for(method, route)
         headers = {"Authorization": f"Bearer {token}"} if token else {}
         principal = self._inst.principal(token)

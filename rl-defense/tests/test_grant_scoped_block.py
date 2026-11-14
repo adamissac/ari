@@ -89,6 +89,9 @@ def test_in_the_loop_the_scoped_block_keeps_authorized_traffic_on_an_insider_sce
         "/payments/unused/../pay_c1",
         "//payments//pay_c1",
         "/payments/%2E/pay_c1",
+        "/payments/pay%255Fc1",  # double-encoded underscore
+        "/payments/pay_c1%3Fx=1",  # encoded question mark
+        "/payments/pay%25255Fc1",
     ],
 )
 def test_dot_segments_and_repeated_slashes_resolve_before_the_ownership_lookup(path):
