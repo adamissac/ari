@@ -8,7 +8,9 @@ import { DemoBanner } from '@/components/demo-banner';
 import { HeaderContrast } from '@/components/header-contrast';
 import { RouteTransition } from '@/components/route-transition';
 import { SiteNavigation } from '@/components/site-navigation';
+import { SmoothScroll } from '@/components/smooth-scroll';
 import { SiteFooter } from '@/components/site-footer';
+import 'lenis/dist/lenis.css';
 import './globals.css';
 import './interface.css';
 import './platform.css';
@@ -55,6 +57,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <HeaderContrast />
         <AnchorScroll />
         <RouteTransition />
+        <SmoothScroll />
         <DemoBanner />
         <main id="main" className="site-main mx-auto px-4 py-6">{children}</main>
         <SiteFooter />
