@@ -1247,7 +1247,7 @@ body:has(.commit-stage) main { color: #fff; }
   mask-composite: exclude;
   pointer-events: none;
 }
-.hero-ink .auth-kicker { color: #ffb8a6; letter-spacing: 0.14em; }
+.hero-ink .auth-kicker { color: #a7a8ac; letter-spacing: 0.14em; }
 .auth-label { display: block; margin-bottom: 0.5rem; font-size: 12px; font-weight: 500; color: rgb(255 255 255 / 72%); }
 .auth-input {
   width: 100%;
@@ -1291,7 +1291,7 @@ body:has(.commit-stage) main { color: #fff; }
 .hero-ink .auth-btn-light span, .hero-ink .auth-btn-light svg { color: inherit; }
 .auth-divider { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: rgb(255 255 255 / 45%); }
 .auth-divider::before, .auth-divider::after { content: ""; height: 1px; flex: 1; background: rgb(255 255 255 / 12%); }
-.auth-link { color: #ffb8a6; text-underline-offset: 3px; transition: color 200ms; }
+.auth-link { color: #f4f4f2; text-underline-offset: 3px; transition: color 200ms; }
 .auth-link:hover { color: #fff; text-decoration: underline; }
 .hero-ink .auth-error { color: #ffc9bd; }
 .auth-error { display: flex; gap: 8px; align-items: flex-start; margin-top: 0.875rem; padding: 10px 12px; border-radius: 12px; font-size: 13px; background: rgb(167 168 172 / 18%); border: 1px solid rgb(255 140 115 / 30%); }
@@ -1652,7 +1652,7 @@ body:has(.commit-stage) main { color: #fff; }
   .footer-brand { transition: translate 250ms var(--ease-quad); }
   .footer-brand:hover, .footer-brand:focus-visible { translate: 3px 0; }
   .footer-links a { transition: translate 220ms var(--ease-quad), color 220ms; }
-  .footer-links a:hover, .footer-links a:focus-visible { translate: 4px 0; color: #ffd5bf; }
+  .footer-links a:hover, .footer-links a:focus-visible { translate: 4px 0; color: #f4f4f2; }
   .footer-top-link > span { transition: translate 220ms var(--ease-quad); }
   .footer-top-link:hover > span { translate: 0 -3px; }
   .btn:not(:disabled) { transition: translate 200ms var(--ease-quad), background-color 250ms, box-shadow 250ms; }
@@ -1734,9 +1734,9 @@ body:has(.setup-layout) .site-header-inner { max-width: 100rem; padding-inline: 
 /* Mono eyebrow marker — square dot + tracked caps. */
 .kicker { display: inline-flex; align-items: center; gap: 9px; font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--color-brand-deep); }
 .kicker::before { content: ""; width: 6px; height: 6px; background: var(--color-brand); box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand) 80%, transparent); }
-.kicker-ghost { color: #ff9b78; }
-.kicker-dark { color: #ffb89d; }
-.hero-ink .kicker-dark { color: #ffb89d; }
+.kicker-ghost { color: #a7a8ac; }
+.kicker-dark { color: #a7a8ac; }
+.hero-ink .kicker-dark { color: #a7a8ac; }
 
 /* Pixel-face figures (Sixtyfour, OFL) — card numbers and stats. */
 .home-deep .story-card-num { font-family: var(--font-sixtyfour), var(--font-mono), monospace; font-weight: 400; letter-spacing: 0.04em; color: rgba(255, 150, 120, 0.30); }
