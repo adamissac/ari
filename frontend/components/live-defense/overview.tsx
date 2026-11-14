@@ -153,6 +153,32 @@ function LiveOverviewRecords({
         )}
       </Panel>
 
+        {graph ? (
+        <Async resource={graph} label="recorded topology">
+          {item => item.nodes.length === 0 ? null : (
+            <Panel title="Connected apps and routes"><div data-testid="live-defense-graph">
+              <p className="mb-2 text-xs text-muted">{item.note}</p>
+              <ul className="flex flex-col gap-2">
+                {item.nodes.map(node => {
+                  const obs = item.observations.find(entry => entry.node_id === node.id);
+                  return (
+                    <li key={node.id} className="rounded-md border border-line bg-panel-2 p-2.5 text-sm text-ink">
+                      <span className="font-medium">{node.label}</span>
+                      <span className="mt-1 flex flex-wrap gap-1 text-xs">
+                        <Tag>{node.kind}</Tag>
+                        <Tag tone={obs?.state === 'attention' ? 'warn' : 'neutral'}>{obs?.state ?? 'unknown'}</Tag>
+                        {obs?.simulated && <Tag tone="warn">simulated source</Tag>}
+                        {obs?.last_checked_at && <span className="text-muted">last window <Time iso={obs.last_checked_at} /></span>}
+                      </span>
+                      {obs?.note && <p className="mt-1 text-xs text-muted">{obs.note}</p>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div></Panel>
+          )}
+        </Async>
+      ) : null}
       <section aria-label="Live Defense activity">
         <StatGrid items={[
           { label: 'Open incidents', value: incidents?.status === 'ready' ? open.length : '…' },
@@ -277,32 +303,6 @@ function LiveOverviewRecords({
                 <dt className="text-muted">Last ingest window</dt><dd>{item.last_ingest_at ? <Time iso={item.last_ingest_at} /> : 'unavailable'}</dd>
                 <dt className="text-muted">Last runtime event</dt><dd>{item.last_runtime_event_at ? <Time iso={item.last_runtime_event_at} /> : 'unavailable'}</dd>
               </dl>
-            )}
-          </Async>
-        ) : null}
-        {graph ? (
-          <Async resource={graph} label="recorded topology">
-            {item => item.nodes.length === 0 ? null : (
-              <div data-testid="live-defense-graph">
-                <p className="mb-2 text-xs text-muted">{item.note}</p>
-                <ul className="flex flex-col gap-2">
-                  {item.nodes.map(node => {
-                    const obs = item.observations.find(entry => entry.node_id === node.id);
-                    return (
-                      <li key={node.id} className="rounded-md border border-line bg-panel-2 p-2.5 text-sm text-ink">
-                        <span className="font-medium">{node.label}</span>
-                        <span className="mt-1 flex flex-wrap gap-1 text-xs">
-                          <Tag>{node.kind}</Tag>
-                          <Tag tone={obs?.state === 'attention' ? 'warn' : 'neutral'}>{obs?.state ?? 'unknown'}</Tag>
-                          {obs?.simulated && <Tag tone="warn">simulated source</Tag>}
-                          {obs?.last_checked_at && <span className="text-muted">last window <Time iso={obs.last_checked_at} /></span>}
-                        </span>
-                        {obs?.note && <p className="mt-1 text-xs text-muted">{obs.note}</p>}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
             )}
           </Async>
         ) : null}
