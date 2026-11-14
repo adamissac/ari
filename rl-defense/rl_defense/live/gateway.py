@@ -107,7 +107,7 @@ def _route(path: str) -> str:
     segments and repeated or trailing slashes resolved. A lab-grade normalization for the demo
     app's router; it is not a general defense against path confusion."""
     raw = path
-    for _ in range(8):
+    while True:  # ends: a decode that changes the string always makes it shorter
         # cut by hand: urlsplit would read "//payments//x" as a host named "payments"
         raw = raw.split("?", 1)[0].split("#", 1)[0]
         decoded = unquote(raw)
