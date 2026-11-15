@@ -1,0 +1,22 @@
+# Pilot gate v3 (created 2026-11-14, committed before any policy was run on it; see
+# results/pilot-gate-v3/PREREGISTRATION.md). Complete grant table. A bookkeeper (dave) abuses his
+# access against tenants he holds no grant for while an outsider attacks too, switching per
+# request, under heavy authorized delegated reads.
+name: gate3_delegate_and_outsider_mixed
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.18
+p_stop: 0.2
+attack_per_step: 6
+benign_per_step: 8
+attackers: [dave, mallory]
+attacker_switch: per_request
+victims: [bob, carol]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice", "erin:carol"]
+delegate_per_step: 2
+delegate_burst_p: 0.4
+delegate_burst_size: 5
+seed_start: 45200
+episodes: 30

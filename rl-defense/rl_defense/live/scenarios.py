@@ -73,9 +73,16 @@ class LiveScenario(BaseModel):
     delegate_per_step: int = Field(1, ge=0)
     delegate_burst_p: float = Field(0.0, ge=0.0, le=1.0)
     delegate_burst_size: int = Field(0, ge=0)
+    # --- gate v3: delegations (a subset of the above) the operator's grant table lacks.
+    # The delegate's reads stay legitimate traffic; the detector and a grant-scoped block
+    # see them as ungranted. Default = a complete table.
+    missing_grants: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def _seeds_in_band(self) -> LiveScenario:
+        unknown = set(self.missing_grants) - set(self.delegations)
+        if unknown:
+            raise ValueError(f"{self.name}: missing_grants not in delegations: {sorted(unknown)}")
         lo, hi = SEED_BANDS[self.split]
         if not (lo <= self.seed_start and self.seed_start + self.episodes - 1 <= hi):
             raise ValueError(f"{self.name}: seeds must lie in the {self.split} band {lo}..{hi}")
@@ -106,7 +113,9 @@ class LiveScenario(BaseModel):
             p_start=self.p_start,
             p_stop=self.p_stop,
             start_active=self.start_active,
-            delegates=tuple(delegate_profile(d) for d in self.delegations),
+            delegates=tuple(
+                delegate_profile(d, granted=d not in self.missing_grants) for d in self.delegations
+            ),
             delegate_per_step=self.delegate_per_step,
             delegate_burst_p=self.delegate_burst_p,
             delegate_burst_size=self.delegate_burst_size,
@@ -132,6 +141,8 @@ _V2 = (
     "delegate_per_step",
     "delegate_burst_p",
     "delegate_burst_size",
+    # gate v3
+    "missing_grants",
 )
 
 

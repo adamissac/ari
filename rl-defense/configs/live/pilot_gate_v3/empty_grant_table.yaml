@@ -1,0 +1,21 @@
+# Pilot gate v3 (created 2026-11-14, committed before any policy was run on it; see
+# results/pilot-gate-v3/PREREGISTRATION.md). The only delegate's grant is missing from the table,
+# so every delegated read looks ungranted, while a faint insider (carol) attacks rarely.
+name: gate3_empty_grant_table
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.1
+p_stop: 0.35
+attack_per_step: 3
+benign_per_step: 6
+attackers: [carol]
+victims: [bob, erin]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice"]
+missing_grants: ["dave:alice"]
+delegate_per_step: 2
+delegate_burst_p: 0.2
+delegate_burst_size: 3
+seed_start: 44700
+episodes: 30

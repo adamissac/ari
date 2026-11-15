@@ -1,0 +1,23 @@
+# Pilot gate v3 (created 2026-11-14, committed before any policy was run on it; see
+# results/pilot-gate-v3/PREREGISTRATION.md). Two bookkeepers do authorized delegated reads; the
+# operator's grant table has dave's grant but not erin's (missing_grants). An outsider attacks
+# in bursts.
+name: gate3_stale_grant_bookkeeper
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.15
+p_stop: 0.25
+attack_per_step: 4
+benign_per_step: 7
+attackers: [mallory]
+rotate_tokens: true
+victims: [alice, bob]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice", "erin:carol"]
+missing_grants: ["erin:carol"]
+delegate_per_step: 2
+delegate_burst_p: 0.25
+delegate_burst_size: 4
+seed_start: 43700
+episodes: 30

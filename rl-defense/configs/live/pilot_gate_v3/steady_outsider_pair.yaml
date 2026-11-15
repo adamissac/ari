@@ -1,0 +1,22 @@
+# Pilot gate v3 (created 2026-11-14, committed before any policy was run on it; see
+# results/pilot-gate-v3/PREREGISTRATION.md). Complete grant table. Two attackers with rotating
+# tokens take turns per window in long campaigns against three victims.
+name: gate3_steady_outsider_pair
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.3
+p_stop: 0.08
+attack_per_step: 5
+benign_per_step: 5
+attackers: [mallory, bob]
+attacker_switch: per_window
+rotate_tokens: true
+victims: [alice, carol, erin]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["erin:carol"]
+delegate_per_step: 1
+delegate_burst_p: 0.2
+delegate_burst_size: 4
+seed_start: 46200
+episodes: 30
