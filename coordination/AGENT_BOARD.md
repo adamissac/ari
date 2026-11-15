@@ -3,14 +3,14 @@
 
 # Agent board — live coordination dashboard
 
-Regenerated 2026-11-14 04:28 UTC. Comms channel: [issue #559](https://github.com/adamissac/ari-ai/issues/559). Protocol: `coordination/PROTOCOL.md`.
+Regenerated 2026-11-15 04:39 UTC. Comms channel: [issue #559](https://github.com/adamissac/ari-ai/issues/559). Protocol: `coordination/PROTOCOL.md`.
 
 ## Active agents
 
 | Agent | Owner | Workstream | State | Task | Branch | SHA |
 | --- | --- | --- | --- | --- | --- | --- |
 | alan-live-defense | Alan | security-agents/, live-defense Phase 6.5/7A/7C, interim shared/ contract approver | BLOCKED | Phase 7C authorized Scout/Diagnose execution (#458); Phase 6.5 RL-gated pilot infra (#412) | feat/alan/live-defense-phase7c-agent-execution, feat/live-defense-phase6-5-rl-gated-pilot | 9486a5b0 |
-| alan-rl-lab-audit | Alan | RL lab audit: rl-defense inference/training/lab episode, backend /lab/simulation, frontend /lab simulation panel | DONE | RL lab audit and policy-quality follow-up delivered | main | dd73a920 |
+| alan-rl-lab-audit | Alan | RL lab audit: rl-defense inference/training/lab episode, backend /lab/simulation, frontend /lab simulation panel | READY_FOR_REVIEW | pilot gate v3 (fixed rule under grant-scoped block): FAIL 6/9, lab only | feat/alan/pilot-gate-v3 | dd73a920 |
 | code-review-eval | Adam | standalone functional AI code reviewer evaluation + scorer integration | DONE | Reviewer eval report merged (#529); combined scorer verified on merged release-gate head | docs/reviewer-eval-report (merged), docs/adam/status-final-verification | 19a16af0 |
 | codex-36bd-check | Alan | exact integrated 36bd05ee merge-readiness check | READY_FOR_REVIEW | ? | codex/check-36bd05ee | f6883835 |
 | codex-b6d-check | Alan | exact b6d5108b independent check | READY_FOR_REVIEW | ? | codex/check-b6d5108b | 1f4cf1ef |
@@ -145,6 +145,17 @@ Regenerated 2026-11-14 04:28 UTC. Comms channel: [issue #559](https://github.com
 | #943 | docs(status): Adam cloud health run 47 | feat/adam/cloud-20261113-1200 | 1cfd1b41 | unassigned | — |
 | #944 | docs(adam): scheduled cloud health run 47 (no-op) | feat/adam/cloud-20261114-run | f1c014e6 | unassigned | — |
 | #946 | docs(coordination): Adam cloud health run 47 | feat/adam/cloud-20261114-1700 | 622cdcb1 | unassigned | — |
+| #948 | docs(adam): scheduled health run 47 handoff | feat/adam/cloud-20261114-0440 | 58853af9 | unassigned | — |
+| #950 | docs(adam): cloud health run 47 handoff | feat/adam/cloud-20261114-1500 | b69de094 | unassigned | — |
+| #953 | docs(status): Adam cloud health run 47 | feat/adam/cloud-20261114-2300 | 2d2ca2a5 | unassigned | — |
+| #954 | docs(adam): scheduled cloud health run 47 handoff | feat/adam/cloud-20261114-1039 | e6e63c69 | unassigned | — |
+| #959 | feat: only commits since connect, hide stale suspicions, flat sidebar | feat/adam/after-connect-only | 49a012bf | unassigned | — |
+| #962 | feat(frontend): Live Defense overview in plain words with status line and pipeline | feat/adam/live-defense-clarity | 127105b7 | unassigned | — |
+| #964 | docs(coordination): Adam scheduled health run 47 | feat/adam/cloud-20261114-1930 | 1eea06a7 | unassigned | — |
+| #965 | chore(adam): cloud health run 47 handoff | feat/adam/cloud-20261114-184543 | eca4687e | unassigned | — |
+| #966 | docs(adam): scheduled cloud health run 47 (full rl-defense suite) | feat/adam/cloud-20261114-2330 | e00c2422 | unassigned | — |
+| #970 | style(frontend): sharper corners and a flat grid background for the console | feat/adam/sharper-corners | bad2d630 | unassigned | — |
+| #971 | docs(handoff): Adam cloud health run 47 | feat/adam/cloud-20261114-2239 | 057e43ac | unassigned | — |
 
 ## File / subsystem claims
 
@@ -198,7 +209,7 @@ Regenerated 2026-11-14 04:28 UTC. Comms channel: [issue #559](https://github.com
 ## Next actions
 
 - **alan-live-defense**: hold; rebase onto post-integration main when asked
-- **alan-rl-lab-audit**: none; protocol-v1 stays the lab policy, see docs/rl-live-defense-audit-progress.md
+- **alan-rl-lab-audit**: merge after CI; no pilot control validated, RL readiness unchanged
 - **code-review-eval**: none — workstream complete; #530 carries inverted score_api conflict resolution (verified clean) and is ready for final security review + merge by integration lead. Re-verify only if scorer code changes again.
 - **codex-36bd-check**: Release owner may use exact integrated candidate through normal protected-branch process; no approval/merge/deploy executed
 - **codex-b6d-check**: Integration/frontend owners reconcile current main; security GO on requested candidate, merge HOLD; no deploy

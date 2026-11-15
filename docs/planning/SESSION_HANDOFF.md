@@ -3,6 +3,13 @@
 Append-only. Newest entry at the top. Every development session (human or agent)
 adds an entry before ending.
 
+### 2026-11-14 — Claude (agent, for Alan) — gate v3 (long-block rule, grant-scoped block): FAIL
+
+- Owner decision (Alan): run a third gate. Added `LiveScenario.missing_grants` (a legitimate delegation absent from the operator's grant table; default none, earlier hashes unchanged), `pilot_gate.run(block_scope=...)` (incumbent runs under the same scope; `<name>@principal` reported only), listed/unlisted delegated success, and `configs/live/pilot_gate_v3/` (4 fresh scenarios, 2 with a missing grant). Pre-registered in `ae75c558`, run once.
+- Result: FAIL, 6 of 9 checks pass (delegated success 0.693, attack-free duty 0.641, -0.90 on `gate3_stale_grant_bookkeeper`). Complete-table scenarios: nothing legitimate refused. Missing-grant scenarios: the delegate loses all delegated reads under every flag-driven policy. `rl-defense/results/pilot-gate-v3/REPORT.md`.
+- Not an RL result. Backend, contracts and readiness unchanged. `pilot_gate_v3` is now exposed. Next would be telling a missing grant from an attack (new work, not started).
+- Tests run locally: `tests/test_pilot_gate_v3.py`, `test_pilot_gate.py`, `test_grant_scoped_block.py`, `test_live_v4.py` (46 passed). Full suites: CI.
+
 ### 2026-11-14 — Claude (agent, for Adam) — Live Defense for apps in any language
 - Did: `monitoring/monitoring/proxy.py` sidecar reverse proxy (httpx + uvicorn, `proxy` extra) wrapping `AriCollector` and `AriControls`; collector gained owner route templates and skip paths. Tests: `monitoring/tests/test_proxy.py` (proxy as a real process in front of a Node server) and `test_ari_controls_a_node_app_through_the_sidecar_proxy` (API + worker -> proxy -> Node).
 - Known gaps: controls are per proxy process (run one instance); WebSockets and serverless not covered; no published image or package for customers outside this repo.

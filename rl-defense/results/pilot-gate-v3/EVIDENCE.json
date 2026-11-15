@@ -1,0 +1,11 @@
+{
+  "block_scope": "ungranted",
+  "candidate_checkpoint_sha256": null,
+  "candidate_rule": "always_block_principal_long",
+  "files": {
+    "episodes.json": "6ca1fc58d9b5b28e9d74e5ce7e3f9ae976c051fd39a0dc3529b4b977a4f4a254",
+    "summary.json": "475bebd4ad1f6618df37fba7c5965a63346438d6724ba5db6065b232fe3c54d5"
+  },
+  "passed": false,
+  "schema": "pilot-gate/1"
+}
