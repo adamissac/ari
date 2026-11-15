@@ -61,6 +61,7 @@ def run_policy(
     episodes: int | None = None,
     q_values=None,  # noqa: ANN001
     record_decisions: bool = False,
+    loop_overrides: dict[str, Any] | None = None,
 ) -> tuple[list[ev.EpisodeMetrics], list[dict[str, Any]], list[dict[str, Any]]]:
     """``ev.run_policy`` plus what it does not record: per-episode own-object and delegated
     request outcomes (from the gateway's records) and, with ``q_values``, per-step decisions."""
@@ -70,7 +71,11 @@ def run_policy(
     for sc in scenarios:
         loop = LiveDefenseLoop(
             live_app,
-            config=LoopConfig(horizon=sc.horizon, action_space=SPACE, **ev.V4_LOOP_OVERRIDES),
+            config=LoopConfig(
+                horizon=sc.horizon,
+                action_space=SPACE,
+                **{**ev.V4_LOOP_OVERRIDES, **(loop_overrides or {})},
+            ),
             driver=sc.driver(),
         )
         try:

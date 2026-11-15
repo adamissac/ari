@@ -76,6 +76,7 @@ untrained one on 4.9% to 18.0% of states.
 | [#941](https://github.com/adamissac/ari-ai/pull/941) | Fail-closed gate, registry hardening, v6 shadow fix and tests, opt-in v1 reward and study, opt-in time-limit option | see GitHub |
 | [#941](https://github.com/adamissac/ari-ai/pull/941) merged | as above | d5a967bf |
 | [#945](https://github.com/adamissac/ari-ai/pull/945) | Guided exploration, `monitor_isolate` rule, evidence-policy study | dd73a920 |
+| [#967](https://github.com/adamissac/ari-ai/pull/967) | Gate v2: deterministic long-block rule fails 5 of 9 | 97d1ce0f |
 | [#961](https://github.com/adamissac/ari-ai/pull/961) | v11 candidate fails its validation prediction; gate v2 not run | 5120646a |
 | [#951](https://github.com/adamissac/ari-ai/pull/951) | Pilot gate run (v6 fails 1 of 9); readiness reports the evidence | e8cfc5b6 |
 | [#949](https://github.com/adamissac/ari-ai/pull/949) | Lab offers the two deterministic rules | c7b28b99 |
@@ -201,6 +202,14 @@ delegate: a principal-wide block stops the attack and the authorized reads toget
 a limit of the available control; the next step is a grant-scoped control, not another
 candidate. [`rl-defense/results/pilot-gate-v2/REPORT.md`](../rl-defense/results/pilot-gate-v2/REPORT.md).
 Both gate scenario sets are now exposed.
+
+**Grant-scoped block.** `DefenseControls.block_scope="ungranted"` (off by default) refuses a
+blocked principal only on requests no delegation grant covers. On validation and on both
+exposed gate sets (diagnostic, not a gate) every policy's availability and delegated success
+become 1.000 with compromise unchanged, and the long-block rule is ahead of the rules on
+every scenario. Limits: the lab's grant table is perfect, and with a free block there is
+nothing left for a learned policy to decide.
+[`rl-defense/results/grant-scoped-block/REPORT.md`](../rl-defense/results/grant-scoped-block/REPORT.md).
 
 ## Finding 7: analysis
 

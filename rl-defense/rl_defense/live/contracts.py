@@ -10,6 +10,8 @@ can later feed offline retraining unchanged.
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from rl_defense.envs.defense_sim import NODE_ACTIONS
@@ -26,6 +28,13 @@ class DefenseControls(_Strict):
     through; the rest get 429. ``monitoring_level`` raises detection fidelity only.
     ``blocked_principals`` maps a principal (customer id) to the nodes on which its
     requests are refused with 403 (live action space v2, ``block_principal``).
+
+    ``block_scope`` says which of a blocked principal's requests are refused:
+    ``"principal"`` (default, v2-v10) refuses all of them on the blocked nodes;
+    ``"ungranted"`` refuses only requests for another owner's object that no delegation grant
+    covers, so the principal's own reads and authorized delegated reads still pass. It needs
+    the gateway to know the grant table (``delegation_aware_detector``); without it every
+    cross-tenant request counts as ungranted.
     """
 
     isolated: dict[str, bool] = Field(default_factory=dict)
@@ -34,6 +43,7 @@ class DefenseControls(_Strict):
     reassessment_pending: dict[str, bool] = Field(default_factory=dict)
     blocked_principals: dict[str, list[str]] = Field(default_factory=dict)
     rate_limit_allow_every: int = 3
+    block_scope: Literal["principal", "ungranted"] = "principal"
 
     def clone(self) -> DefenseControls:
         return self.model_copy(deep=True)

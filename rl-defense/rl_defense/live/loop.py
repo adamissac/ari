@@ -108,6 +108,9 @@ class LoopConfig:
     finding_severity_context: Literal["fixed", "platform"] = "fixed"
     severity_p_payments: float = 0.5
     severity_p_other: float = 0.25
+    # which requests of a blocked principal are refused (contracts.DefenseControls.block_scope);
+    # "ungranted" needs delegation_aware_detector so the gateway knows the grant table
+    block_scope: Literal["principal", "ungranted"] = "principal"
     # reward coefficients (applied to measured, normalized counts)
     c_impact: float = 1.0
     c_disrupt: float = 0.5  # v1-v3; v4 uses 1.0 (V4_LOOP_OVERRIDES in evaluate.py)
@@ -162,7 +165,7 @@ class LiveDefenseLoop:
     def reset(self, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:
         if self._gateway is not None:
             self._gateway.close()
-        self.controls = DefenseControls()
+        self.controls = DefenseControls(block_scope=self.config.block_scope)
         self.finding_severity = self._severity_context(seed)
         self._timers = _Timers()
         self._ever_blocked = set()

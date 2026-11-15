@@ -22,11 +22,13 @@ attempt. Without grants (the v1-v3 default) every foreign-owner read is flagged.
 
 from __future__ import annotations
 
+import posixpath
 import re
 import warnings
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Protocol
+from urllib.parse import quote, unquote
 
 import httpx
 
@@ -85,7 +87,9 @@ class RequestRecord:
     actor: str  # customer id of the caller (or "anon")
     is_attack: bool  # generator's label — METRICS ONLY, never used for telemetry
     status: int  # HTTP status actually returned (gateway 503/429 or the app's own)
-    blocked_reason: str | None  # "isolated" | "principal_blocked" | "rate_limited" | None
+    blocked_reason: (
+        str | None
+    )  # "isolated" | "principal_blocked" | "ungranted_blocked" | "rate_limited" | None
     compromised: bool  # really succeeded cross-tenant read (allowed, 200, foreign owner in body)
     # detector: token's principal != object owner (and, v4, no delegation grant covers it)
     cross_tenant_attempt: bool = False
@@ -95,6 +99,22 @@ class RequestRecord:
     @property
     def allowed(self) -> bool:
         return self.blocked_reason is None
+
+
+def _route(path: str) -> str:
+    """The one path both the decision and the app use: query and fragment cut, percent-decoded
+    until nothing changes (so ``%255F`` or an encoded ``?`` cannot survive one round), dot
+    segments and repeated or trailing slashes resolved. A lab-grade normalization for the demo
+    app's router; it is not a general defense against path confusion."""
+    raw = path
+    while True:  # ends: a decode that changes the string always makes it shorter
+        # cut by hand: urlsplit would read "//payments//x" as a host named "payments"
+        raw = raw.split("?", 1)[0].split("#", 1)[0]
+        decoded = unquote(raw)
+        if decoded == raw:
+            break
+        raw = decoded
+    return posixpath.normpath("/" + raw.lstrip("/"))
 
 
 class DefensiveGateway:
@@ -139,10 +159,18 @@ class DefensiveGateway:
         token: str | None = None,
         is_attack: bool = False,
     ) -> RequestRecord:
-        node = self._topology.node_for(method, path)
+        # Classify and look up ownership on the route the app will actually serve: without
+        # this, "/payments/pay_c1?x=1" has no owner here, is never flagged, and passes a
+        # grant-scoped block. The same normalized route is what gets forwarded (with the
+        # original query), so the decision and the app cannot disagree about the path.
+        route = _route(path)
+        query = path.split("#", 1)[0].partition("?")[2]
+        # re-encoded, so the app decodes it back to exactly ``route`` and nothing else
+        forward = quote(route, safe="/") + (f"?{query}" if query else "")
+        node = self._topology.node_for(method, route)
         headers = {"Authorization": f"Bearer {token}"} if token else {}
         principal = self._inst.principal(token)
-        owner = self._inst.resource_owner(method, path)
+        owner = self._inst.resource_owner(method, route)
         cross = (
             principal is not None
             and owner is not None
@@ -161,7 +189,10 @@ class DefensiveGateway:
         if self.controls.isolated.get(node, False):
             return blocked(503, "isolated")
         if principal is not None and node in self.controls.blocked_principals.get(principal, ()):
-            return blocked(403, "principal_blocked")
+            if self.controls.block_scope == "principal":
+                return blocked(403, "principal_blocked")
+            if cross:  # "ungranted": only what no grant covers; own and delegated reads pass
+                return blocked(403, "ungranted_blocked")
         if self.controls.rate_limited.get(node, False):
             n = self._rl_counter.get(node, 0)
             self._rl_counter[node] = n + 1
@@ -170,7 +201,7 @@ class DefensiveGateway:
                 return blocked(429, "rate_limited")
 
         # --- forward to the real app ---
-        resp = self._client.request(method, path, headers=headers)
+        resp = self._client.request(method, forward, headers=headers)
         compromised = self._is_compromise(principal, resp)
         rec = RequestRecord(
             node,
