@@ -23,7 +23,7 @@ from rl_defense.checkpoint import git_sha, load_checkpoint, sha256_file
 from rl_defense.envs.defense_sim import NOOP_ACTION
 from rl_defense.layouts import FEATURE_INDEX
 from rl_defense.live import evaluate as ev
-from rl_defense.live.adversary import live_app
+from rl_defense.live.adversary import IDENTITIES, live_app
 from rl_defense.live.loop import LiveDefenseLoop, LoopConfig
 from rl_defense.live.scenarios import CONFIG_DIR, LiveScenario, load_scenarios
 
@@ -69,6 +69,10 @@ def run_policy(
     access: list[dict[str, Any]] = []
     decisions: list[dict[str, Any]] = []
     for sc in scenarios:
+        # (delegate, owner) customer ids of legitimate delegations the grant table lacks
+        unlisted = {
+            tuple(IDENTITIES[n].customer_id for n in spec.split(":")) for spec in sc.missing_grants
+        }
         loop = LiveDefenseLoop(
             live_app,
             config=LoopConfig(
@@ -82,7 +86,7 @@ def run_policy(
             for seed in sc.seeds(episodes):
                 obs, mask = loop.reset(seed)
                 ts, done = [], False
-                own = own_ok = delegated = delegated_ok = 0
+                own = own_ok = delegated = delegated_ok = unlisted_n = unlisted_ok = 0
                 while not done:
                     action = int(policy(obs, mask))
                     margin = None
@@ -99,6 +103,8 @@ def run_policy(
                         # object's owner and the traffic generator did not label it an attack
                         if r.owner is not None and r.principal != r.owner:
                             delegated, delegated_ok = delegated + 1, delegated_ok + ok
+                            if (r.principal, r.owner) in unlisted:
+                                unlisted_n, unlisted_ok = unlisted_n + 1, unlisted_ok + ok
                         else:
                             own, own_ok = own + 1, own_ok + ok
                     if q_values is not None or record_decisions:
@@ -126,6 +132,9 @@ def run_policy(
                         "own_succeeded": int(own_ok),
                         "delegated_requests": delegated,
                         "delegated_succeeded": int(delegated_ok),
+                        # the part of delegated traffic whose grant the table lacks
+                        "unlisted_delegated_requests": unlisted_n,
+                        "unlisted_delegated_succeeded": int(unlisted_ok),
                     }
                 )
         finally:
@@ -139,9 +148,18 @@ def _ratio(num: float, den: float) -> float | None:
 
 def access_summary(access: list[dict[str, Any]]) -> dict[str, float | None]:
     tot = {k: sum(a[k] for a in access) for k in access[0] if k not in ("scenario", "seed")}
+    for k in ("unlisted_delegated_requests", "unlisted_delegated_succeeded"):
+        tot.setdefault(k, 0)  # rows recorded before gate v3 have no missing-grant counters
     return {
         "own_traffic_success": _ratio(tot["own_succeeded"], tot["own_requests"]),
         "delegated_success": _ratio(tot["delegated_succeeded"], tot["delegated_requests"]),
+        "unlisted_delegated_success": _ratio(
+            tot["unlisted_delegated_succeeded"], tot["unlisted_delegated_requests"]
+        ),
+        "listed_delegated_success": _ratio(
+            tot["delegated_succeeded"] - tot["unlisted_delegated_succeeded"],
+            tot["delegated_requests"] - tot["unlisted_delegated_requests"],
+        ),
     }
 
 
@@ -221,8 +239,12 @@ def run(
     rules_tuning_sha256: str = RULES_TUNING_SHA256,
     references: dict[str, tuple[Path, str]] | None = None,
     candidate_rule: str | None = None,
+    block_scope: str = "principal",
 ) -> dict[str, Any]:
-    """Defaults are the first gate (frozen v6). ``references`` are other pinned checkpoints
+    """Defaults are the first gate (frozen v6). ``block_scope`` is the block every gated
+    policy (candidate and incumbent included) runs under; when it is not ``"principal"`` the
+    candidate, the rules and the references also run under the principal-wide block, reported
+    only as ``<name>@principal``. ``references`` are other pinned checkpoints
     run on the same episodes and reported only; they are not part of the gate.
     ``candidate_rule`` makes one of :data:`FIXED_RULES` the candidate instead of a checkpoint:
     a deterministic control, not a learned policy."""
@@ -257,9 +279,15 @@ def run(
             episodes=episodes,
             q_values=agent.q_values if is_candidate and agent is not None else None,
             record_decisions=is_candidate,
+            loop_overrides={"block_scope": block_scope},
         )
         decisions = d or decisions
         print(f"{name}: {ev.summarize(rows[name])['reward']:.3f}", flush=True)
+    if block_scope != "principal":
+        for name in [n for n in policies if n not in FIXED_RULES and n != "noop"]:
+            key = f"{name}@principal"
+            rows[key], access[key], _ = run_policy(policies[name], scenarios, episodes=episodes)
+            print(f"{key}: {ev.summarize(rows[key])['reward']:.3f}", flush=True)
 
     summary = {
         name: {
@@ -290,7 +318,8 @@ def run(
         },
         "scenarios": {s.name: s.config_hash() for s in scenarios},
         "episode_seeds": {s.name: [s.seeds(episodes)[0], s.seeds(episodes)[-1]] for s in scenarios},
-        "loop_overrides": dict(ev.V4_LOOP_OVERRIDES),
+        "loop_overrides": {**ev.V4_LOOP_OVERRIDES, "block_scope": block_scope},
+        "missing_grants": {s.name: list(s.missing_grants) for s in scenarios},
         "action_space": SPACE,
         "scenario_dir": scenario_dir,
         "rules": {"params": rules_params, "tuning_sha256": rules_tuning_sha256},
@@ -324,6 +353,7 @@ def run(
         },
         "candidate_checkpoint_sha256": None if manifest is None else manifest["checkpoint_sha256"],
         "candidate_rule": candidate_rule,
+        "block_scope": block_scope,
         "passed": result["gate"]["passed"],
     }
     (out / "EVIDENCE.json").write_text(json.dumps(evidence, indent=2, sort_keys=True))
@@ -341,6 +371,7 @@ def main() -> None:
     ap.add_argument("--rules-tuning-sha256", default=RULES_TUNING_SHA256)
     ap.add_argument("--reference-v6", action="store_true", help="also run frozen v6, reported only")
     ap.add_argument("--candidate-rule", choices=sorted(FIXED_RULES))
+    ap.add_argument("--block-scope", choices=("principal", "ungranted"), default="principal")
     args = ap.parse_args()
     result = run(
         args.out,
@@ -352,6 +383,7 @@ def main() -> None:
         rules_tuning_sha256=args.rules_tuning_sha256,
         references={"frozen_v6": (CANDIDATE, CANDIDATE_SHA256)} if args.reference_v6 else None,
         candidate_rule=args.candidate_rule,
+        block_scope=args.block_scope,
     )
     print(json.dumps(result["gate"], indent=2))
 

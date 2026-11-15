@@ -2,9 +2,9 @@
   "agent": "alan-rl-lab-audit",
   "human_owner": "Alan",
   "workstream": "RL lab audit: rl-defense inference/training/lab episode, backend /lab/simulation, frontend /lab simulation panel",
-  "state": "DONE",
-  "task": "RL lab audit and policy-quality follow-up delivered",
-  "branch": "main",
+  "state": "READY_FOR_REVIEW",
+  "task": "pilot gate v3 (fixed rule under grant-scoped block): FAIL 6/9, lab only",
+  "branch": "feat/alan/pilot-gate-v3",
   "latest_sha": "dd73a920",
   "prs": [
     929,
@@ -20,7 +20,7 @@
   "claims": [],
   "depends_on": [],
   "blockers": [],
-  "last_update_utc": "2026-11-14T02:00:00Z",
-  "tests": "see docs/planning/SESSION_HANDOFF.md entry of 2026-11-13 (RL follow-up)",
-  "next_action": "none; protocol-v1 stays the lab policy, see docs/rl-live-defense-audit-progress.md"
+  "last_update_utc": "2026-11-14T23:30:00Z",
+  "tests": "tests/test_pilot_gate_v3.py + gate/scope/live_v4 tests: 46 passed locally",
+  "next_action": "merge after CI; no pilot control validated, RL readiness unchanged"
 }

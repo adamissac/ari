@@ -130,17 +130,21 @@ class DelegateProfile:
     token: str
     delegated_payment_ids: tuple[str, ...]
     owner: str = ""  # customer id of the tenant whose payments the delegate may read
+    # False = the business authorized this delegate but the operator's grant table has no
+    # entry for it (missing or stale grant data). The traffic is still legitimate.
+    granted: bool = True
 
 
-def delegate_profile(spec: str) -> DelegateProfile:
-    """``"dave:alice"`` = dave may read alice's payments."""
+def delegate_profile(spec: str, *, granted: bool = True) -> DelegateProfile:
+    """``"dave:alice"`` = dave may read alice's payments. ``granted=False`` leaves the
+    delegation out of the operator's grant table (:func:`delegation_grants`)."""
     delegate, _, owner = spec.partition(":")
     if delegate not in IDENTITIES or owner not in IDENTITIES or delegate == owner:
         raise ValueError(f"bad delegation {spec!r}; expected '<delegate>:<owner>'")
     d, o = IDENTITIES[delegate], IDENTITIES[owner]
     if not o.payments:
         raise ValueError(f"delegation {spec!r}: {owner} owns no payments")
-    return DelegateProfile(d.customer_id, d.tokens[0], o.payments, o.customer_id)
+    return DelegateProfile(d.customer_id, d.tokens[0], o.payments, o.customer_id, granted)
 
 
 def delegation_grants(delegates: tuple[DelegateProfile, ...]) -> dict[str, frozenset[str]]:
@@ -148,10 +152,12 @@ def delegation_grants(delegates: tuple[DelegateProfile, ...]) -> dict[str, froze
 
     This is authorization data the operator owns (who was granted access to whom), not
     traffic ground truth: a delegate that also reads a tenant outside its grants is
-    still flagged on those reads."""
+    still flagged on those reads. A delegate with ``granted=False`` is absent from the
+    table, so its legitimate reads are flagged too."""
     out: dict[str, set[str]] = {}
     for d in delegates:
-        out.setdefault(d.actor, set()).add(d.owner)
+        if d.granted:
+            out.setdefault(d.actor, set()).add(d.owner)
     return {k: frozenset(v) for k, v in out.items()}
 
 

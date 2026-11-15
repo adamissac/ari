@@ -211,6 +211,17 @@ every scenario. Limits: the lab's grant table is perfect, and with a free block 
 nothing left for a learned policy to decide.
 [`rl-defense/results/grant-scoped-block/REPORT.md`](../rl-defense/results/grant-scoped-block/REPORT.md).
 
+**Gate v3, long-block rule under the grant-scoped block (owner decision).** Fresh scenarios,
+two of four with a grant missing from the operator's table; incumbent rules under the same
+block; thresholds unchanged. Pre-registered, run once: **failed 3 of 9 checks** (delegated
+success 0.693, legitimate traffic blocked in 64% of attack-free windows, -0.90 on one
+scenario). With a complete table nothing legitimate was refused and compromise was 0.09
+against the rules' 0.15 to 0.51. With a missing grant the delegate is flagged and loses all
+delegated reads, and every policy that acts on the flag fails the same checks: the limit is
+the detector reading "no grant on file" as an attack. No pilot control is validated; RL
+readiness is unchanged.
+[`rl-defense/results/pilot-gate-v3/REPORT.md`](../rl-defense/results/pilot-gate-v3/REPORT.md).
+
 ## Finding 7: analysis
 
 The scored objective is the return over a fixed 200-step horizon and the observation carries
