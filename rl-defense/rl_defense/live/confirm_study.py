@@ -33,17 +33,13 @@ SETTINGS: dict[str, dict[str, Any]] = {
         "confirm_response_p": 0.5,
     },
 }
-CONFIRMATION_KEYS = ("requested", "confirmed", "denied", "unanswered")
 
 
 def _summary(rows: list[ev.EpisodeMetrics], access: list[dict[str, Any]]) -> dict[str, Any]:
-    n = len(access)
     return {
         **ev.summarize(rows),
         **pg.access_summary(access),
-        "confirmations_per_episode": {
-            k: sum(a[f"confirmations_{k}"] for a in access) / n for k in CONFIRMATION_KEYS
-        },
+        "confirmations_per_episode": pg.confirmations(access),
     }
 
 

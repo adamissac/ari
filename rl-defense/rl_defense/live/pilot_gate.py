@@ -165,6 +165,12 @@ def access_summary(access: list[dict[str, Any]]) -> dict[str, float | None]:
     }
 
 
+def confirmations(access: list[dict[str, Any]]) -> dict[str, float]:
+    """Mean owner-confirmation counts per episode ("confirm" block scope; zero otherwise)."""
+    keys = [k for k in access[0] if k.startswith("confirmations_")]
+    return {k.removeprefix("confirmations_"): sum(a[k] for a in access) / len(access) for k in keys}
+
+
 def abstention(decisions: list[dict[str, Any]]) -> dict[str, Any]:
     quiet = [d for d in decisions if not d["flagged"]]
     flagged = [d for d in decisions if d["flagged"]]
@@ -242,11 +248,13 @@ def run(
     references: dict[str, tuple[Path, str]] | None = None,
     candidate_rule: str | None = None,
     block_scope: str = "principal",
+    confirm: dict[str, float] | None = None,
 ) -> dict[str, Any]:
     """Defaults are the first gate (frozen v6). ``block_scope`` is the block every gated
     policy (candidate and incumbent included) runs under; when it is not ``"principal"`` the
     candidate, the rules and the references also run under the principal-wide block, reported
-    only as ``<name>@principal``. ``references`` are other pinned checkpoints
+    only as ``<name>@principal``. ``confirm`` are the owner-confirmation settings
+    (``confirm_delay``, ``confirm_response_p``, ``confirm_error_p``) for the "confirm" scope. ``references`` are other pinned checkpoints
     run on the same episodes and reported only; they are not part of the gate.
     ``candidate_rule`` makes one of :data:`FIXED_RULES` the candidate instead of a checkpoint:
     a deterministic control, not a learned policy."""
@@ -273,6 +281,9 @@ def run(
     rows: dict[str, list[ev.EpisodeMetrics]] = {}
     access: dict[str, list[dict[str, Any]]] = {}
     decisions: list[dict[str, Any]] = []
+    if confirm and block_scope != "confirm":
+        raise ValueError("confirm settings need block_scope='confirm'")
+    scoped = {"block_scope": block_scope, **(confirm or {})}
     for name, policy in policies.items():
         is_candidate = name == "candidate"
         rows[name], access[name], d = run_policy(
@@ -281,7 +292,7 @@ def run(
             episodes=episodes,
             q_values=agent.q_values if is_candidate and agent is not None else None,
             record_decisions=is_candidate,
-            loop_overrides={"block_scope": block_scope},
+            loop_overrides=scoped,
         )
         decisions = d or decisions
         print(f"{name}: {ev.summarize(rows[name])['reward']:.3f}", flush=True)
@@ -293,11 +304,18 @@ def run(
 
     summary = {
         name: {
-            "pooled": {**ev.summarize(r), **access_summary(access[name])},
+            "pooled": {
+                **ev.summarize(r),
+                **access_summary(access[name]),
+                "confirmations_per_episode": confirmations(access[name]),
+            },
             "by_scenario": {
                 sc: {
                     **s,
                     **access_summary([a for a in access[name] if a["scenario"] == sc]),
+                    "confirmations_per_episode": confirmations(
+                        [a for a in access[name] if a["scenario"] == sc]
+                    ),
                 }
                 for sc, s in ev.summarize_by_scenario(r).items()
             },
@@ -320,7 +338,7 @@ def run(
         },
         "scenarios": {s.name: s.config_hash() for s in scenarios},
         "episode_seeds": {s.name: [s.seeds(episodes)[0], s.seeds(episodes)[-1]] for s in scenarios},
-        "loop_overrides": {**ev.V4_LOOP_OVERRIDES, "block_scope": block_scope},
+        "loop_overrides": {**ev.V4_LOOP_OVERRIDES, **scoped},
         "missing_grants": {s.name: list(s.missing_grants) for s in scenarios},
         "action_space": SPACE,
         "scenario_dir": scenario_dir,
@@ -356,6 +374,7 @@ def run(
         "candidate_checkpoint_sha256": None if manifest is None else manifest["checkpoint_sha256"],
         "candidate_rule": candidate_rule,
         "block_scope": block_scope,
+        "confirm": confirm,
         "passed": result["gate"]["passed"],
     }
     (out / "EVIDENCE.json").write_text(json.dumps(evidence, indent=2, sort_keys=True))
@@ -376,7 +395,15 @@ def main() -> None:
     ap.add_argument(
         "--block-scope", choices=("principal", "ungranted", "confirm"), default="principal"
     )
+    ap.add_argument("--confirm-delay", type=int)
+    ap.add_argument("--confirm-response-p", type=float)
+    ap.add_argument("--confirm-error-p", type=float)
     args = ap.parse_args()
+    confirm = {
+        k: v
+        for k in ("confirm_delay", "confirm_response_p", "confirm_error_p")
+        if (v := getattr(args, k)) is not None
+    }
     result = run(
         args.out,
         args.episodes,
@@ -388,6 +415,7 @@ def main() -> None:
         references={"frozen_v6": (CANDIDATE, CANDIDATE_SHA256)} if args.reference_v6 else None,
         candidate_rule=args.candidate_rule,
         block_scope=args.block_scope,
+        confirm=confirm or None,
     )
     print(json.dumps(result["gate"], indent=2))
 

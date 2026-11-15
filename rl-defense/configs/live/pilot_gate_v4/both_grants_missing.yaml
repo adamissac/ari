@@ -1,0 +1,23 @@
+# Pilot gate v4 (created 2026-11-15, committed before any policy was run on it; see
+# results/pilot-gate-v4/PREREGISTRATION.md). Two bookkeepers do authorized delegated reads and
+# neither grant is in the operator's table. Two attackers switch per request.
+name: gate4_both_grants_missing
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.15
+p_stop: 0.2
+attack_per_step: 4
+benign_per_step: 6
+attackers: [mallory, bob]
+attacker_switch: per_request
+rotate_tokens: true
+victims: [alice, carol]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice", "erin:carol"]
+missing_grants: ["dave:alice", "erin:carol"]
+delegate_per_step: 2
+delegate_burst_p: 0.3
+delegate_burst_size: 4
+seed_start: 45600
+episodes: 30
