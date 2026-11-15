@@ -246,8 +246,30 @@ test('every process card holds for several wheel notches before the chapter move
   const pinnedNotches = [0, 0, 0, 0];
   const order: number[] = [];
   for (let notch = 0; notch < 60; notch++) {
+    const before = await page.evaluate(() => scrollY);
     await page.mouse.wheel(0, 100);
-    await page.waitForTimeout(150);
+    // Read the page only once this notch has landed and the chapter's eased progress has caught
+    // up with it. A fixed pause read a stale position on a busy runner, which dropped notches
+    // from whichever card was on screen and made the counts depend on timing.
+    await chapter.evaluate((el, y0) => new Promise<void>((resolve, reject) => {
+      const deadline = performance.now() + 5000;
+      const check = () => {
+        const atEnd = scrollY >= document.documentElement.scrollHeight - innerHeight - 0.5;
+        const landed = scrollY >= y0 + 99.5 || atEnd;
+        const r = el.getBoundingClientRect();
+        const total = r.height - innerHeight;
+        const target = total <= 0 ? 1 : Math.min(1, Math.max(0, -r.top / total));
+        const eased = parseFloat(getComputedStyle(el).getPropertyValue('--p'));
+        if (landed && Math.abs(eased - target) < 0.002) {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())); // let React commit
+        } else if (performance.now() > deadline) {
+          reject(new Error(`notch did not settle: scrollY ${scrollY} from ${y0}, progress ${eased} of ${target}`));
+        } else {
+          requestAnimationFrame(check);
+        }
+      };
+      requestAnimationFrame(check);
+    }), before);
     const state = await chapter.evaluate(el => {
       const r = el.getBoundingClientRect();
       return {
