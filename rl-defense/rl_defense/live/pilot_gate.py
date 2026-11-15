@@ -135,6 +135,8 @@ def run_policy(
                         # the part of delegated traffic whose grant the table lacks
                         "unlisted_delegated_requests": unlisted_n,
                         "unlisted_delegated_succeeded": int(unlisted_ok),
+                        # owner confirmations ("confirm" block scope; zero otherwise)
+                        **{f"confirmations_{k}": int(v) for k, v in loop.confirmations.items()},
                     }
                 )
         finally:
@@ -371,7 +373,9 @@ def main() -> None:
     ap.add_argument("--rules-tuning-sha256", default=RULES_TUNING_SHA256)
     ap.add_argument("--reference-v6", action="store_true", help="also run frozen v6, reported only")
     ap.add_argument("--candidate-rule", choices=sorted(FIXED_RULES))
-    ap.add_argument("--block-scope", choices=("principal", "ungranted"), default="principal")
+    ap.add_argument(
+        "--block-scope", choices=("principal", "ungranted", "confirm"), default="principal"
+    )
     args = ap.parse_args()
     result = run(
         args.out,
