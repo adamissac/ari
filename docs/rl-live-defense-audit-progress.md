@@ -231,6 +231,14 @@ of owners answering it is 0.862 and 0.304. The owner is simulated and never wron
 an attacker, so the unchanged compromise rate is not evidence about that risk.
 [`rl-defense/results/confirm-hold/REPORT.md`](../rl-defense/results/confirm-hold/REPORT.md).
 
+**Gate v4, long-block rule with the hold (owner decision).** Fresh scenarios, two of four
+with missing grants; simulated owners answer after 4 windows, 75% answer, 10% of answers
+wrong (assumed values, fixed before the run); thresholds unchanged. **Failed 1 of 9
+checks**: delegated success 0.777 against 0.85. Wrong confirmations raised compromise from
+0.055 (principal-wide block) to 0.100. No pilot control is validated; the outcome depends on
+owner behaviour the lab can only assume. RL readiness is unchanged.
+[`rl-defense/results/pilot-gate-v4/REPORT.md`](../rl-defense/results/pilot-gate-v4/REPORT.md).
+
 ## Finding 7: analysis
 
 The scored objective is the return over a fixed 200-step horizon and the observation carries

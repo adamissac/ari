@@ -36,7 +36,8 @@ def test_gate_v3_scenarios_are_fresh_and_two_have_an_incomplete_grant_table():
         for s in load_scenarios(_split(d.name), subdir=d.name):
             names.add(s.name)
             seeds.update(s.seeds())
-            assert not s.missing_grants  # no earlier scenario has the new case
+            # no earlier scenario has the new case (gate v4 came later and has it too)
+            assert d.name == "pilot_gate_v4" or not s.missing_grants
     for s in gate:
         assert s.name not in names and not seeds & set(s.seeds())
     assert len({x for s in gate for x in s.seeds()}) == 120

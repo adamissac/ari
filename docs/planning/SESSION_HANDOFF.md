@@ -3,6 +3,13 @@
 Append-only. Newest entry at the top. Every development session (human or agent)
 adds an entry before ending.
 
+### 2026-11-15 — Claude (agent, for Alan) — gate v4 (long-block rule, hold for confirmation): FAIL
+
+- Owner decision (Alan): run a fourth gate. Added `LoopConfig.confirm_error_p` (an answering owner is wrong either way), counters `wrongly_confirmed` / `wrongly_denied`, `pilot_gate.run(confirm=...)` and `--confirm-*` flags, `configs/live/pilot_gate_v4/` (4 fresh scenarios, 2 with missing grants). Pre-registered in `298d05cf`, run once.
+- Result: FAIL, 8 of 9 checks pass. Delegated success 0.777 (floor 0.85). Compromise 0.100 with the hold against 0.055 under the principal-wide block (wrong confirmations). `rl-defense/results/pilot-gate-v4/REPORT.md`.
+- Not an RL result; owner is simulated with assumed delay, response and error rates. Backend, contracts and readiness unchanged. `pilot_gate_v4` is now exposed.
+- Tests run locally: `tests/test_pilot_gate_v4.py`, `test_confirm_hold.py`, `test_pilot_gate_v3.py`, `test_pilot_gate.py`, `test_grant_scoped_block.py` (41 passed). Full suites: CI.
+
 ### 2026-11-15 — Claude (agent, for Alan) — hold-for-owner-confirmation control (lab)
 
 - Added `block_scope="confirm"` (`DefenseControls`, `LoopConfig` with `confirm_delay`, `confirm_response_p`): gateway reason `held_for_confirmation`, `DefensiveGateway.confirm()`, loop asks a SIMULATED owner once per (principal, owner) pair; `loop.confirmations` counters; `rl_defense/live/confirm_study.py`. Default scope unchanged.

@@ -1,0 +1,20 @@
+# Pilot gate v4 (created 2026-11-15, committed before any policy was run on it; see
+# results/pilot-gate-v4/PREREGISTRATION.md). Complete grant table. Heavy authorized delegated
+# reads and a rare, faint insider (carol).
+name: gate4_quiet_day_rare_insider
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.06
+p_stop: 0.45
+attack_per_step: 2
+benign_per_step: 9
+attackers: [carol]
+victims: [bob, dave]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice", "erin:carol"]
+delegate_per_step: 2
+delegate_burst_p: 0.4
+delegate_burst_size: 5
+seed_start: 48200
+episodes: 30

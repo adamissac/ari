@@ -1,0 +1,21 @@
+# Pilot gate v4 (created 2026-11-15, committed before any policy was run on it; see
+# results/pilot-gate-v4/PREREGISTRATION.md). A listed bookkeeper (dave) abuses his access against
+# tenants he holds no grant for, while a second bookkeeper's grant (erin:bob) is missing.
+name: gate4_insider_beside_unlisted_delegate
+split: holdout
+horizon: 30
+schedule: bursty
+p_start: 0.12
+p_stop: 0.3
+attack_per_step: 5
+benign_per_step: 8
+attackers: [dave]
+victims: [carol, erin]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice", "erin:bob"]
+missing_grants: ["erin:bob"]
+delegate_per_step: 2
+delegate_burst_p: 0.35
+delegate_burst_size: 5
+seed_start: 46700
+episodes: 30

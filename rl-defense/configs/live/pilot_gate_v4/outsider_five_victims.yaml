@@ -1,0 +1,20 @@
+# Pilot gate v4 (created 2026-11-15, committed before any policy was run on it; see
+# results/pilot-gate-v4/PREREGISTRATION.md). Complete grant table. An outsider with rotating
+# tokens attacks every tenant from the first window, so five owners are asked about him.
+name: gate4_outsider_five_victims
+split: holdout
+horizon: 30
+schedule: always
+start_active: true
+attack_per_step: 6
+benign_per_step: 6
+attackers: [mallory]
+rotate_tokens: true
+victims: [alice, bob, carol, dave, erin]
+benign: [alice, bob, carol, dave, erin]
+delegations: ["dave:alice"]
+delegate_per_step: 1
+delegate_burst_p: 0.2
+delegate_burst_size: 3
+seed_start: 47200
+episodes: 30

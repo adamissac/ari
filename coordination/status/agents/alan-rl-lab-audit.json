@@ -3,9 +3,9 @@
   "human_owner": "Alan",
   "workstream": "RL lab audit: rl-defense inference/training/lab episode, backend /lab/simulation, frontend /lab simulation panel",
   "state": "DONE",
-  "task": "gate v3 FAIL merged (#974); hold-for-confirmation lab control and diagnostic",
-  "branch": "feat/alan/confirm-hold",
-  "latest_sha": "dbfcacce",
+  "task": "gate v4 (fixed rule, hold for owner confirmation): FAIL 8/9, lab only",
+  "branch": "feat/alan/pilot-gate-v4",
+  "latest_sha": "693bff36",
   "prs": [
     929,
     930,
@@ -23,12 +23,13 @@
     967,
     968,
     973,
-    974
+    974,
+    976
   ],
   "claims": [],
   "depends_on": [],
   "blockers": [],
-  "last_update_utc": "2026-11-15T06:00:00Z",
-  "tests": "tests/test_confirm_hold.py + gate/scope/gateway tests: 73 passed locally",
-  "next_action": "none pending; a fourth gate needs owner go-ahead and a wrong-confirmation case"
+  "last_update_utc": "2026-11-15T09:00:00Z",
+  "tests": "gate v4/v3, confirm-hold, scope tests: 41 passed locally",
+  "next_action": "none pending; four gates run, no pilot control validated; further gates need real owner-response data"
 }

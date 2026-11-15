@@ -1,0 +1,16 @@
+{
+  "block_scope": "confirm",
+  "candidate_checkpoint_sha256": null,
+  "candidate_rule": "always_block_principal_long",
+  "confirm": {
+    "confirm_delay": 4,
+    "confirm_error_p": 0.1,
+    "confirm_response_p": 0.75
+  },
+  "files": {
+    "episodes.json": "4e8fb32aedcc92ef5d2609727c9334d607d18d8d234650f1a272383ffd00df78",
+    "summary.json": "3c19f5a91b0235a3a2be63fce9894e193aa67e53e3b3fd45df0c3f066257c008"
+  },
+  "passed": false,
+  "schema": "pilot-gate/1"
+}

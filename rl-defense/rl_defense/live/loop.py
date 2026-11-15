@@ -118,11 +118,24 @@ class LoopConfig:
     # SIMULATED: an owner who answers is always right (confirms exactly the delegations the
     # business really authorized, listed in the grant table or not).
     confirm_response_p: float = 1.0
+    # Chance an owner who answers gets it wrong, either way: confirms a reader the business
+    # never authorized (an attacker), or denies a legitimate delegate. 0 = never wrong.
+    confirm_error_p: float = 0.0
     # reward coefficients (applied to measured, normalized counts)
     c_impact: float = 1.0
     c_disrupt: float = 0.5  # v1-v3; v4 uses 1.0 (V4_LOOP_OVERRIDES in evaluate.py)
     c_action: float = 0.02
     c_escalate: float = 0.1
+
+
+CONFIRMATION_COUNTERS = (
+    "requested",
+    "confirmed",
+    "denied",
+    "unanswered",
+    "wrongly_confirmed",
+    "wrongly_denied",
+)
 
 
 @dataclass
@@ -170,7 +183,7 @@ class LiveDefenseLoop:
         # "confirm" scope: pair -> step the owner's answer lands (None = never answers)
         self._confirm_pending: dict[tuple[str, str], int | None] = {}
         self._confirm_rng = np.random.default_rng(0)
-        self.confirmations = {"requested": 0, "confirmed": 0, "denied": 0, "unanswered": 0}
+        self.confirmations = dict.fromkeys(CONFIRMATION_COUNTERS, 0)
 
     # ------------------------------------------------------------------ lifecycle
     def reset(self, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:
@@ -182,7 +195,7 @@ class LiveDefenseLoop:
         self._ever_blocked = set()
         self._confirm_pending = {}
         self._confirm_rng = np.random.default_rng([seed, 0xC0F1])  # own stream: traffic unchanged
-        self.confirmations = {"requested": 0, "confirmed": 0, "denied": 0, "unanswered": 0}
+        self.confirmations = dict.fromkeys(CONFIRMATION_COUNTERS, 0)
         self.step_idx = 0
         self.escalations_used = 0
         self.driver.reset(seed)
@@ -211,7 +224,8 @@ class LiveDefenseLoop:
 
         The answer is SIMULATED from the scenario's real delegations (the business's intent,
         including grants the operator's table lacks). It reaches the gateway only as an
-        owner's confirmation, after the delay; an attacker's pair is denied and stays held.
+        owner's confirmation, after the delay; an attacker's pair is denied and stays held,
+        unless the owner errs (``confirm_error_p``), which lets that attacker through.
         """
         assert self._gateway is not None
         cfg, counts = self.config, self.confirmations
@@ -228,11 +242,15 @@ class LiveDefenseLoop:
             if due is None or due > self.step_idx:
                 continue
             self._confirm_pending[pair] = None  # answered; a denied pair is not asked again
-            if pair in authorized:
+            # no draw at 0, so results recorded before this option existed reproduce
+            wrong = cfg.confirm_error_p > 0 and self._confirm_rng.random() < cfg.confirm_error_p
+            if (pair in authorized) != wrong:
                 self._gateway.confirm(*pair)
                 counts["confirmed"] += 1
+                counts["wrongly_confirmed"] += wrong  # an unauthorized reader let through
             else:
                 counts["denied"] += 1
+                counts["wrongly_denied"] += wrong  # a legitimate delegate left held
 
     def _severity_context(self, seed: int) -> dict[str, float]:
         cfg = self.config
