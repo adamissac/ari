@@ -110,7 +110,14 @@ class LoopConfig:
     severity_p_other: float = 0.25
     # which requests of a blocked principal are refused (contracts.DefenseControls.block_scope);
     # "ungranted" needs delegation_aware_detector so the gateway knows the grant table
-    block_scope: Literal["principal", "ungranted"] = "principal"
+    block_scope: Literal["principal", "ungranted", "confirm"] = "principal"
+    # "confirm" scope only. A held (principal, owner) pair is put to the owner once; the
+    # answer arrives after this many further windows...
+    confirm_delay: int = 2
+    # ...with this probability; otherwise the owner never answers and the pair stays held.
+    # SIMULATED: an owner who answers is always right (confirms exactly the delegations the
+    # business really authorized, listed in the grant table or not).
+    confirm_response_p: float = 1.0
     # reward coefficients (applied to measured, normalized counts)
     c_impact: float = 1.0
     c_disrupt: float = 0.5  # v1-v3; v4 uses 1.0 (V4_LOOP_OVERRIDES in evaluate.py)
@@ -160,6 +167,10 @@ class LiveDefenseLoop:
         self._applied_block: list[str] = []
         # live_v3: principals blocked at any point this episode (operator's own history)
         self._ever_blocked: set[str] = set()
+        # "confirm" scope: pair -> step the owner's answer lands (None = never answers)
+        self._confirm_pending: dict[tuple[str, str], int | None] = {}
+        self._confirm_rng = np.random.default_rng(0)
+        self.confirmations = {"requested": 0, "confirmed": 0, "denied": 0, "unanswered": 0}
 
     # ------------------------------------------------------------------ lifecycle
     def reset(self, seed: int = 0) -> tuple[np.ndarray, np.ndarray]:
@@ -169,6 +180,9 @@ class LiveDefenseLoop:
         self.finding_severity = self._severity_context(seed)
         self._timers = _Timers()
         self._ever_blocked = set()
+        self._confirm_pending = {}
+        self._confirm_rng = np.random.default_rng([seed, 0xC0F1])  # own stream: traffic unchanged
+        self.confirmations = {"requested": 0, "confirmed": 0, "denied": 0, "unanswered": 0}
         self.step_idx = 0
         self.escalations_used = 0
         self.driver.reset(seed)
@@ -191,6 +205,34 @@ class LiveDefenseLoop:
         if self._gateway is not None:
             self._gateway.close()
             self._gateway = None
+
+    def _owner_confirmations(self, records: list) -> None:  # noqa: ANN001
+        """ "confirm" scope: ask the owner about each newly held pair, apply answers now due.
+
+        The answer is SIMULATED from the scenario's real delegations (the business's intent,
+        including grants the operator's table lacks). It reaches the gateway only as an
+        owner's confirmation, after the delay; an attacker's pair is denied and stays held.
+        """
+        assert self._gateway is not None
+        cfg, counts = self.config, self.confirmations
+        for r in records:
+            pair = (r.principal, r.owner)
+            if r.blocked_reason != "held_for_confirmation" or pair in self._confirm_pending:
+                continue
+            counts["requested"] += 1
+            answers = self._confirm_rng.random() < cfg.confirm_response_p
+            self._confirm_pending[pair] = self.step_idx + cfg.confirm_delay if answers else None
+            counts["unanswered"] += not answers
+        authorized = {(d.actor, d.owner) for d in self.driver.delegates}
+        for pair, due in self._confirm_pending.items():
+            if due is None or due > self.step_idx:
+                continue
+            self._confirm_pending[pair] = None  # answered; a denied pair is not asked again
+            if pair in authorized:
+                self._gateway.confirm(*pair)
+                counts["confirmed"] += 1
+            else:
+                counts["denied"] += 1
 
     def _severity_context(self, seed: int) -> dict[str, float]:
         cfg = self.config
@@ -216,6 +258,7 @@ class LiveDefenseLoop:
         self._gateway.clear_records()
         self.driver.run_window(self._gateway)
         records = list(self._gateway.records)
+        self._owner_confirmations(records)
 
         attack = [r for r in records if r.is_attack]
         benign = [r for r in records if not r.is_attack]

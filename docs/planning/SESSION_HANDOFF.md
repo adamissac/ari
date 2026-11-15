@@ -3,6 +3,13 @@
 Append-only. Newest entry at the top. Every development session (human or agent)
 adds an entry before ending.
 
+### 2026-11-15 — Claude (agent, for Alan) — hold-for-owner-confirmation control (lab)
+
+- Added `block_scope="confirm"` (`DefenseControls`, `LoopConfig` with `confirm_delay`, `confirm_response_p`): gateway reason `held_for_confirmation`, `DefensiveGateway.confirm()`, loop asks a SIMULATED owner once per (principal, owner) pair; `loop.confirmations` counters; `rl_defense/live/confirm_study.py`. Default scope unchanged.
+- Diagnostic on exposed `pilot_gate_v3` (not a gate): long-block rule delegated success 0.693 -> 0.969, attack-free blocks 0.641 -> 0.069, compromise unchanged 0.098 (answers after 2 windows). Degrades with slow or missing answers. `rl-defense/results/confirm-hold/REPORT.md`.
+- Limit: the simulated owner never wrongly confirms an attacker. A gate for this control needs that case. Backend, contracts and readiness unchanged.
+- Tests run locally: `tests/test_confirm_hold.py` plus gate, scope and gateway tests (73 passed). Full suites: CI.
+
 ### 2026-11-14 — Claude (agent, for Alan) — gate v3 (long-block rule, grant-scoped block): FAIL
 
 - Owner decision (Alan): run a third gate. Added `LiveScenario.missing_grants` (a legitimate delegation absent from the operator's grant table; default none, earlier hashes unchanged), `pilot_gate.run(block_scope=...)` (incumbent runs under the same scope; `<name>@principal` reported only), listed/unlisted delegated success, and `configs/live/pilot_gate_v3/` (4 fresh scenarios, 2 with a missing grant). Pre-registered in `ae75c558`, run once.

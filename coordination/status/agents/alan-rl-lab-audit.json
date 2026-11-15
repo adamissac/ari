@@ -2,10 +2,10 @@
   "agent": "alan-rl-lab-audit",
   "human_owner": "Alan",
   "workstream": "RL lab audit: rl-defense inference/training/lab episode, backend /lab/simulation, frontend /lab simulation panel",
-  "state": "READY_FOR_REVIEW",
-  "task": "pilot gate v3 (fixed rule under grant-scoped block): FAIL 6/9, lab only",
-  "branch": "feat/alan/pilot-gate-v3",
-  "latest_sha": "dd73a920",
+  "state": "DONE",
+  "task": "gate v3 FAIL merged (#974); hold-for-confirmation lab control and diagnostic",
+  "branch": "feat/alan/confirm-hold",
+  "latest_sha": "dbfcacce",
   "prs": [
     929,
     930,
@@ -15,12 +15,20 @@
     938,
     939,
     941,
-    945
+    945,
+    947,
+    949,
+    951,
+    961,
+    967,
+    968,
+    973,
+    974
   ],
   "claims": [],
   "depends_on": [],
   "blockers": [],
-  "last_update_utc": "2026-11-14T23:30:00Z",
-  "tests": "tests/test_pilot_gate_v3.py + gate/scope/live_v4 tests: 46 passed locally",
-  "next_action": "merge after CI; no pilot control validated, RL readiness unchanged"
+  "last_update_utc": "2026-11-15T06:00:00Z",
+  "tests": "tests/test_confirm_hold.py + gate/scope/gateway tests: 73 passed locally",
+  "next_action": "none pending; a fourth gate needs owner go-ahead and a wrong-confirmation case"
 }

@@ -89,7 +89,8 @@ class RequestRecord:
     status: int  # HTTP status actually returned (gateway 503/429 or the app's own)
     blocked_reason: (
         str | None
-    )  # "isolated" | "principal_blocked" | "ungranted_blocked" | "rate_limited" | None
+    )  # "isolated" | "principal_blocked" | "ungranted_blocked" | "held_for_confirmation"
+    # | "rate_limited" | None
     compromised: bool  # really succeeded cross-tenant read (allowed, 200, foreign owner in body)
     # detector: token's principal != object owner (and, v4, no delegation grant covers it)
     cross_tenant_attempt: bool = False
@@ -137,6 +138,8 @@ class DefensiveGateway:
         self.controls = controls
         self.records: list[RequestRecord] = []
         self._rl_counter: dict[str, int] = {}
+        # (principal, owner) pairs an owner confirmed after a hold; treated like a grant
+        self._confirmed: set[tuple[str, str]] = set()
 
     def close(self) -> None:
         self._client.close()
@@ -146,6 +149,11 @@ class DefensiveGateway:
 
     def __exit__(self, *exc) -> None:  # noqa: ANN002
         self.close()
+
+    def confirm(self, principal: str, owner: str) -> None:
+        """The owner confirmed ``principal`` may read their objects: from now on the pair is
+        neither flagged nor refused by a scoped block."""
+        self._confirmed.add((principal, owner))
 
     def clear_records(self) -> None:
         self.records = []
@@ -176,6 +184,7 @@ class DefensiveGateway:
             and owner is not None
             and owner != principal
             and not self._inst.is_authorized_delegate(principal, owner)
+            and (principal, owner) not in self._confirmed
         )
 
         def blocked(status: int, reason: str) -> RequestRecord:
@@ -191,8 +200,9 @@ class DefensiveGateway:
         if principal is not None and node in self.controls.blocked_principals.get(principal, ()):
             if self.controls.block_scope == "principal":
                 return blocked(403, "principal_blocked")
-            if cross:  # "ungranted": only what no grant covers; own and delegated reads pass
-                return blocked(403, "ungranted_blocked")
+            if cross:  # scoped: only what no grant covers; own and delegated reads pass
+                held = self.controls.block_scope == "confirm"
+                return blocked(403, "held_for_confirmation" if held else "ungranted_blocked")
         if self.controls.rate_limited.get(node, False):
             n = self._rl_counter.get(node, 0)
             self._rl_counter[node] = n + 1

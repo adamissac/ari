@@ -222,6 +222,15 @@ the detector reading "no grant on file" as an attack. No pilot control is valida
 readiness is unchanged.
 [`rl-defense/results/pilot-gate-v3/REPORT.md`](../rl-defense/results/pilot-gate-v3/REPORT.md).
 
+**Hold for owner confirmation.** `block_scope="confirm"` (off by default, lab only) refuses
+the same requests as the scoped block but asks the object's owner once per pair and lets a
+confirmed pair through. On the exposed gate v3 scenarios (diagnostic, not a gate) the
+long-block rule goes from delegated success 0.693 to 0.969 and attack-free blocks 0.641 to
+0.069 with compromise unchanged at 0.098, when every owner answers after 2 windows; at half
+of owners answering it is 0.862 and 0.304. The owner is simulated and never wrongly confirms
+an attacker, so the unchanged compromise rate is not evidence about that risk.
+[`rl-defense/results/confirm-hold/REPORT.md`](../rl-defense/results/confirm-hold/REPORT.md).
+
 ## Finding 7: analysis
 
 The scored objective is the return over a fixed 200-step horizon and the observation carries
