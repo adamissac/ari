@@ -95,12 +95,11 @@ body { background: linear-gradient(180deg, var(--color-bg) 0%, color-mix(in srgb
   background: var(--color-muted);
 }
 
-/* Small uppercase mono label used for eyebrows, nav and buttons. */
+/* Small mono label for eyebrows and meta; nav and buttons switch to sans below. Sentence case. */
 .label-mono {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 /* Navigation and buttons: Inter Medium. Headings styled as labels: Space Grotesk Medium. */

@@ -16,7 +16,7 @@ void main(){
   float e=fbm(uv*1.5+vec2(t*.018,-t*.012))+.4*fbm(uv*3.1+vec2(-t*.025,t*.02));
   float b=e*16.;
   float f=fract(b), d=min(f,1.-f), w=fwidth(b);
-  float line=1.-smoothstep(0.,w*1.3,d);
+  float line=1.-smoothstep(0.,w*1.9,d);
   float major=step(mod(floor(b+.5),5.),.5);
   float glow=smoothstep(1.15,0.,length(uv*vec2(.8,1.)-vec2(0.,-.62)));
   vec3 ice=vec3(.61,.73,.78), ash=vec3(.145,.208,.239), night=vec3(.051,.078,.094);
@@ -28,7 +28,7 @@ void main(){
 const VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
 
 /**
- * Slow topographic-contour backdrop for the landing hero. Rendered at half resolution, paused off screen and
+ * Slow topographic-contour backdrop for the landing hero. Rendered at device resolution (capped at 2x), paused off screen and
  * when the tab is hidden, and drawn once (still) under reduced motion. Without WebGL it renders
  * nothing and the page background shows through.
  */
@@ -60,7 +60,7 @@ export function LiquidBackground() {
     let visible = true;
     const start = performance.now();
     const size = () => {
-      const scale = 0.5; // shortcut: half resolution keeps the shader cheap; the blur hides it.
+      const scale = Math.min(window.devicePixelRatio || 1, 2); // crisp contour lines; capped so 3x screens stay cheap
       canvas.width = Math.max(1, Math.round(canvas.clientWidth * scale));
       canvas.height = Math.max(1, Math.round(canvas.clientHeight * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);

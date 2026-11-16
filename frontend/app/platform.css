@@ -102,30 +102,23 @@ h1 { font-weight: 500; }
 .net-map, .graph-view, .lab-now, .monitor-head, .pricing-card-dark { background: var(--color-panel) !important; }
 .story-panel, .story-card, .story-stat { background: var(--color-panel); box-shadow: inset 0 0 0 1px var(--glass-line); }
 
-/* Glacier accents on restrained dark surfaces. */
+/* Flat obsidian surfaces; glacier only on selection and primary actions. */
 :root { --ember: 167 186 194; --ember-hi: 237 243 245; --trail: linear-gradient(90deg, rgb(var(--ember-hi) / 85%), rgb(var(--ember) / 35%) 28%, transparent 72%); }
 :root body, :root:has(.hero-full) body, :root:not(:has(.hero-full)) body {
-  background:
-    radial-gradient(52% 44% at 88% -8%, rgb(var(--ember) / 10%), transparent 72%),
-    radial-gradient(40% 36% at -6% 104%, rgb(var(--ember) / 6%), transparent 70%),
-    var(--color-bg);
-  background-attachment: fixed;
+  background: var(--color-bg);
 }
 
 :root:not(:has(.hero-full)) .panel { position: relative; overflow: hidden; }
-:root:not(:has(.hero-full)) .panel::before { display: block; opacity: 0.55; }
-/* A trail under each page title and across the top bar. */
-.page-title { border-bottom: 0 !important; background: var(--trail) left bottom / 100% 1px no-repeat; }
-:root:not(:has(.hero-full)) .site-header, body:has(.project-shell) .site-header { border-bottom: 0; background: linear-gradient(90deg, transparent 30%, rgb(var(--ember) / 45%) 78%, rgb(var(--ember-hi) / 70%)) left bottom / 100% 1px no-repeat, var(--color-night); }
+/* Hairlines under page titles and the top bar. */
+.page-title { border-bottom: 1px solid var(--glass-line) !important; background: none; }
+:root:not(:has(.hero-full)) .site-header, body:has(.project-shell) .site-header { border-bottom: 0; background: var(--color-night); box-shadow: inset 0 -1px 0 var(--glass-line); }
 @media (min-width: 1024px) {
   .project-shell { background:
-    linear-gradient(180deg, rgb(var(--ember) / 9%), transparent 220px) left top / 247px 100% no-repeat,
     linear-gradient(90deg, var(--color-night) 0 247px, var(--glass-line) 247px 248px, transparent 248px); }
-  .project-tab[aria-current="page"] { background: linear-gradient(90deg, rgb(var(--ember) / 14%), rgb(var(--ember) / 4%) 60%, transparent), var(--color-panel-2); box-shadow: inset 2px 0 0 rgb(var(--ember-hi)); }
-  .project-shell > .project-body { background: radial-gradient(56% 360px at 100% 0, rgb(var(--ember) / 8%), transparent 100%); }
+  .project-tab[aria-current="page"] { background: var(--color-panel-2); box-shadow: inset 2px 0 0 var(--color-brand); }
 }
 .evidence-tag { box-shadow: inset 0 0 0 1px rgb(var(--ember) / 30%); }
-tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: linear-gradient(90deg, rgb(var(--ember) / 9%), transparent 55%); }
+tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: rgb(var(--ember) / 5%); }
 
 /* Trails across the hero: thin ember streaks that fade out, behind the content. */
 
@@ -215,17 +208,17 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 .hero-stage:has(.liquid-bg) .hero-orbs { display: none; }
 .hero-glow { display: none !important; }
 
-/* Glacier is the action color on every page; pale ink stays reserved for text. */
+/* Primary actions are off-white from the ink ramp; glacier stays for selection and focus. */
 :root main :is(a, button).bg-white,
 :root main :is(a, button).bg-brand,
 :root .hero-ink :is(a, button).bg-white,
 :root .btn-primary,
-:root .auth-btn-light { background-color: #9cbbc7; color: #0d1418; }
+:root .auth-btn-light { background-color: #e3ecef; color: #0d1418; }
 :root main :is(a, button).bg-white:hover,
 :root main :is(a, button).bg-brand:hover,
 :root .hero-ink :is(a, button).bg-white:hover,
 :root .btn-primary:hover,
-:root .auth-btn-light:hover { background-color: #b6ced6; }
+:root .auth-btn-light:hover { background-color: #f4f8f9; }
 @media (max-width: 767px) {
   .hx-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; font-size: 10px; }
   .hx-stages .hero-step { min-width: 0; }
