@@ -27,7 +27,7 @@ export function SetupDone({ projectId, repoId, onBack }: { projectId: string; re
         ))}
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Link href={`${base}?${repoQuery}`} className="btn label-mono inline-flex h-8 items-center justify-center rounded-md bg-brand px-3 text-on-brand shadow-[0_6px_16px_-8px_rgba(194,69,45,0.6)] transition-[background-color,color,box-shadow,transform] duration-[250ms] hover:bg-brand-deep hover:shadow-[0_8px_20px_-8px_rgba(194,69,45,0.5)] active:scale-[0.97]">Go to Analytics</Link>
+        <Link href={`${base}?${repoQuery}`} className="btn label-mono inline-flex h-8 items-center justify-center rounded-md bg-brand px-3 text-on-brand shadow-[0_6px_16px_-8px_rgba(156,187,199,0.6)] transition-[background-color,color,box-shadow,transform] duration-[250ms] hover:bg-brand-deep hover:shadow-[0_8px_20px_-8px_rgba(156,187,199,0.5)] active:scale-[0.97]">Go to Analytics</Link>
         <Button onClick={onBack}>Back to setup</Button>
       </div>
     </section>

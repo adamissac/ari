@@ -8,7 +8,7 @@ import type { AgentId, AgentRunView, Analysis, ToolStep } from '@/lib/demo/scena
  */
 
 export type Team = AgentRunView['team'];
-export const TEAM_COLOR: Record<Team, string> = { Red: '#ff7a5c', Blue: '#6ea8ff', Independent: '#5fd49a' };
+export const TEAM_COLOR: Record<Team, string> = { Red: '#e5a5a5', Blue: '#6ea8ff', Independent: '#5fd49a' };
 
 export interface Tick {
   agent: AgentId;

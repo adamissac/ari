@@ -78,8 +78,8 @@ export const spawnGap = (count: number, max: number): number => 2.2 - 1.75 * Mat
 
 interface Ant { trail: number; start: number; d: number; speed: number; dir: 1 | -1; lane: number; push: number; phase: number; seed: number; age: number; scout: boolean }
 
-const ANT = 'rgba(255, 238, 228, 0.82)';
-const SCOUT = 'rgba(255, 150, 120, 0.95)';
+const ANT = 'rgba(237, 243, 245, 0.82)';
+const SCOUT = 'rgba(201, 219, 226, 0.95)';
 
 function drawAnt(ctx: CanvasRenderingContext2D, x: number, y: number, angle: number, scale: number, gait: number, alpha: number, scout: boolean) {
   ctx.save();
@@ -201,7 +201,7 @@ export function AntColony({ play = true }: { play?: boolean }) {
       ctx.lineWidth = 1.2;
       ctx.setLineDash([1.5, 7]);
       ctx.lineDashOffset = -t * 18;
-      ctx.strokeStyle = 'rgba(224, 104, 74, 0.5)';
+      ctx.strokeStyle = 'rgba(156, 187, 199, 0.5)';
       ctx.beginPath();
       laid.forEach((bins, i) => {
         const pts = binPts[i]!;

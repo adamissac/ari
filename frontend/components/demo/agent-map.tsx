@@ -300,7 +300,7 @@ function TickLine({ tick, live = false }: { tick: Tick; live?: boolean }) {
   return (
     <li className="amap-tick" data-live={live || undefined} style={{ ['--team' as string]: TEAM_COLOR[tick.team] }}>
       <p className="text-sm text-white/90"><span className="font-medium capitalize">{tick.agent}</span> <span className="text-white/45">·</span> {plainStep(tick.step)}</p>
-      <p className={`mt-0.5 text-xs ${tick.step.outcome === 'denied' ? 'text-[#ffc36b]' : 'text-white/50'}`}>{live ? 'Working…' : tick.step.outcome === 'denied' ? `Blocked by policy: ${tick.step.result}` : tick.step.result}</p>
+      <p className={`mt-0.5 text-xs ${tick.step.outcome === 'denied' ? 'text-[#e0bc80]' : 'text-white/50'}`}>{live ? 'Working…' : tick.step.outcome === 'denied' ? `Blocked by policy: ${tick.step.result}` : tick.step.result}</p>
     </li>
   );
 }
@@ -328,7 +328,7 @@ function AgentDetail({ agent, status }: { agent: AgentRunView; status: Status })
               <li key={i} className="text-xs">
                 <p className="text-white/85">{plainStep(step)} <span className="font-mono text-white/35">{step.tool}</span></p>
                 <p className="text-white/45">{step.input}</p>
-                <p className={step.outcome === 'denied' ? 'text-[#ffc36b]' : 'text-white/60'}>{step.outcome === 'denied' ? 'Blocked by policy: ' : ''}{step.result}</p>
+                <p className={step.outcome === 'denied' ? 'text-[#e0bc80]' : 'text-white/60'}>{step.outcome === 'denied' ? 'Blocked by policy: ' : ''}{step.result}</p>
               </li>
             ))}
           </ol>
