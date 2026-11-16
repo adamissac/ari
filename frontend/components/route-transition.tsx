@@ -28,9 +28,9 @@ function allowed(): boolean {
   return !navigator.webdriver; // automated browsers (e2e) skip it, like the intro loader
 }
 
-const MIN_MS = 380; // long enough not to flicker, short enough for a page people change often
-const FINISH_MS = 220;
-const LIFT_MS = 420;
+const MIN_MS = 900; // long enough to read as a deliberate transition, short enough for frequent page changes
+const FINISH_MS = 360;
+const LIFT_MS = 700;
 const GIVE_UP_MS = 8000; // if the next page never arrives, lift anyway
 
 type Phase = 'idle' | 'cover' | 'lift';
@@ -73,7 +73,7 @@ export function RouteTransition() {
       const elapsed = now - r.start;
       if (r.arrived === null) {
         // Waiting for the next page: ease toward 90%.
-        setPct(Math.round(90 * (1 - Math.exp(-elapsed / 420))));
+        setPct(Math.round(90 * (1 - Math.exp(-elapsed / 700))));
       } else {
         const sinceArrival = now - Math.max(r.arrived, r.start + MIN_MS - FINISH_MS);
         if (sinceArrival >= FINISH_MS) { lift(); return; }

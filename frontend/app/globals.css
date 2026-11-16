@@ -302,11 +302,6 @@ html[data-home-hero] .site-header { position: fixed; inset-inline: 0; top: 0; }
 .intro[data-phase="lift"] { translate: 0 -100%; }
 .intro-mark { position: absolute; top: 50%; left: 50%; translate: -50% -50%; animation: intro-mark-reveal 700ms var(--ease-quad) both; }
 @keyframes intro-mark-reveal { from { opacity: 0; scale: 0.94; } to { opacity: 1; scale: 1; } }
-.intro-ring { position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; translate: -50% -50%; rotate: -90deg; overflow: visible; animation: intro-mark-reveal 700ms var(--ease-quad) both; }
-.intro-ring circle { fill: none; stroke-width: 2; }
-.intro-ring-track { stroke: rgba(255, 255, 255, 0.1); }
-.intro-ring-fill { stroke: var(--color-brand); stroke-linecap: round; stroke-dasharray: 100; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--color-brand) 60%, transparent)); }
-.intro-pct { position: absolute; top: calc(50% + 136px); left: 50%; translate: -50%; font-family: var(--font-mono); font-size: 12px; line-height: 1; color: rgba(255, 255, 255, 0.85); font-variant-numeric: tabular-nums; }
 
 /* Landing story chapters (components/story.tsx). Tracks are tall only on lg screens with motion
    allowed; their stage is sticky and scenes read scroll progress. Otherwise: normal flow. */
@@ -1737,12 +1732,11 @@ body:has(.setup-layout) .site-header-inner { max-width: 100rem; padding-inline: 
 .kicker-dark { color: #a7bac2; }
 .hero-ink .kicker-dark { color: #a7bac2; }
 
-/* Pixel-face figures (Sixtyfour, OFL) — card numbers and stats. */
-.home-deep .story-card-num { font-family: var(--font-sixtyfour), var(--font-mono), monospace; font-weight: 400; letter-spacing: 0.04em; color: rgba(201, 219, 226, 0.30); }
-.home-deep .stat-num { font-family: var(--font-sixtyfour), var(--font-mono), monospace; font-weight: 400; letter-spacing: 0.02em; color: #edf3f5;
+/* Card numbers and stats: display face with tabular figures. */
+.home-deep .story-card-num { font-family: var(--font-display); font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: 0; color: rgba(201, 219, 226, 0.30); }
+.home-deep .stat-num { font-family: var(--font-display); font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: #edf3f5;
   font-size: clamp(2.25rem, 15vw, 3.75rem); font-size: clamp(2.25rem, 15.5cqw, 4.5rem); }
-/* Sixtyfour is very wide ("Never" ≈ 6.1px per font-px): size the stat to its card, not the
-   viewport, so it can never push the page wider. */
+/* Size the stat to its card, not the viewport, so it can never push the page wider. */
 .home-deep .story-stat { container-type: inline-size; }
 
 /* Inactive steps dim (never blur) while the walkthrough stage is pinned. */

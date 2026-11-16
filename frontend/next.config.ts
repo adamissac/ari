@@ -12,6 +12,10 @@ const config: NextConfig = {
   // The transport package is a symlinked local workspace dependency.
   turbopack: { root: path.resolve(import.meta.dirname, '..') },
   outputFileTracingRoot: path.resolve(import.meta.dirname, '..'),
+  // The Defense Lab page is retired in favour of per-project live defense; its bundle API stays.
+  async redirects() {
+    return [{ source: '/lab', destination: '/projects', permanent: false }];
+  },
   async headers() {
     return [{
       source: '/:path*',

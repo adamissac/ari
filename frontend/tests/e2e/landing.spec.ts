@@ -76,7 +76,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     expect(await page.evaluate(() => document.activeElement?.closest('.nav-secondary') !== null)).toBe(false);
     if (viewport.width < 640) {
       await nav.getByRole('button', { name: 'Menu', exact: true }).click();
-      for (const name of ['Projects', 'Defense Lab', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
+      for (const name of ['Projects', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
       await nav.getByRole('link', { name: 'Projects', exact: true }).focus();
       await page.keyboard.press('Escape');
       await expect(nav.getByRole('button', { name: 'Menu', exact: true })).toBeFocused();
@@ -137,8 +137,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     // Move the dark chapter under every row of controls, not only below the anchor offset.
     await page.locator('#how').evaluate(el => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 200));
     await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(237, 243, 245)');
-    await nav.getByRole('link', { name: 'Defense Lab', exact: true }).hover();
-    await expect(nav.getByRole('link', { name: 'Defense Lab', exact: true })).toHaveCSS('background-color', 'rgba(237, 243, 245, 0.09)');
+    await nav.getByRole('link', { name: 'Pricing', exact: true }).hover();
+    await expect(nav.getByRole('link', { name: 'Pricing', exact: true })).toHaveCSS('background-color', 'rgba(237, 243, 245, 0.09)');
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.getByRole('link', { name: 'How It Works', exact: true }).click();
     await expect(page).toHaveURL(/#how$/);
@@ -153,7 +153,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await nav.getByRole('link', { name: 'Pricing', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'ARI pricing' })).toBeVisible();
     await page.evaluate(() => window.scrollTo(0, 0));
-    for (const name of ['Projects', 'Defense Lab', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
+    for (const name of ['Projects', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
     await expect(page.locator('body')).not.toContainText('Ari AI');
     await expect(page.locator('nextjs-portal')).toHaveCount(0);
     expect(errors).toEqual([]);

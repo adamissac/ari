@@ -11,8 +11,8 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 it('uses the supplied ant (bare mark) in the intro without drawing a different logo', () => {
   const { container } = render(<IntroLoader onReveal={vi.fn()} />);
   expect(screen.getByTestId('ari-logo').style.height).toBe('96px');
-  expect(container.querySelector('svg:not(.intro-ring)')).toBeNull();
-  expect(container.querySelector('.intro-ring')).not.toBeNull();
+  expect(container.querySelector('svg')).toBeNull();
+  expect(container.querySelector('.intro .route-veil-line .route-veil-line-fill')).not.toBeNull(); // same look as the page-change veil
   expect(container.querySelector('.intro')?.getAttribute('aria-hidden')).toBe('true');
 });
 

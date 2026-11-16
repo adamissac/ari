@@ -1,7 +1,6 @@
 'use client';
 
 import type { AnalystReview, DefenseRecommendation, LivePolicyDecision, RLEvaluation, RLExplanation } from '@hackatl/frontend-transport';
-import Link from 'next/link';
 import { useState } from 'react';
 import { QRanking, SimulationCaveat, SourceTag } from '@/components/live-defense/common';
 import { AnalystReviewForm } from '@/components/live-defense/review';
@@ -33,7 +32,7 @@ export function Explainability({
       <Panel title="Why a stored recommendation looks the way it does" actions={<SourceTag mode="live" />}>
         <SimulationCaveat />
         <p className="mt-3 text-xs text-muted">
-          Q-values explain a stored simulation recommendation, not a live attack. Held-out scores live in the <Link className="text-accent hover:underline" href="/lab">Defense Lab</Link>.
+          Q-values explain a stored simulation recommendation, not a live attack.
         </p>
       </Panel>
       <Panel title="Shadow decisions (authenticated ingest)">

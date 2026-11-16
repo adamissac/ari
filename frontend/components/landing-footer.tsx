@@ -3,7 +3,7 @@ import { Reveal } from '@/components/reveal';
 import { LogoMark } from '@/components/brand';
 
 const GROUPS = [
-  { title: 'Explore', links: [['The process', '#how'], ['Defense Lab', '/lab'], ['Pricing', '/pricing']] },
+  { title: 'Explore', links: [['The process', '#how'], ['Pricing', '/pricing']] },
   { title: 'Build with Ari', links: [['Your projects', '/projects'], ['Connect a repository', '/connect'], ['Source code', 'https://github.com/adamissac/ari-ai']] },
 ] as const;
 

@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { notifySessionChanged } from '@/lib/session-events';
 import { AuthStage, LockIcon } from '@/components/auth-stage';
-import { BRAND_NAME } from '@/components/brand';
+import { BRAND_NAME, LogoMark } from '@/components/brand';
 import { GitHubMark } from '@/components/demo/ui';
 import { INTRO_KEY } from '@/components/intro-loader';
-import { ErrorState, Loading } from '@/components/ui';
+import { ErrorState } from '@/components/ui';
 
 type SessionState =
   | { status: 'loading' }
@@ -89,7 +89,15 @@ export function SessionGate({ children }: { children: ReactNode }) {
     setState({ status: 'signed-out' });
   }, []);
 
-  if (state.status === 'loading') return <div className="mx-auto max-w-md p-10"><Loading label="Checking session" /></div>;
+  if (state.status === 'loading') {
+    return (
+      <div role="status" aria-live="polite" className="loading-screen">
+        <LogoMark size={96} decorative className="route-veil-mark" />
+        <span className="route-veil-line"><span className="route-veil-line-fill" /></span>
+        <span className="sr-only">Checking session…</span>
+      </div>
+    );
+  }
   if (state.status === 'error') {
     return (
       <div className="mx-auto max-w-lg p-10">
