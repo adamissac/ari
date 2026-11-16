@@ -3030,3 +3030,8 @@ Canonical main 9437e217d65aa1be22fa7b4f54f723200cd428c8; external pilot NO-GO. S
 - `GET /projects/{id}/findings?dedupe=true`: read-side only. An unproven finding (hypothesis, inconclusive) is returned only from the newest assessment that raised the same suspicion in the same repository (kind + CWE + first cited file, else kind + title). Nothing is deleted or re-statused; the default response is unchanged. The findings page and the analytics page pass it; the commits page does not, so each commit still shows its own suspicions.
 - Limit: a reworded suspicion with no CWE, or one whose first cited file differs, stays separate.
 - Railway production (names only, values redacted): no `JOB_MAX_RUNNING_PER_PROJECT` or `WORKER_PROCESSES`, so the defaults (12 and 12) apply.
+
+## 2026-11-16 — Obsidian and Glacier frontend palette
+
+- Branch `feat/adam/obsidian-glacier-theme` updates the shared frontend palette and page overrides from current `main`. Core colors: `#0D1418` background, `#1C282E` panel, `#9CBBC7` accent, `#EDF3F5` text. Distinct labeled status colors remain.
+- Verified locally: production Next.js build, 543 frontend unit tests, and Playwright checks of home, pricing, lab, projects, connect, and the mobile homepage. The projects route showed its signed-out session state; authenticated console detail pages were not visually inspected.
