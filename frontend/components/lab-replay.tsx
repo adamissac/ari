@@ -164,7 +164,7 @@ function ServicePanel({ episode, scenario, name, t, truth, onClose }: { episode:
         </svg>
         <figcaption className="text-xs text-faint">Observed signal so far (dashed line = suspicious band)</figcaption>
       </figure>
-      {truth && state && <p className="mt-2 text-xs text-[#b42318]">Hidden truth (not seen by the defender): attacker {STAGE_WORDS[state.hidden_stage_ground_truth]}.</p>}
+      {truth && state && <p className="mt-2 text-xs text-[#8f3a3a]">Hidden truth (not seen by the defender): attacker {STAGE_WORDS[state.hidden_stage_ground_truth]}.</p>}
       <details className="mt-3 text-xs">
         <summary className="cursor-pointer text-muted">Observed values</summary>
         <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1">
@@ -180,7 +180,7 @@ function ServicePanel({ episode, scenario, name, t, truth, onClose }: { episode:
   );
 }
 
-const STAGE_FILL: Record<HiddenStage, string> = { none: 'transparent', foothold: '#f0a868', escalated: '#e0735c', impact: '#b42318' };
+const STAGE_FILL: Record<HiddenStage, string> = { none: 'transparent', foothold: '#e0bc80', escalated: '#e5a5a5', impact: '#8f3a3a' };
 const THUMB = 14; // px; matches .lab-scrub-thumb and the input's thumb in globals.css
 const STAGE_RANK: Record<HiddenStage, number> = { none: 0, foothold: 1, escalated: 2, impact: 3 };
 

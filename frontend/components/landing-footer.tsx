@@ -3,18 +3,20 @@ import { Reveal } from '@/components/reveal';
 import { LogoMark } from '@/components/brand';
 
 const GROUPS = [
-  { title: 'Explore', links: [['The process', '#how'], ['Defense Lab', '/lab'], ['Pricing', '/pricing']] },
-  { title: 'Build with Ari', links: [['Your projects', '/projects'], ['Connect a repository', '/connect'], ['Source code', 'https://github.com/adamissac/ari-ai']] },
+  { title: 'Product', links: [['The process', '#how'], ['Pricing', '/pricing']] },
+  { title: 'Console', links: [['Your projects', '/projects'], ['Connect a repository', '/connect']] },
+  { title: 'Resources', links: [['Source code', 'https://github.com/adamissac/ari-ai']] },
 ] as const;
 
+/**
+ * Landing footer: brand and link columns on one grid, then a back-to-top control.
+ */
 export function LandingFooter() {
   return (
     <footer className="landing-footer" data-testid="landing-footer">
-      <div aria-hidden="true" className="footer-glow" />
-      <div aria-hidden="true" className="footer-line" />
       <Reveal className="footer-top">
         <div className="footer-identity">
-          <Link href="/" aria-label="Back to Ari home" className="footer-brand"><LogoMark size={36} decorative /><span className="ari-wordmark-text">ARI</span></Link>
+          <Link href="/" aria-label="Back to Ari home" className="footer-brand"><LogoMark size={28} decorative /><span className="ari-wordmark-text">ARI</span></Link>
           <p>Software moves fast.<br />Proof should keep up.</p>
         </div>
         <nav aria-label="Footer" className="footer-links">
@@ -22,7 +24,6 @@ export function LandingFooter() {
         </nav>
       </Reveal>
       <Reveal className="footer-bottom" delay={100}>
-        <span>© {new Date().getUTCFullYear()} ARI</span>
         <a href="#main" className="footer-top-link">Back to top <span aria-hidden="true">↑</span></a>
       </Reveal>
     </footer>

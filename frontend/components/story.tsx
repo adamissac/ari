@@ -92,7 +92,7 @@ function LandingVignette({ kind }: { kind: 'agents' | 'shield' | 'clock' | 'patr
             <circle cx="21" cy="54" r="4" /><circle cx="34" cy="54" r="5" />
             <circle cx="48" cy="36" r="4" /><circle cx="60" cy="36" r="5" />
           </g>
-          <circle className="vignette-threat" cx="82" cy="28" r="5" fill="#dc4939" />
+          <circle className="vignette-threat" cx="82" cy="28" r="5" fill="#e5a5a5" />
         </>
       )}
       {kind === 'shield' && (

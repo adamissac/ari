@@ -150,7 +150,6 @@ test('one real assessment from scope approval to verified patch', async ({ brows
   await expect(loop.getByTestId('loop-review')).toContainText('Review the change');
   await expect(loop.getByTestId('loop-prove')).toContainText('fixes accepted by independent tests.');
   await expect(loop.getByTestId('loop-prove')).toContainText('nothing was merged or deployed');
-  await expect(loop.getByTestId('loop-lab')).toContainText('isolated test environment');
   await alice.getByTestId('term-monitoring').focus();
   await alice.keyboard.press('Enter');
   await expect(loop.getByRole('note')).toContainText('Watching the code repository');

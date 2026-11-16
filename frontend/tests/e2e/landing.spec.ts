@@ -1,7 +1,6 @@
 import { expect, test, type Locator } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 
-const steps = ['Understand', 'Review', 'Attack Safely', 'Diagnose', 'Repair', 'Verify', 'Monitor'];
 
 async function expectContrastAtLeastAA(locator: Locator, label: string) {
   const ratio = await locator.evaluate(element => {
@@ -53,8 +52,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'ARI');
     await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'ARI — Find the flaw. Prove the fix.');
     const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toHaveText('FIND THE FLAW. PROVE THE FIX.');
-    await expect(page.locator('.hero-content p')).toHaveCount(2);
+    await expect(heading).toHaveText('ARI');
+    await expect(page.locator('.hero-content p')).toHaveCount(0); // the hero is just the name
     await expectContrastAtLeastAA(page.getByRole('link', { name: 'Go to projects', exact: true }).first(), 'hero CTA');
     await expectContrastAtLeastAA(page.getByTestId('problem-count'), 'problem count');
     await expectContrastAtLeastAA(page.getByTestId('story-events-line'), 'events card line');
@@ -63,7 +62,6 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await expect(page.getByRole('link', { name: 'Go to projects', exact: true }).first()).toHaveAttribute('href', '/projects');
     await expect(page.getByRole('link', { name: /demo/i })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'How It Works', exact: true })).toHaveAttribute('href', '#how');
-    await expect(page.locator('[aria-label="Assessment loop"] li .hero-step-name')).toHaveText(steps);
     const nav = page.getByRole('navigation', { name: 'Primary', exact: true });
     const secondary = nav.locator('.nav-secondary');
     await expect(secondary).toHaveAttribute('inert', '');
@@ -78,7 +76,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     expect(await page.evaluate(() => document.activeElement?.closest('.nav-secondary') !== null)).toBe(false);
     if (viewport.width < 640) {
       await nav.getByRole('button', { name: 'Menu', exact: true }).click();
-      for (const name of ['Projects', 'Defense Lab', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
+      for (const name of ['Projects', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
       await nav.getByRole('link', { name: 'Projects', exact: true }).focus();
       await page.keyboard.press('Escape');
       await expect(nav.getByRole('button', { name: 'Menu', exact: true })).toBeFocused();
@@ -91,7 +89,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await expect(page.locator('.hero-orb')).toHaveCount(5);
     const orbDurations = await page.locator('.hero-orb').evaluateAll(elements => elements.slice(0, 5).map(el => getComputedStyle(el).animationDuration));
     expect(orbDurations).toEqual(['26s', '31s', '34s', '23s', '37s']);
-    await expect(heading.locator('.hero-line').first()).toHaveAttribute('data-glow', 'FIND THE FLAW.');
+    await expect(heading.locator('.hero-line').first()).toHaveAttribute('data-glow', 'ARI');
     await expect(heading.locator('.hero-line').first()).toHaveCSS('text-shadow', 'none'); // glow is isolated to an opacity-animated pseudo layer
     await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
     const fonts = await page.evaluate(() => ({
@@ -139,8 +137,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     // Move the dark chapter under every row of controls, not only below the anchor offset.
     await page.locator('#how').evaluate(el => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 200));
     await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(237, 243, 245)');
-    await nav.getByRole('link', { name: 'Defense Lab', exact: true }).hover();
-    await expect(nav.getByRole('link', { name: 'Defense Lab', exact: true })).toHaveCSS('background-color', 'rgba(237, 243, 245, 0.09)');
+    await nav.getByRole('link', { name: 'Pricing', exact: true }).hover();
+    await expect(nav.getByRole('link', { name: 'Pricing', exact: true })).toHaveCSS('background-color', 'rgba(237, 243, 245, 0.09)');
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.getByRole('link', { name: 'How It Works', exact: true }).click();
     await expect(page).toHaveURL(/#how$/);
@@ -155,7 +153,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await nav.getByRole('link', { name: 'Pricing', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'ARI pricing' })).toBeVisible();
     await page.evaluate(() => window.scrollTo(0, 0));
-    for (const name of ['Projects', 'Defense Lab', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
+    for (const name of ['Projects', 'Pricing']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
     await expect(page.locator('body')).not.toContainText('Ari AI');
     await expect(page.locator('nextjs-portal')).toHaveCount(0);
     expect(errors).toEqual([]);
@@ -298,8 +296,8 @@ test('motion accents respond to hover and respect reduced motion', async ({ page
   await expect(footer.locator('.footer-top')).toHaveAttribute('data-shown', 'true');
   const link = footer.getByRole('link', { name: 'Pricing', exact: true });
   await link.hover();
-  await expect(link).toHaveCSS('translate', '4px');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(link).toHaveCSS('color', 'rgb(237, 243, 245)'); // hover brightens in place, never slides
   await expect(link).toHaveCSS('translate', 'none');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(footer.locator('.footer-top')).toHaveCSS('transition-duration', '0s');
 });

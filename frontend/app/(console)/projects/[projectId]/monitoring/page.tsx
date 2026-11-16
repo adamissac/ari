@@ -97,7 +97,7 @@ export default function MonitoringPage() {
         </Panel>
         <Panel title="RL evaluations">
           <Async resource={evals} label="RL evaluations">
-            {page => page.items.length === 0 ? <Empty>No evaluation imported into this project. The <Link className="text-accent hover:underline" href="/lab">Defense Lab</Link> reads the committed evaluation bundle directly.</Empty> : (
+            {page => page.items.length === 0 ? <Empty>No evaluation imported into this project.</Empty> : (
               <ul className="divide-y divide-line text-xs">
                 {page.items.map(e => (
                   <li key={e.id} className="py-2">

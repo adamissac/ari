@@ -75,7 +75,7 @@ export function CommitAnalysis({ repo, commit, analysis: given, live, realRun, r
               <span className="flex items-center gap-2"><Avatar login={commit.author} size={20} /><span className="font-semibold text-white">{commit.author}</span></span>
               <span suppressHydrationWarning>pushed {relativeTime(commit.minutesAgo)}</span>
               <span className="rounded bg-white/10 px-1.5 py-0.5 font-mono">{commit.branch}</span>
-              <span><span className="text-[#7fe0aa]">+{commit.additions}</span> <span className="text-[#ff9b88]">−{commit.deletions}</span></span>
+              <span><span className="text-[#7fe0aa]">+{commit.additions}</span> <span className="text-[#e5a5a5]">−{commit.deletions}</span></span>
               {live?.htmlUrl ? <a href={live.htmlUrl} target="_blank" rel="noreferrer" className="underline decoration-white/30 underline-offset-2 hover:text-white">View on GitHub</a> : <CiBadge state={commit.ci} />}
             </p>
           </div>
@@ -185,7 +185,7 @@ function Review({ analysis, accepted, live }: { analysis: Analysis; accepted: bo
                 return (
                   <li key={e.id} className="review-item">
                     <p className="flex items-start gap-2.5">
-                      <span aria-hidden="true" className={ok ? 'text-[#9ff0c6]' : 'text-[#ff9b88]'}>{ok ? '✓' : '✕'}</span>
+                      <span aria-hidden="true" className={ok ? 'text-[#9ff0c6]' : 'text-[#e5a5a5]'}>{ok ? '✓' : '✕'}</span>
                       <span className="text-sm text-white">{e.text}</span>
                     </p>
                     <p className="mt-1.5 pl-6 text-xs leading-relaxed text-white/55">{broken ? (accepted ? 'This change broke it; the fix restores it.' : 'This change breaks it.') : 'Still holds after this change.'} Learned from {e.source}.</p>
@@ -204,7 +204,7 @@ function Review({ analysis, accepted, live }: { analysis: Analysis; accepted: bo
                 {r.tests.map(test => (
                   <tr key={test.name} className="border-t border-white/10 align-top">
                     <td className="py-2.5 pr-3 font-mono text-xs [overflow-wrap:anywhere]">{test.name}</td>
-                    <td className={`whitespace-nowrap py-2.5 pr-3 ${test.before === 'fail' ? 'text-[#ff9b88]' : 'text-[#9ff0c6]'}`}>{test.before === 'fail' ? '✕ fail' : '✓ pass'}</td>
+                    <td className={`whitespace-nowrap py-2.5 pr-3 ${test.before === 'fail' ? 'text-[#e5a5a5]' : 'text-[#9ff0c6]'}`}>{test.before === 'fail' ? '✕ fail' : '✓ pass'}</td>
                     <td className={`whitespace-nowrap py-2.5 ${live ? 'text-white/55' : 'text-[#9ff0c6]'}`}>{live ? 'should pass' : '✓ pass'}</td>
                   </tr>
                 ))}

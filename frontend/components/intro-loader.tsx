@@ -6,8 +6,8 @@ import { BRAND_NAME, LogoMark } from '@/components/brand';
 /** Session key: the intro plays once per sign-in (cleared on sign-out, see session.tsx). */
 export const INTRO_KEY = 'ari-intro-played';
 
-const DURATION_MS = 1800;
-const LIFT_MS = 800;
+const DURATION_MS = 2600;
+const LIFT_MS = 1000;
 
 function shouldPlay(): boolean {
   if (typeof window === 'undefined') return false;
@@ -17,8 +17,8 @@ function shouldPlay(): boolean {
 }
 
 /**
- * Full-screen intro shown on the home hero right after sign-in: the supplied mark fades in while a
- * percentage counts up, then the curtain lifts and `onReveal` starts the hero entrance. It never
+ * Full-screen intro shown on the home hero right after sign-in, in the same look as the page-change
+ * veil (route-transition.tsx): the mark fades in while the line fills, then the curtain lifts and `onReveal` starts the hero entrance. It never
  * intercepts input (pointer-events: none), and is skipped under reduced motion or automation.
  */
 export function IntroLoader({ onReveal }: { onReveal: () => void }) {
@@ -52,13 +52,9 @@ export function IntroLoader({ onReveal }: { onReveal: () => void }) {
 
   if (phase === 'gone') return null;
   return (
-    <div aria-hidden="true" className="intro" data-phase={phase}>
-      <LogoMark size={96} decorative className="intro-mark" />
-      <svg className="intro-ring" viewBox="0 0 200 200">
-        <circle className="intro-ring-track" cx="100" cy="100" r="96" pathLength={100} />
-        <circle className="intro-ring-fill" cx="100" cy="100" r="96" pathLength={100} style={{ strokeDashoffset: 100 - pct }} />
-      </svg>
-      <span className="intro-pct">{pct}%</span>
+    <div aria-hidden="true" className="intro route-veil" data-phase={phase}>
+      <LogoMark size={96} decorative className="intro-mark route-veil-mark" />
+      <span className="route-veil-line"><span className="route-veil-line-fill" style={{ transform: `scaleX(${pct / 100})` }} /></span>
       <span className="sr-only">{BRAND_NAME}</span>
     </div>
   );

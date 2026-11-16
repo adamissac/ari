@@ -6,10 +6,10 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { notifySessionChanged } from '@/lib/session-events';
 import { AuthStage, LockIcon } from '@/components/auth-stage';
-import { BRAND_NAME } from '@/components/brand';
+import { BRAND_NAME, LogoMark } from '@/components/brand';
 import { GitHubMark } from '@/components/demo/ui';
 import { INTRO_KEY } from '@/components/intro-loader';
-import { ErrorState, Loading } from '@/components/ui';
+import { ErrorState } from '@/components/ui';
 
 type SessionState =
   | { status: 'loading' }
@@ -89,7 +89,15 @@ export function SessionGate({ children }: { children: ReactNode }) {
     setState({ status: 'signed-out' });
   }, []);
 
-  if (state.status === 'loading') return <div className="mx-auto max-w-md p-10"><Loading label="Checking session" /></div>;
+  if (state.status === 'loading') {
+    return (
+      <div role="status" aria-live="polite" className="loading-screen">
+        <LogoMark size={96} decorative className="route-veil-mark" />
+        <span className="route-veil-line"><span className="route-veil-line-fill" /></span>
+        <span className="sr-only">Checking session…</span>
+      </div>
+    );
+  }
   if (state.status === 'error') {
     return (
       <div className="mx-auto max-w-lg p-10">
@@ -132,7 +140,7 @@ function SignIn({ onSignedIn }: { onSignedIn: (me: MeResponse) => void }) {
       <Link href="/access" className="auth-btn auth-btn-ghost" data-testid="access-link">Use an access code</Link>
       {devLoginVisible && (
         <form onSubmit={submit} className="mt-6 border-t border-white/10 pt-5" aria-label="Development login">
-          <p className="label-mono mb-3 text-xs text-[#ffb8a6]">Development login · local backend only</p>
+          <p className="label-mono mb-3 text-xs text-[#c9dbe2]">Development login · local backend only</p>
           <label htmlFor="dev-login" className="auth-label">GitHub login</label>
           <input id="dev-login" className="auth-input" value={login} onChange={e => setLogin(e.target.value)} required pattern="(?:[A-Za-z0-9]|-){1,39}" autoComplete="username" name="github_login" />
           <button type="submit" className="auth-btn auth-btn-ghost mt-3" disabled={busy || !login.trim()}>Development sign-in</button>

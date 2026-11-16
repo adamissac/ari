@@ -263,7 +263,7 @@ function Walkthrough({
   const canContinue = currentQuestion !== 6 || authorized;
 
   return (
-      <div className="grid w-full min-w-0 grid-cols-1 gap-6 pb-10 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10 lg:pt-2">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-6 pb-10 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 lg:pt-2">
         <nav aria-label="Setup progress">
           <p className="font-mono text-xs text-muted lg:hidden">Question {currentQuestion} of 8 · {title}</p>
           <div role="progressbar" aria-label={`Question ${currentQuestion} of 8`} aria-valuemin={1} aria-valuemax={8} aria-valuenow={currentQuestion} className="mt-2 h-px bg-panel-2 lg:sr-only">
@@ -274,7 +274,7 @@ function Walkthrough({
               const number = index + 1;
               const done = finished || progress.answers[QUESTION_KEYS[index] as SetupQuestion] !== undefined;
               return (
-                <li key={label} aria-current={!finished && currentQuestion === number ? 'step' : undefined} className={`flex items-center gap-3 border-l-2 px-3 py-2 text-sm ${!finished && currentQuestion === number ? 'border-brand bg-brand/10 text-ink' : done ? 'border-line-3 text-muted' : 'border-transparent text-faint'}`}>
+                <li key={label} aria-current={!finished && currentQuestion === number ? 'step' : undefined} className={`step-item flex items-center gap-3 rounded-md px-3 py-2 text-sm ${!finished && currentQuestion === number ? 'step-item-current text-ink' : done ? 'text-muted' : 'text-faint'}`}>
                   <span className="w-6 shrink-0 font-mono text-xs tabular-nums">{number}</span>
                   <span>{label}</span>
                   {done && <span className="ml-auto font-mono text-xs text-muted">Saved</span>}

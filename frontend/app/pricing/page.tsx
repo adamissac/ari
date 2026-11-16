@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Fragment } from 'react';
 import { BRAND_NAME } from '@/components/brand';
 import { Faq } from '@/components/faq';
-import { Reveal } from '@/components/reveal';
-import { RollText } from '@/components/ui';
 import { DEMO_ONLY } from '@/lib/deployment';
-import { perAssessment, PLANS, usd } from '@/lib/pricing';
+import { perAssessment, PLANS, usd, type Plan } from '@/lib/pricing';
 
 const START = DEMO_ONLY ? '/access' : '/projects';
 
@@ -14,24 +13,25 @@ export const metadata: Metadata = {
   description: `${BRAND_NAME} plans: Founder, Growth, Scale and Enterprise, priced by full assessments and assessed source lines per month.`,
 };
 
-/* Preview pricing: the layout follows kairo.security's pricing page; plan contents describe
-   what ARI does. Prices are proposals; nothing can be purchased. */
+/* Preview pricing: prices are proposals; nothing can be purchased.
+   A card per plan with the action under the price and what the plan adds over the one before,
+   then one grouped comparison table. */
 const INCLUDED = [
-  'Intent-aware review of every pull request against what the code is meant to do',
-  'A failing test generated to reproduce each functional defect it reports',
-  'Seven security agents probing only inside the sandbox scope you approve',
-  'Fixes proposed only after human approval, and closed only when independent tests pass',
-  'Signed GitHub monitoring that re-checks every push for regressions',
-  'Evidence for every claim: source spans, test reports and agent transcripts',
+  'Intent-aware review of every pull request',
+  'A failing test that reproduces each functional defect',
+  'Seven security agents inside the sandbox scope you approve',
+  'Fixes proposed only after human approval',
+  'Fixes closed only when independent tests pass',
+  'Signed GitHub monitoring of every push',
+  'Evidence for every claim: source spans, test reports, transcripts',
 ];
 
 const ENTERPRISE_ADDS = [
-  'Custom assessment and source-line volumes',
-  'SARIF and rules-of-engagement reports for every assessment',
-  'Findings mapped to CWE, CVSS, OWASP LLM Top 10, MITRE ATT&CK and D3FEND',
-  'Scope and rules of engagement agreed in writing before any testing',
-  'Two-person approval for containment and incident closure workflows',
-  'A persisted audit trail of every approval and decision',
+  'SARIF and rules-of-engagement reports',
+  'Findings mapped to CWE, CVSS, OWASP LLM Top 10, ATT&CK, D3FEND',
+  'Scope and rules of engagement agreed in writing',
+  'Two-person approval for containment and incident closure',
+  'Persisted audit trail of every approval and decision',
 ];
 
 const FAQ = [
@@ -39,106 +39,118 @@ const FAQ = [
   { q: 'What counts as assessed source lines?', a: 'In this proposal, the source lines ARI reads across all full assessments in a month. Assessing a 50,000-line repository three times counts as 150,000 lines.' },
   { q: 'Does ARI ever change our code on its own?', a: 'No. Patches are proposed only after a person approves remediation, and a fix only counts when independent, executed tests agree.' },
   { q: 'What will ARI test?', a: 'Only the scope you approve, such as sandbox builds of your own repositories. It never targets third-party systems.' },
-  { q: 'Is the Defense Lab live network defense?', a: 'No. It is a policy trained and evaluated in an isolated test network, shown as decision support. Nothing it recommends is applied automatically.' },
   { q: 'Can I buy a plan today?', a: 'Not yet. This is a hackathon preview: the plans above are proposals and nothing can be purchased. You can open the console and try the product.' },
 ];
 
-function Check({ dark }: { dark?: boolean }) {
+function Check({ label }: { label: string }) {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" className={`mt-0.5 h-4 w-4 shrink-0 ${dark ? 'text-white/70' : 'text-brand'}`}>
-      <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    <svg role="img" aria-label={label} viewBox="0 0 16 16" className="h-4 w-4 shrink-0 text-muted">
+      <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function Cta({ href, children, tone }: { href: string; children: string; tone: 'light' | 'dark' }) {
-  return (
-    <Link href={href} className={`group label-mono inline-flex h-10 items-center rounded-md px-4 transition-colors duration-[250ms] ${tone === 'light' ? 'bg-white text-night hover:bg-brand hover:text-on-brand' : 'bg-white/10 text-white shadow-[inset_0_0_0_1px_rgb(255_247_242_/_14%)] hover:bg-brand'}`}>
-      <RollText>{children}</RollText>
-    </Link>
-  );
+const isEnterprise = (plan: Plan) => plan.monthlyUsd === null;
+
+/** What a plan card lists: Founder lists the core loop, the others what they add over the plan before. */
+function features(plan: Plan, previous: Plan | undefined): string[] {
+  if (isEnterprise(plan)) return ['Custom assessment and source-line volumes', ...ENTERPRISE_ADDS.slice(0, 4)];
+  const usage = [`${plan.assessments} full assessments a month`, `${plan.sourceLines} source lines`, `${perAssessment(plan)} per assessment`];
+  return previous ? usage : [...usage, 'Intent-aware review of every pull request', 'Seven security agents in your approved scope', 'Fixes closed only when independent tests pass'];
 }
+
+const TABLE: { group: string; rows: { label: string; value: (plan: Plan) => string | boolean }[] }[] = [
+  { group: 'Usage per month', rows: [
+    { label: 'Full assessments', value: plan => plan.assessments === null ? 'Custom' : String(plan.assessments) },
+    { label: 'Assessed source lines', value: plan => plan.sourceLines },
+    { label: 'Price per included assessment', value: perAssessment },
+  ] },
+  { group: 'Review, attack and verification', rows: INCLUDED.map(label => ({ label, value: () => true })) },
+  { group: 'Reporting and governance', rows: ENTERPRISE_ADDS.map(label => ({ label, value: isEnterprise })) },
+];
 
 export default function PricingPage() {
   return (
-    <div className="pricing marketing-atmosphere">
-      <header className="hero-ink bleed-hero -mt-6 pb-20 pt-16 md:pb-28 md:pt-24" aria-labelledby="pricing-title">
-        <div className="mx-auto max-w-7xl px-4">
-          <h1 id="pricing-title" className="display text-5xl font-semibold md:text-7xl">{BRAND_NAME} pricing</h1>
-          <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">Know what every change does, prove every fix, and keep checking as your code moves.</p>
-          <p className="mt-3 text-xs text-white/60" data-testid="pricing-proposal">Hackathon preview: plans are proposals, nothing can be purchased.</p>
-          <div className="mt-7"><Cta href={START} tone="light">Open the console</Cta></div>
-        </div>
+    <div className="pricing mx-auto max-w-6xl">
+      <header className="pt-12 md:pt-20" aria-labelledby="pricing-title">
+        <h1 id="pricing-title" className="font-display text-4xl font-medium tracking-tight md:text-6xl">{BRAND_NAME} pricing</h1>
+        <p className="mt-4 max-w-xl text-base text-muted">Pay for the commits you assess. Every plan runs the same review, safe attack and independent verification.</p>
+        <p className="mt-4 inline-flex items-center gap-2 text-sm text-faint" data-testid="pricing-proposal">
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-warn" />Preview: plans are proposals
+        </p>
       </header>
 
-      <section aria-label="Plans" className="pricing-plans -mt-12 grid gap-4 sm:grid-cols-2 md:-mt-16 xl:grid-cols-4">
-        {PLANS.map(plan => {
-          const dark = plan.recommended;
+      <section aria-label="Plans" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {PLANS.map((plan, index) => {
+          const previous = PLANS[index - 1];
           return (
-            <article key={plan.id} className={`pricing-card flex flex-col ${dark ? 'pricing-card-dark' : 'pricing-card-light'}`} aria-labelledby={`plan-${plan.id}`} data-testid={`plan-${plan.id}`}>
-              <div className="flex items-start justify-between gap-3">
-                <h2 id={`plan-${plan.id}`} className="text-2xl font-semibold">{plan.name}</h2>
-                {plan.recommended && <span className="pricing-badge label-mono">Recommended</span>}
+            <article key={plan.id} className={`price-card ${plan.recommended ? 'price-card-featured' : ''}`} aria-labelledby={`plan-${plan.id}`} data-testid={`plan-${plan.id}`}>
+              <div className="flex h-6 items-center justify-between gap-3">
+                <h2 id={`plan-${plan.id}`} className="text-base font-medium">{plan.name}</h2>
+                {plan.recommended && <span className="plan-badge">Recommended</span>}
               </div>
-              <p className={`mt-2 text-sm ${dark ? 'text-white/70' : 'text-muted'}`}>{plan.tagline}</p>
-              <p className="mt-8 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                <span className="font-display text-5xl font-semibold tracking-tight">{plan.monthlyUsd === null ? 'Contact us' : usd(plan.monthlyUsd)}</span>
-                {plan.monthlyUsd !== null && <span className={`label-mono ${dark ? 'text-white/60' : 'text-faint'}`}>/ month · proposed</span>}
+              <p className="mt-1 min-h-10 text-sm text-muted">{plan.tagline}</p>
+              <p className="mt-6 flex items-baseline gap-1.5">
+                <span className="font-display text-3xl font-medium tabular-nums tracking-tight">{isEnterprise(plan) ? 'Custom' : usd(plan.monthlyUsd ?? 0)}</span>
+                {!isEnterprise(plan) && <span className="text-sm text-faint">/ month</span>}
               </p>
-              <dl className={`pricing-quota mt-6 ${dark ? 'pricing-quota-dark' : ''}`}>
-                <div><dt>Full assessments / month</dt><dd>{plan.assessments ?? 'Custom'}</dd></div>
-                <div><dt>Assessed source lines / month</dt><dd>{plan.sourceLines}</dd></div>
-                <div><dt>Per included assessment</dt><dd>{perAssessment(plan)}</dd></div>
-              </dl>
-              <div className="mt-auto pt-7">
-                {plan.monthlyUsd === null
-                  ? <Cta href="/#how" tone="dark">See how it works</Cta>
-                  : <Cta href={START} tone={dark ? 'light' : 'dark'}>Open the console</Cta>}
+              <div className="mt-6">
+                {isEnterprise(plan)
+                  ? <Link href="/#how" className="plan-cta w-full">See how it works</Link>
+                  : <Link href={START} className={`plan-cta w-full ${plan.recommended ? 'plan-cta-primary' : ''}`}>Open the console</Link>}
               </div>
+              <p className="mt-6 border-t border-line pt-6 text-sm text-muted">{previous ? `Everything in ${previous.name}, plus` : 'Includes'}</p>
+              <ul className="mt-3 flex flex-col gap-3 text-sm text-ink-2">
+                {features(plan, previous).map(f => <li key={f} className="flex gap-2.5"><Check label="Included" />{f}</li>)}
+              </ul>
             </article>
           );
         })}
       </section>
 
-      <section aria-label="What every plan includes" className="mt-10 grid border-t border-white/10 pt-8 md:grid-cols-2 md:divide-x md:divide-white/10">
-        <div className="md:pr-10">
-          <p className="label-mono text-faint">Every plan includes</p>
-          <ul className="mt-4 flex flex-col gap-3 text-sm text-ink">
-            {INCLUDED.map(f => <li key={f} className="flex gap-3"><Check />{f}</li>)}
-          </ul>
-        </div>
-        <div className="mt-8 md:mt-0 md:pl-10">
-          <p className="label-mono text-faint">Enterprise adds</p>
-          <ul className="mt-4 flex flex-col gap-3 text-sm text-ink">
-            {ENTERPRISE_ADDS.map(f => <li key={f} className="flex gap-3"><Check />{f}</li>)}
-          </ul>
-        </div>
-      </section>
-
-      <p className="mt-14 text-center text-xs text-faint md:mt-16" data-testid="pricing-preview">Hackathon preview: these plans are proposals and nothing can be purchased yet. Prices in USD.</p>
-
-      <Reveal>
-        <section aria-labelledby="faq-title" className="pricing-faq mx-auto mt-24 max-w-3xl py-16 md:py-24">
-          <div className="faq-aside flex flex-col items-center text-center">
-            <h2 id="faq-title" className="display mt-5 text-4xl font-semibold md:text-5xl">Questions, answered</h2>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted">How plans, assessments and assessed lines would work, and what {BRAND_NAME} will and won’t do to your code.</p>
-            <Link href="/#how" className="label-mono mt-6 inline-flex items-center gap-2 text-brand hover:text-brand-deep">See how it works <span aria-hidden="true">→</span></Link>
-          </div>
-          <div className="mt-10"><Faq items={FAQ} /></div>
-        </section>
-      </Reveal>
-
-      <Reveal>
-      <section aria-labelledby="pricing-cta" className="pricing-cta mb-16 mt-16 border-t border-white/10 px-6 py-12 text-center md:px-12 md:py-16">
-        <h2 id="pricing-cta" className="display mx-auto max-w-2xl text-2xl font-semibold md:text-3xl">See what your code really does before an attacker does.</h2>
-        <div className="mt-8 flex flex-wrap justify-center gap-2">
-          <Cta href={START} tone="light">Open the console</Cta>
-          <Link href="/#how" className="group label-mono inline-flex h-10 items-center rounded-md bg-white/10 px-4 text-white transition-colors duration-[250ms] hover:bg-white/20">
-            <RollText>See how it works</RollText>
-          </Link>
+      <section aria-labelledby="compare-title" className="mt-20">
+        <h2 id="compare-title" className="text-lg font-medium">Compare plans</h2>
+        <div className="mt-6 overflow-x-auto">
+          <table className="price-table">
+            <thead>
+              <tr><th scope="col"><span className="sr-only">Feature</span></th>{PLANS.map(plan => <th key={plan.id} scope="col">{plan.name}</th>)}</tr>
+            </thead>
+            <tbody>
+              {TABLE.map(section => (
+                <Fragment key={section.group}>
+                  <tr className="price-table-group"><th scope="rowgroup" colSpan={PLANS.length + 1}>{section.group}</th></tr>
+                  {section.rows.map(row => (
+                    <tr key={row.label}>
+                      <th scope="row">{row.label}</th>
+                      {PLANS.map(plan => {
+                        const v = row.value(plan);
+                        return <td key={plan.id}>{v === true ? <Check label="Included" /> : v === false ? <span className="text-faint" aria-label="Not included">–</span> : v}</td>;
+                      })}
+                    </tr>
+                  ))}
+                </Fragment>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
-      </Reveal>
+
+      <section aria-labelledby="faq-title" className="mt-20 grid gap-8 border-t border-line pt-10 md:grid-cols-[18rem_1fr] md:gap-10">
+        <div>
+          <h2 id="faq-title" className="text-lg font-medium">Questions</h2>
+          <p className="mt-2 text-sm text-muted">How plans, assessments and assessed lines would work.</p>
+        </div>
+        <Faq items={FAQ} />
+      </section>
+
+      <section aria-labelledby="pricing-cta" className="pricing-cta mb-16 mt-20 grid gap-x-10 gap-y-2 border-t border-line pt-10 md:grid-cols-[1fr_auto] md:items-center">
+        <h2 id="pricing-cta" className="max-w-xl text-2xl font-medium tracking-tight">See what your code really does before an attacker does.</h2>
+        <div className="row-span-2 mt-4 flex gap-2 md:col-start-2 md:row-start-1 md:mt-0">
+          <Link href={START} className="plan-cta plan-cta-primary">Open the console</Link>
+          <Link href="/#how" className="plan-cta">See how it works</Link>
+        </div>
+        <p className="text-sm text-faint" data-testid="pricing-preview">Prices in USD. These plans are proposals and nothing can be purchased yet.</p>
+      </section>
     </div>
   );
 }

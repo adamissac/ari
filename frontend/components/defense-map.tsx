@@ -13,9 +13,9 @@ export interface MapNode { id: string; label: string; kind: string; critical: bo
 
 export const MAP_STATE: Record<MapState, { label: string; glyph: string; color: string }> = {
   healthy: { label: 'Healthy', glyph: '●', color: '#5fc48d' },
-  checking: { label: 'Being checked', glyph: '◌', color: '#e0735c' },
-  attention: { label: 'Needs attention', glyph: '▲', color: '#f0a43a' },
-  limited: { label: 'Rate-limited', glyph: '◐', color: '#e8c07a' },
+  checking: { label: 'Being checked', glyph: '◌', color: '#9cbbc7' },
+  attention: { label: 'Needs attention', glyph: '▲', color: '#e0bc80' },
+  limited: { label: 'Rate-limited', glyph: '◐', color: '#e0bc80' },
   hardened: { label: 'Hardened', glyph: '◆', color: '#7fd1ae' },
   isolated: { label: 'Isolated', glyph: '■', color: '#c9b8b2' },
 };
