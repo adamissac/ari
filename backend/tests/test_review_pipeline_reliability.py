@@ -295,6 +295,34 @@ def test_pr_review_is_not_posted_after_repository_disconnect(automatic, monkeypa
     assert not audits("monitoring.pr_review_posted")
 
 
+def test_legacy_review_job_on_disconnected_repository_is_audited_not_posted(automatic, monkeypatch):
+    """A job queued before repo_id was in the payload survives a disconnect. Its pre-check must
+    record why no review was posted instead of returning silently."""
+    alice, bob, ids, _ = automatic
+    seed_pr_assessment(ids, bob)
+    with transaction() as conn:
+        conn.execute(
+            sa.update(jobs)
+            .where(jobs.c.kind == "post_pr_review")
+            .values(payload=jobs.c.payload.op("-")("repo_id"))
+        )
+    assert alice.post(f"/api/v1/repositories/{ids['repo']}/disconnect").status_code == 200
+    calls = []
+
+    class GitHub:
+        def post_pull_request_review(self, *args):
+            calls.append(args)
+
+    monkeypatch.setattr("backend.auto_commits.GitHubApp", GitHub)
+    worker.drain(kinds=["post_pr_review"])
+    assert calls == []
+    assert job("post_pr_review")["status"] == "succeeded"
+    assert any(
+        a["details"]["reason"] == "repository disconnected"
+        for a in audits("monitoring.pr_review_skipped")
+    )
+
+
 # --- disconnect, quota ----------------------------------------------------------------
 
 

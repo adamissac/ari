@@ -923,12 +923,6 @@ def post_pr_review(ctx: JobContext) -> dict[str, Any]:
             .first()
         )
         if repo is not None and repo["disconnected_at"] is not None:
-            return {"noop": "repository is disconnected"}
-        if repo is None or not repo["installation_id"]:
-            raise PermanentJobError(
-                ErrorCode.VALIDATION_FAILED, "connected GitHub installation is unavailable"
-            )
-        if repo["disconnected_at"] is not None:
             audit.record(
                 conn,
                 org_id=project_org(conn, assessment.project_id),
@@ -942,6 +936,10 @@ def post_pr_review(ctx: JobContext) -> dict[str, Any]:
             )
             log.info("pr review for %s skipped: repository disconnected", assessment_id)
             return {"noop": "repository disconnected"}
+        if repo is None or not repo["installation_id"]:
+            raise PermanentJobError(
+                ErrorCode.VALIDATION_FAILED, "connected GitHub installation is unavailable"
+            )
         finding_docs = list(
             conn.execute(
                 sa.select(findings.c.doc)
