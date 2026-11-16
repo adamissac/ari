@@ -86,8 +86,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     }
     await expect(page.getByRole('link', { name: 'ARI home', exact: true })).toBeVisible();
     await expect.poll(() => page.locator('.hero-in').evaluateAll(els => els.every(el => Number(getComputedStyle(el).opacity) >= 0.99))).toBe(true);
-    await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(255, 255, 255)');
-    await expect(heading.locator('.hero-line').first()).toHaveCSS('color', 'rgb(244, 244, 242)');
+    await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(237, 243, 245)');
+    await expect(heading.locator('.hero-line').first()).toHaveCSS('color', 'rgb(237, 243, 245)');
     await expect(page.locator('.hero-orb')).toHaveCount(5);
     const orbDurations = await page.locator('.hero-orb').evaluateAll(elements => elements.slice(0, 5).map(el => getComputedStyle(el).animationDuration));
     expect(orbDurations).toEqual(['26s', '31s', '34s', '23s', '37s']);
@@ -109,14 +109,14 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
       await expect.poll(() => page.locator('header').evaluate(el => Math.round(el.getBoundingClientRect().top))).toBe(0);
       const styles = await page.locator('header').evaluate(el => ({ bg: getComputedStyle(el).backgroundColor, border: getComputedStyle(el).borderBottomWidth }));
       expect(styles).toEqual(viewport.width < 640
-        ? { bg: 'rgba(15, 15, 16, 0.94)', border: '1px' }
+        ? { bg: 'rgba(13, 20, 24, 0.94)', border: '1px' }
         : { bg: 'rgba(0, 0, 0, 0)', border: '0px' });
       for (const item of await page.locator('header a:not(.hdr-cta)').all()) {
         await expect(item).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
         await expect(item).toHaveCSS('box-shadow', 'none');
         await expect(item).toHaveCSS('border-top-width', '0px');
       }
-      await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(255, 255, 255)');
+      await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(237, 243, 245)');
       await expect(secondary).toHaveCSS('opacity', scrollY >= 100 ? '1' : '0');
       await expect(secondary).toHaveAttribute('aria-hidden', String(scrollY < 100));
       for (const item of await secondary.locator('a').all()) {
@@ -138,9 +138,9 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     }
     // Move the dark chapter under every row of controls, not only below the anchor offset.
     await page.locator('#how').evaluate(el => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY + 200));
-    await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(255, 255, 255)');
+    await expect(page.locator('header .hdr-logo')).toHaveCSS('color', 'rgb(237, 243, 245)');
     await nav.getByRole('link', { name: 'Defense Lab', exact: true }).hover();
-    await expect(nav.getByRole('link', { name: 'Defense Lab', exact: true })).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.09)');
+    await expect(nav.getByRole('link', { name: 'Defense Lab', exact: true })).toHaveCSS('background-color', 'rgba(237, 243, 245, 0.09)');
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.getByRole('link', { name: 'How It Works', exact: true }).click();
     await expect(page).toHaveURL(/#how$/);
@@ -190,7 +190,7 @@ test('problem chapter eases to the short change-check headline', async ({ page }
     window.scrollTo(0, top + (el.clientHeight - window.innerHeight) * 0.9);
   });
   await expect(page.getByText('Changes, checked', { exact: true })).toBeVisible();
-  await expect(page.getByTestId('story-timeline-capsule')).toHaveCSS('color', 'rgb(255, 255, 255)');
+  await expect(page.getByTestId('story-timeline-capsule')).toHaveCSS('color', 'rgb(237, 243, 245)');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(1440);
 });
 
