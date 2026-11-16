@@ -290,7 +290,7 @@ test('motion accents respond to hover and respect reduced motion', async ({ page
   await page.goto('/');
   const cta = page.locator('.hero-full .hero-in > a').first();
   // Hover only after the hero entrance settles: a hover taken while the button still moves can be lost.
-  await expect.poll(() => page.locator('.hero-in').evaluateAll(els => els.every(el => Number(getComputedStyle(el).opacity) >= 0.99 && getComputedStyle(el).transform === 'none'))).toBe(true);
+  await expect.poll(() => page.locator('.hero-full .hero-in').evaluateAll(els => els.every(el => Number(getComputedStyle(el).opacity) >= 0.99 && el.getAnimations().every(animation => animation.playState === 'finished')))).toBe(true);
   await cta.hover();
   await expect(cta).toHaveCSS('translate', '0px -3px');
   const footer = page.getByTestId('landing-footer');
