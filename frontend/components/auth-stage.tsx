@@ -2,10 +2,13 @@
 
 import type { ReactNode } from 'react';
 import { BRAND_NAME, LogoMark } from '@/components/brand';
-import { HeroStage } from '@/components/hero';
+import { LiquidBackground } from '@/components/liquid-bg';
 import { useMarkAuthStage } from '@/lib/auth-stage-presence';
 
-/** Centered sign-in card over the animated hero background. */
+/**
+ * Sign-in layout: the hero's contour field on the left (desktop only) with the brand line, and the
+ * form on a calm column to the right. No floating card, glow or orbit decoration.
+ */
 export function AuthStage({
   kicker = BRAND_NAME,
   title,
@@ -23,21 +26,24 @@ export function AuthStage({
 }) {
   useMarkAuthStage();
   return (
-    <HeroStage className="auth-stage px-5 py-16 md:px-12" labelledBy="auth-title">
-      <div className="auth-orbits" aria-hidden="true"><span /><span /><span /></div>
-      <div className="mx-auto w-full max-w-[460px]">
+    <section className="auth-stage auth-split" aria-labelledby="auth-title">
+      <div className="auth-visual" aria-hidden="true">
+        <LiquidBackground />
+        <p className="auth-visual-line">Find the flaw.<br />Prove the fix.</p>
+      </div>
+      <div className="auth-pane">
         <div className="auth-card w-full" data-testid={testId}>
           <div className="flex items-center gap-2.5">
             <LogoMark size={22} decorative priority />
-            <p className="label-mono auth-kicker">{kicker}</p>
+            <p className="auth-kicker text-sm text-muted">{kicker}</p>
           </div>
-          <h1 id="auth-title" className="mt-3 text-[1.75rem] font-medium leading-tight tracking-[-0.02em] text-ink">{title}</h1>
+          <h1 id="auth-title" className="mt-6 text-3xl font-medium tracking-tight text-ink">{title}</h1>
           {subtitle && <p className="mt-2 text-sm leading-relaxed text-muted">{subtitle}</p>}
-          <div className="mt-7">{children}</div>
-          {footnote && <div className="auth-footnote mt-7">{footnote}</div>}
+          <div className="mt-8">{children}</div>
+          {footnote && <div className="auth-footnote mt-8">{footnote}</div>}
         </div>
       </div>
-    </HeroStage>
+    </section>
   );
 }
 

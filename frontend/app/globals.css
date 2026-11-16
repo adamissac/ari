@@ -1601,13 +1601,6 @@ body:has(.commit-stage) main { color: #edf3f5; }
 
 /* Quiet motion frames the form without competing with it. */
 .auth-stage .hero-content { position: relative; }
-.auth-orbits { position: absolute; inset: 50% auto auto 50%; width: min(100vw, 1000px); aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; z-index: -1; }
-.auth-orbits span { position: absolute; inset: 9%; border: 1px solid rgb(201 219 226 / 9%); border-radius: 50%; animation: auth-orbit 42s linear infinite; }
-.auth-orbits span::after { content: ''; position: absolute; left: 50%; top: -3px; width: 5px; height: 5px; border-radius: 50%; background: #9cbbc7; box-shadow: 0 0 18px 3px #e9a18340; }
-.auth-orbits span:nth-child(2) { inset: 0; animation-duration: 65s; animation-direction: reverse; opacity: .6; }
-.auth-orbits span:nth-child(3) { inset: 20%; animation-duration: 32s; opacity: .45; }
-@keyframes auth-orbit { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .auth-orbits span { animation: none; } }
 
 /* Landing footer: shared baselines, two navigation columns, simple legal row. */
 .landing-footer { position: relative; isolation: isolate; overflow: hidden; margin-inline: calc(50% - 50vw); border-top: 1px solid rgb(237 243 245 / 8%); padding: 56px max(24px, calc((100vw - 1216px) / 2)) 20px; background: transparent; color: #edf3f5; }
