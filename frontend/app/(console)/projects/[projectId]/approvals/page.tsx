@@ -28,8 +28,8 @@ const MANUAL_NOTE = 'Ari asks here before it builds a candidate fix or opens a p
 const MODE_LABEL: Record<DeliveryMode, string> = { manual: 'Ask before each fix', pull_request: 'Open a pull request', auto: 'Commit to the default branch' };
 const DELIVERY_NOTE: Record<DeliveryMode, string> = {
   manual: MANUAL_NOTE,
-  pull_request: 'Fix delivery is set to "Open a pull request": candidate fixes are approved automatically on behalf of the owner who authorized delivery, and each independently verified fix arrives as a pull request. Sandbox testing scopes are still decided here. Ari never merges or deploys on its own.',
-  auto: 'Fix delivery is set to "Commit to the default branch": candidate fixes are approved automatically on behalf of the owner who authorized delivery, and each independently verified fix is committed to the default branch with no human check (a pull request if the branch moved or is protected). Sandbox testing scopes are still decided here.',
+  pull_request: 'Fixes are approved automatically and each verified fix arrives as a pull request. Ari never merges or deploys on its own.',
+  auto: 'Fixes are approved automatically and each verified fix is committed to the default branch without a human check.',
 };
 const AUTO_APPROVED_REASON = 'auto delivery';
 const isAutoApproved = (a: Approval) => a.status === 'approved' && (a.reason ?? '').startsWith(AUTO_APPROVED_REASON);

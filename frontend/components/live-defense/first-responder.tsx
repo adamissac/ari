@@ -284,7 +284,7 @@ function MappingPanel({
   };
   return (
     <Panel title="Owner-attested deploy-to-commit mapping">
-      <p className="mb-3 text-sm text-muted">Without this mapping, runtime↔code correlation is UNKNOWN. A vulnerability at a commit is not proof of this request.</p>
+      <p className="mb-3 text-sm text-muted">Without this mapping, runtime events can&apos;t be linked to code.</p>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <Field label="Application">
           <select className={inputClass} value={appId} onChange={e => setAppId(e.target.value)}>
