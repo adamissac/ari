@@ -4,7 +4,7 @@ export const BRAND_HEADLINE = 'FIND THE FLAW.';
 export const BRAND_HEADLINE_REST = 'PROVE THE FIX.';
 export const BRAND_TAGLINE = 'A repair counts only when independent, executed tests agree.';
 
-/** Original owner-supplied PNG (kept byte-for-byte; also the favicon). */
+/** Original owner-supplied PNG (kept byte-for-byte). The favicon is the mark on an obsidian tile (app/icon.png). */
 export const LOGO_SOURCE = '/brand/ari-ant.png';
 /** Transparent ant cut out of the original (361×256), drawn as a mask in the current text colour. */
 export const LOGO_SRC = '/brand/ari-ant-mark.png';

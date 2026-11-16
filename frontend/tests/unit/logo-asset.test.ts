@@ -7,8 +7,14 @@ it('preserves the owner-supplied ant PNG byte-for-byte', () => {
   expect(createHash('sha256').update(source).digest('hex')).toBe('0d4d68e2e5917248016e2368773ac9a40417188737da6623485ecd82da47eeae');
   expect(source.readUInt32BE(16)).toBe(1254);
   expect(source.readUInt32BE(20)).toBe(1254);
-  // Buffer.equals is an exact native byte comparison; toEqual walks every byte and can time out.
-  expect(readFileSync('app/icon.png').equals(source)).toBe(true);
+});
+
+it('ships a favicon drawn from the ant mark on the obsidian tile', () => {
+  const icon = readFileSync('app/icon.png');
+  expect(icon.readUInt32BE(16)).toBe(512);
+  expect(icon.readUInt32BE(20)).toBe(512);
+  expect(icon[25]).toBe(6); // RGBA: rounded corners are transparent
+  expect(readFileSync('app/apple-icon.png').readUInt32BE(16)).toBe(180);
 });
 
 it('ships a transparent, tightly cropped ant mark derived from the original', () => {
