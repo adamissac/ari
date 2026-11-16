@@ -277,6 +277,8 @@ html[data-home-hero] .site-header { position: fixed; inset-inline: 0; top: 0; }
 /* Centred hero at a calm size, with a "The problem"-style strip under it. */
 .hero-center .hero-headline { font-size: clamp(2.2rem, 5vw, 4.5rem); line-height: 1; }
 .hero-center .hero-headline .hero-line { white-space: normal; }
+/* Landing hero is just the name: one huge, tight wordmark. */
+.hero-center .hero-headline.hero-ari { font-size: clamp(6rem, 34vw, 26rem); line-height: .82; letter-spacing: -.07em; }
 @media (max-width: 639px) { .hx-pill-slot > .hx-pill { justify-self: start; } }
 /* The ember line fills up to the stage the assessment has reached. */
 /* What the flaw exposes: drawn to the right while Trace follows it. */

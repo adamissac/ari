@@ -2,29 +2,33 @@
 
 import { useEffect, useRef } from 'react';
 
-// Domain-warped noise: slow liquid folds in graphite with platinum highlights.
-const FRAG = `precision mediump float;
+// Drifting topographic contours over near-black, lit from below by the brand ember (#c2452d).
+// fwidth keeps every contour line about one pixel wide however steep the field gets.
+const FRAG = `#extension GL_OES_standard_derivatives : enable
+precision mediump float;
 uniform vec2 r; uniform float t;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
   return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
-float fbm(vec2 p){float v=0.,a=.5;for(int k=0;k<5;k++){v+=a*n(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return v;}
+float fbm(vec2 p){float v=0.,a=.5;for(int k=0;k<4;k++){v+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return v;}
 void main(){
-  vec2 uv=gl_FragCoord.xy/r.y;
-  vec2 q=vec2(fbm(uv*1.4+t*.035),fbm(uv*1.4+vec2(5.2,1.3)-t*.03));
-  vec2 w=vec2(fbm(uv*1.6+3.*q+vec2(1.7,9.2)+t*.05),fbm(uv*1.6+3.*q+vec2(8.3,2.8)-t*.04));
-  float f=fbm(uv*1.2+3.5*w);
-  float ridge=smoothstep(.55,.95,f)*.55+smoothstep(.75,1.,length(w))*.25;
-  vec3 base=vec3(.043,.043,.047), mid=vec3(.13,.135,.15), hi=vec3(.66,.66,.68);
-  vec3 c=mix(base,mid,smoothstep(.2,.8,f));
-  c=mix(c,hi,ridge*.35);
-  float v=smoothstep(1.25,.25,length(gl_FragCoord.xy/r-vec2(.5,.45)));
-  gl_FragColor=vec4(c*mix(.55,1.,v),1.);
+  vec2 uv=(gl_FragCoord.xy-.5*r)/r.y;
+  float e=fbm(uv*1.5+vec2(t*.018,-t*.012))+.4*fbm(uv*3.1+vec2(-t*.025,t*.02));
+  float b=e*16.;
+  float f=fract(b), d=min(f,1.-f), w=fwidth(b);
+  float line=1.-smoothstep(0.,w*1.3,d);
+  float major=step(mod(floor(b+.5),5.),.5);
+  float glow=smoothstep(1.15,0.,length(uv*vec2(.8,1.)-vec2(0.,-.62)));
+  vec3 ember=vec3(.76,.27,.18), ash=vec3(.22,.21,.21);
+  vec3 c=vec3(.03,.028,.03)+ember*glow*glow*.22;
+  c+=mix(ash,ember*1.25,glow)*line*mix(.35,.85,major)*(.35+.65*glow);
+  float v=smoothstep(1.2,.3,length(uv*vec2(.7,1.)));
+  gl_FragColor=vec4(c*mix(.5,1.,v),1.);
 }`;
 const VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
 
 /**
- * Slow liquid backdrop for the landing hero. Rendered at half resolution, paused off screen and
+ * Slow topographic-contour backdrop for the landing hero. Rendered at half resolution, paused off screen and
  * when the tab is hidden, and drawn once (still) under reduced motion. Without WebGL it renders
  * nothing and the page background shows through.
  */
@@ -34,6 +38,7 @@ export function LiquidBackground() {
     const canvas = ref.current;
     const gl = canvas?.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
     if (!canvas || !gl) return;
+    gl.getExtension('OES_standard_derivatives'); // without it the shader fails to link and the CSS background shows
     const shader = (type: number, src: string) => {
       const s = gl.createShader(type)!; gl.shaderSource(s, src); gl.compileShader(s); return s;
     };

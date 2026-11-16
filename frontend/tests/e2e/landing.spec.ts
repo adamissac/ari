@@ -1,7 +1,6 @@
 import { expect, test, type Locator } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 
-const steps = ['Understand', 'Review', 'Attack Safely', 'Diagnose', 'Repair', 'Verify', 'Monitor'];
 
 async function expectContrastAtLeastAA(locator: Locator, label: string) {
   const ratio = await locator.evaluate(element => {
@@ -53,8 +52,8 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'ARI');
     await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'ARI — Find the flaw. Prove the fix.');
     const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toHaveText('FIND THE FLAW. PROVE THE FIX.');
-    await expect(page.locator('.hero-content p')).toHaveCount(2);
+    await expect(heading).toHaveText('ARI');
+    await expect(page.locator('.hero-content p')).toHaveCount(0); // the hero is just the name
     await expectContrastAtLeastAA(page.getByRole('link', { name: 'Go to projects', exact: true }).first(), 'hero CTA');
     await expectContrastAtLeastAA(page.getByTestId('problem-count'), 'problem count');
     await expectContrastAtLeastAA(page.getByTestId('story-events-line'), 'events card line');
@@ -63,7 +62,6 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await expect(page.getByRole('link', { name: 'Go to projects', exact: true }).first()).toHaveAttribute('href', '/projects');
     await expect(page.getByRole('link', { name: /demo/i })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'How It Works', exact: true })).toHaveAttribute('href', '#how');
-    await expect(page.locator('[aria-label="Assessment loop"] li .hero-step-name')).toHaveText(steps);
     const nav = page.getByRole('navigation', { name: 'Primary', exact: true });
     const secondary = nav.locator('.nav-secondary');
     await expect(secondary).toHaveAttribute('inert', '');
@@ -91,7 +89,7 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     await expect(page.locator('.hero-orb')).toHaveCount(5);
     const orbDurations = await page.locator('.hero-orb').evaluateAll(elements => elements.slice(0, 5).map(el => getComputedStyle(el).animationDuration));
     expect(orbDurations).toEqual(['26s', '31s', '34s', '23s', '37s']);
-    await expect(heading.locator('.hero-line').first()).toHaveAttribute('data-glow', 'FIND THE FLAW.');
+    await expect(heading.locator('.hero-line').first()).toHaveAttribute('data-glow', 'ARI');
     await expect(heading.locator('.hero-line').first()).toHaveCSS('text-shadow', 'none'); // glow is isolated to an opacity-animated pseudo layer
     await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe('loaded');
     const fonts = await page.evaluate(() => ({
