@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Reveal } from '@/components/reveal';
 import { LogoMark } from '@/components/brand';
-import { LiquidBackground } from '@/components/liquid-bg';
 
 const GROUPS = [
   { title: 'Product', links: [['The process', '#how'], ['Pricing', '/pricing']] },
@@ -10,8 +9,8 @@ const GROUPS = [
 ] as const;
 
 /**
- * Landing footer: brand and link columns on one grid, then the hero's contour field as a band
- * with the ARI wordmark cut out of it, so the page ends the way it starts.
+ * Landing footer: brand and link columns on one grid, then a legal row with a small status note and
+ * a back-to-top control.
  */
 export function LandingFooter() {
   return (
@@ -25,12 +24,9 @@ export function LandingFooter() {
           {GROUPS.map(group => <div key={group.title}><h2>{group.title}</h2>{group.links.map(([label, href]) => <Link key={label} href={href}>{label}</Link>)}</div>)}
         </nav>
       </Reveal>
-      <div aria-hidden="true" className="footer-band">
-        <LiquidBackground />
-        <span className="footer-wordmark">ARI</span>
-      </div>
       <Reveal className="footer-bottom" delay={100}>
-        <span>© {new Date().getUTCFullYear()} ARI · Hackathon preview</span>
+        <span className="footer-legal"><span>© {new Date().getUTCFullYear()} ARI</span><span aria-hidden="true">·</span><span>Hackathon preview</span></span>
+        <span className="footer-status"><span aria-hidden="true" className="footer-status-dot" />Prices and plans are proposals</span>
         <a href="#main" className="footer-top-link">Back to top <span aria-hidden="true">↑</span></a>
       </Reveal>
     </footer>

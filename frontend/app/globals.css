@@ -1602,8 +1602,8 @@ body:has(.commit-stage) main { color: #edf3f5; }
 /* Quiet motion frames the form without competing with it. */
 .auth-stage .hero-content { position: relative; }
 
-/* Landing footer (components/landing-footer.tsx): brand and three link columns on one grid, a contour
-   band with the ARI wordmark cut out of it, then a quiet legal row. */
+/* Landing footer (components/landing-footer.tsx): brand and three link columns on one grid, then a
+   legal row: copyright, a status note and a back-to-top control. */
 .landing-footer { position: relative; isolation: isolate; overflow: hidden; margin-inline: calc(50% - 50vw); border-top: 1px solid var(--glass-line); padding: 56px max(24px, calc((100vw - 1216px) / 2)) 0; background: var(--color-bg); }
 .footer-top { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px; align-items: start; }
 .footer-brand { display: inline-flex; align-items: center; gap: 10px; height: 32px; color: #edf3f5; }
@@ -1613,18 +1613,18 @@ body:has(.commit-stage) main { color: #edf3f5; }
 .footer-links h2 { margin-bottom: 12px; font-size: 13px; font-weight: 500; color: var(--color-faint); }
 .footer-links a { display: block; width: fit-content; padding-block: 6px; color: var(--color-ink-2); font-size: 14px; line-height: 1.5; transition: color 150ms var(--ease-out); }
 .footer-links a:hover, .footer-links a:focus-visible { color: #edf3f5; }
-.footer-band { position: relative; height: clamp(110px, 14vw, 200px); margin: 40px calc(-1 * max(24px, calc((100vw - 1216px) / 2))) 0; overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 45%); mask-image: linear-gradient(180deg, transparent, #000 45%); }
-.footer-band .liquid-bg { transform: none; }
-.footer-wordmark { position: absolute; left: 50%; bottom: 0; z-index: 1; translate: -50% 22%; font-family: var(--font-display); font-weight: 700; font-size: clamp(120px, 24vw, 360px); line-height: .8; letter-spacing: -.04em; color: var(--color-bg); pointer-events: none; }
-.footer-bottom { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0 20px; border-top: 1px solid var(--glass-line); color: var(--color-faint); font-size: 13px; }
-.footer-top-link { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; transition: color 150ms var(--ease-out); }
-.footer-top-link:hover { color: var(--color-ink); }
+.footer-bottom { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-top: 56px; padding: 20px 0 28px; border-top: 1px solid var(--glass-line); color: var(--color-faint); font-size: 13px; }
+.footer-legal { display: inline-flex; gap: 8px; }
+.footer-status { display: inline-flex; align-items: center; gap: 8px; }
+.footer-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-warn); }
+.footer-top-link { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border-radius: 8px; color: var(--color-muted); box-shadow: inset 0 0 0 1px var(--glass-line); transition: color 150ms var(--ease-out), background-color 150ms var(--ease-out); }
+.footer-top-link:hover { color: var(--color-ink); background: rgb(237 243 245 / 6%); }
 @media (max-width: 767px) {
   .landing-footer { padding: 40px 24px 0; }
+  .footer-bottom { margin-top: 32px; }
   .footer-top { grid-template-columns: 1fr; gap: 28px; }
   .footer-links { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
   .footer-links a { font-size: 13px; }
-  .footer-band { height: 96px; margin-top: 24px; margin-inline: -24px; }
 }
 
 /* Small motion cues complement the existing scroll-driven chapters. */
