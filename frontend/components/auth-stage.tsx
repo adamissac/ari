@@ -7,7 +7,7 @@ import { useMarkAuthStage } from '@/lib/auth-stage-presence';
 
 /**
  * Sign-in layout: the form in a narrow column on the left, where the eye starts, and the hero's
- * contour field with the brand line on the right (desktop only), as split sign-in pages such as
+ * contour field in an inset panel on the right (desktop only), as split sign-in pages such as
  * Supabase's do. No floating card, glow or orbit decoration.
  */
 export function AuthStage({
@@ -42,7 +42,7 @@ export function AuthStage({
       </div>
       <div className="auth-visual" aria-hidden="true">
         <LiquidBackground />
-        <p className="auth-visual-line">Find the flaw.<br />Prove the fix.</p>
+        <LogoMark size={56} decorative className="auth-visual-mark" />
       </div>
     </section>
   );
