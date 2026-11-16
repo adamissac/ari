@@ -9,8 +9,7 @@ const GROUPS = [
 ] as const;
 
 /**
- * Landing footer: brand and link columns on one grid, then a legal row with a small status note and
- * a back-to-top control.
+ * Landing footer: brand and link columns on one grid, then a back-to-top control.
  */
 export function LandingFooter() {
   return (
@@ -25,8 +24,6 @@ export function LandingFooter() {
         </nav>
       </Reveal>
       <Reveal className="footer-bottom" delay={100}>
-        <span className="footer-legal"><span>© {new Date().getUTCFullYear()} ARI</span><span aria-hidden="true">·</span><span>Hackathon preview</span></span>
-        <span className="footer-status"><span aria-hidden="true" className="footer-status-dot" />Prices and plans are proposals</span>
         <a href="#main" className="footer-top-link">Back to top <span aria-hidden="true">↑</span></a>
       </Reveal>
     </footer>
