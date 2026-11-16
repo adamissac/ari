@@ -1,6 +1,6 @@
 /* ARI interface system: precise grids, warm ink and restrained ember light.
    Keep the landing hero, scroll tracks and replay geometry owned by globals.css. */
-:root { --ui-radius: 10px; --ui-edge: rgb(244 244 242 / 12%); }
+:root { --ui-radius: 3px; --ui-edge: rgb(244 244 242 / 12%); }
 
 /* A quieter frame makes records and controls carry the visual hierarchy. */
 :root:not(:has(.hero-full)) .site-header { border-bottom: 1px solid var(--ui-edge); }
@@ -24,10 +24,10 @@
 :root:not(:has(.hero-full)) .demo-card:is(:hover, :focus-visible) { border-color: rgb(244 244 242 / 20%); }
 :root:not(:has(.hero-full)) .page-title { padding-bottom: 28px; margin-bottom: 28px; }
 :root:not(:has(.hero-full)) .page-title h1 { font-size: 30px; line-height: 36px; }
-.btn { min-height: 36px; padding-inline: 12px; border-radius: 8px; font-size: 13px; }
+.btn { min-height: 36px; padding-inline: 12px; border-radius: var(--ui-radius); font-size: 13px; }
 .status-badge { font-size: 12px; }
 .empty-state { padding-block: 44px; border-radius: var(--ui-radius); line-height: 1.7; }
-:root:not(:has(.hero-full)) :is(input, select, textarea):not([type="checkbox"], [type="radio"], [type="range"]) { border-radius: 8px; min-height: 36px; }
+:root:not(:has(.hero-full)) :is(input, select, textarea):not([type="checkbox"], [type="radio"], [type="range"]) { border-radius: var(--ui-radius); min-height: 36px; }
 :root:not(:has(.hero-full)) .night-footer { border-top: 1px solid var(--ui-edge); margin-top: 48px; padding-block: 28px 32px; }
 .night-footer > p { font-size: 12px; letter-spacing: .08em; max-width: 65ch; }
 
