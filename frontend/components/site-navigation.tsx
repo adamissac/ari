@@ -4,14 +4,18 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useRef, useState, useSyncExternalStore, type KeyboardEvent } from 'react';
 import { AccountLink } from '@/components/account-link';
 import { NavLink } from '@/components/nav-link';
+import { useAuthStageShowing } from '@/lib/auth-stage-presence';
 
 const hasScrolled = () => window.scrollY >= 100;
 const serverTop = () => false;
 const noSubscription = () => () => {};
 
-/** Keep the account slot fixed while the homepage's secondary links fade in/out. */
+/** Keep the account slot fixed while the homepage's secondary links fade in/out. Sign-in screens
+ *  keep only the logo, like most sign-in pages, so the form is the one thing to do. */
 export function SiteNavigation() {
   const pathname = usePathname();
+  const signingIn = useAuthStageShowing();
+  if (signingIn) return null;
   return (
     <nav aria-label="Primary" className="site-nav">
       <NavigationLinks key={pathname} home={pathname === '/'} />
