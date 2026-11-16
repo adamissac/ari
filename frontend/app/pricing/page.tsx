@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 };
 
 /* Preview pricing: prices are proposals; nothing can be purchased.
-   Layout follows the connected-grid pattern of developer-tool pricing pages: one panel with a
-   column per plan, the action right under the price, then one grouped comparison table. */
+   A card per plan with the action under the price and what the plan adds over the one before,
+   then one grouped comparison table. */
 const INCLUDED = [
   'Intent-aware review of every pull request',
   'A failing test that reproduces each functional defect',
@@ -52,6 +52,13 @@ function Check({ label }: { label: string }) {
 
 const isEnterprise = (plan: Plan) => plan.monthlyUsd === null;
 
+/** What a plan card lists: Founder lists the core loop, the others what they add over the plan before. */
+function features(plan: Plan, previous: Plan | undefined): string[] {
+  if (isEnterprise(plan)) return ['Custom assessment and source-line volumes', ...ENTERPRISE_ADDS.slice(0, 4)];
+  const usage = [`${plan.assessments} full assessments a month`, `${plan.sourceLines} source lines`, `${perAssessment(plan)} per assessment`];
+  return previous ? usage : [...usage, 'Intent-aware review of every pull request', 'Seven security agents in your approved scope', 'Fixes closed only when independent tests pass'];
+}
+
 const TABLE: { group: string; rows: { label: string; value: (plan: Plan) => string | boolean }[] }[] = [
   { group: 'Usage per month', rows: [
     { label: 'Full assessments', value: plan => plan.assessments === null ? 'Custom' : String(plan.assessments) },
@@ -73,31 +80,32 @@ export default function PricingPage() {
         </p>
       </header>
 
-      <section aria-label="Plans" className="price-grid mt-12">
-        {PLANS.map(plan => (
-          <article key={plan.id} className={`price-col ${plan.recommended ? 'price-col-featured' : ''}`} aria-labelledby={`plan-${plan.id}`} data-testid={`plan-${plan.id}`}>
-            <div className="flex h-6 items-center justify-between gap-3">
-              <h2 id={`plan-${plan.id}`} className="text-base font-medium">{plan.name}</h2>
-              {plan.recommended && <span className="plan-badge">Recommended</span>}
-            </div>
-            <p className="mt-1 min-h-10 text-sm text-muted">{plan.tagline}</p>
-            <p className="mt-6 flex h-10 items-baseline gap-2">
-              <span className="font-display text-4xl font-medium tabular-nums tracking-tight">{isEnterprise(plan) ? 'Custom' : usd(plan.monthlyUsd ?? 0)}</span>
-              {!isEnterprise(plan) && <span className="text-sm text-faint">per month</span>}
-            </p>
-            <div className="mt-6">
-              {isEnterprise(plan)
-                ? <Link href="/#how" className="plan-cta w-full">See how it works</Link>
-                : <Link href={START} className={`plan-cta w-full ${plan.recommended ? 'plan-cta-primary' : ''}`}>Open the console</Link>}
-            </div>
-            <p className="mt-8 text-sm text-ink">
-              {isEnterprise(plan)
-                ? <>Volumes agreed with you</>
-                : <><span className="font-display text-2xl font-medium tabular-nums">{plan.assessments}</span> <span className="text-muted">full assessments a month</span></>}
-            </p>
-            <p className="mt-1 text-sm text-muted">{isEnterprise(plan) ? 'Everything in Scale, plus reporting and governance' : `${plan.sourceLines} source lines · ${perAssessment(plan)} each`}</p>
-          </article>
-        ))}
+      <section aria-label="Plans" className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {PLANS.map((plan, index) => {
+          const previous = PLANS[index - 1];
+          return (
+            <article key={plan.id} className={`price-card ${plan.recommended ? 'price-card-featured' : ''}`} aria-labelledby={`plan-${plan.id}`} data-testid={`plan-${plan.id}`}>
+              <div className="flex h-6 items-center justify-between gap-3">
+                <h2 id={`plan-${plan.id}`} className="text-base font-medium">{plan.name}</h2>
+                {plan.recommended && <span className="plan-badge">Recommended</span>}
+              </div>
+              <p className="mt-1 min-h-10 text-sm text-muted">{plan.tagline}</p>
+              <p className="mt-6 flex items-baseline gap-1.5">
+                <span className="font-display text-3xl font-medium tabular-nums tracking-tight">{isEnterprise(plan) ? 'Custom' : usd(plan.monthlyUsd ?? 0)}</span>
+                {!isEnterprise(plan) && <span className="text-sm text-faint">/ month</span>}
+              </p>
+              <div className="mt-6">
+                {isEnterprise(plan)
+                  ? <Link href="/#how" className="plan-cta w-full">See how it works</Link>
+                  : <Link href={START} className={`plan-cta w-full ${plan.recommended ? 'plan-cta-primary' : ''}`}>Open the console</Link>}
+              </div>
+              <p className="mt-6 border-t border-line pt-6 text-sm text-muted">{previous ? `Everything in ${previous.name}, plus` : 'Includes'}</p>
+              <ul className="mt-3 flex flex-col gap-3 text-sm text-ink-2">
+                {features(plan, previous).map(f => <li key={f} className="flex gap-2.5"><Check label="Included" />{f}</li>)}
+              </ul>
+            </article>
+          );
+        })}
       </section>
 
       <section aria-labelledby="compare-title" className="mt-20">
