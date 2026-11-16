@@ -16,18 +16,18 @@ export const SIMULATION_CAVEAT =
   'Recommendation from a policy trained in an isolated test environment. Not applied automatically.';
 
 export const NO_ENFORCEMENT =
-  'Analyst accept is a recorded opinion, not enforcement approval, and does not execute a control. This dashboard does not apply, isolate, rate-limit, or block anything from a review or sample layout. Isolate is never offered. Owned-test rate-limit and exact-source block require a separate authorization endpoint after the deterministic gate. Adapter HTTP 200 is not effectiveness.';
+  'Accepting a recommendation records your opinion only. This page does not apply, isolate, rate-limit, or block anything.';
 
 export const OWNED_TEST_LABEL = 'OWNED TEST ENVIRONMENT';
 
 export const OWNED_TEST_AUTHORIZE_COPY =
-  'Authorization is a separate owner action from analyst review. It can apply a temporary control only on a registered owned-test loopback app after the deterministic gate. Production is not granted. Adapter HTTP 200 is not effectiveness. RL and rules cannot execute without that authorization.';
+  'Owner authorization is separate from review. Temporary controls apply only to registered owned-test apps, never production.';
 
 export const SHADOW_MODE_COPY =
-  'Shadow mode: Ari records ingest and recommendations for authorized staging apps. It does not grant production enforcement and never re-shows an ingest token after issuance.';
+  'Shadow mode records traffic and recommendations for staging apps. Nothing is enforced.';
 
 export const FIRST_RESPONDER_COPY =
-  'First-responder modes are server-enforced: OFF, MONITOR (alias SHADOW), and ASSISTED RESPONSE. AUTO-EXECUTE does not exist. Scout and Diagnose may execute a real authorized agent loop when a mapping and snapshot exist. That execution is not independent verification and not a confirmed threat. Probe still needs AuthorizedScope; Patch stays worktree-only. An RL recommendation is not executed defense.';
+  'Modes: Off, Monitor and Assisted response. AUTO-EXECUTE does not exist. Scout and Diagnose may execute only when you authorize them; an RL recommendation is not executed defense.';
 
 export const EVIDENCE_STATES = ['Observed', 'Suspected', 'Verified', 'Recommended', 'Authorized', 'Executed', 'Failed', 'Rolled back'] as const;
 
@@ -38,10 +38,10 @@ export const RL_GATED_COPY =
   'RL-gated shadow-only. Server refuses grants, control channels, authorization, and leftover execute. Analyst accept is still a recorded opinion. This is not customer deployment.';
 
 export const RL_BLOCKED_COPY =
-  'Phase 6 CONDITIONAL GO is rules-based shadow only. The RL-gated pilot stays blocked until the RL owner supplies evidence. Merged research PRs, unit tests, and docs are not model readiness.';
+  'The RL pilot stays blocked until its evidence is in. Rules-based shadow mode runs meanwhile.';
 
 export const HEALTH_UNKNOWN_COPY =
-  'Worker, telemetry, and policy stay unknown. Heartbeat and queue depth are measured timestamps or counts, not a healthy verdict. Missing values are unavailable — never guessed. HTTP 200 from this page is not health.';
+  'Health is unknown until the worker, telemetry and policy report in. Nothing here is guessed.';
 
 export function liveDefenseMode(previewParam: string | null | undefined): LiveDefenseMode {
   return previewParam === PREVIEW_VALUE ? 'layout-preview' : 'live';

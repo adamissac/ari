@@ -53,7 +53,7 @@ export function StagingApps({
         {apps ? (
           <Async resource={apps} label="staging apps">
             {page => page.items.length === 0 ? (
-              <Empty>No staging app yet. Only sandbox and owned-test environments are allowed. Production enforcement grants are not offered.</Empty>
+              <Empty>No staging app yet.</Empty>
             ) : (
               <ul className="flex flex-col gap-3">
                 {page.items.map(app => (
@@ -66,9 +66,9 @@ export function StagingApps({
       </Panel>
       <PilotReportPanel projectId={projectId} />
       <Panel title="Ingest guidance">
-        <p className="text-sm text-ink">Send aggregated per-route counters to the existing ingest endpoint. Never put raw logs, payloads, or secrets in the batch.</p>
+        <p className="text-sm text-ink">Send per-route counters to the ingest endpoint. Never send raw logs or secrets.</p>
         <pre className="mt-3 overflow-x-auto rounded-md border border-line bg-panel-2 p-3 text-xs text-ink">{ingestCurl(projectId)}</pre>
-        <p className="mt-2 text-xs text-muted">The token is shown once at issuance. Later lists return metadata only (id, last used, revoked). Owners revoke from this page.</p>
+        <p className="mt-2 text-xs text-muted">The token is shown once. Revoke it here.</p>
         {health ? (
           <Async resource={health} label="ingest health">
             {item => (
@@ -106,7 +106,7 @@ function RegisterApp({ projectId, onChange }: { projectId: string; onChange?: ()
   return (
     <Panel title="Register an application">
       <p className="mb-3 text-sm text-muted">
-        Identity and environment only. A production app gets controls only after you grant each kind and click to authorize each control.
+        Identity and environment only.
       </p>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
         <Field label="Name">
@@ -446,8 +446,7 @@ function PilotReportPanel({ projectId }: { projectId: string }) {
   return (
     <Panel title="Exportable pilot report">
       <p className="text-sm text-ink">
-        Downloads recorded staging-app, ingest, shadow-decision, and review counts.
-        HTTP 200 is not attack success. This report never claims that shadow mode prevented breaches.
+        Downloads the recorded counts as a report.
       </p>
       <Button className="mt-3" variant="primary" disabled={status === 'saving'} onClick={() => void download()}>
         Download pilot report

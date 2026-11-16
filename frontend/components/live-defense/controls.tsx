@@ -47,7 +47,7 @@ export function ControlsDashboard({
     <div className="flex min-w-0 flex-col gap-6" data-testid="live-defense-controls">
       <OwnedTestBanner />
       <p className="rounded-xl border border-line bg-panel-2 px-4 py-3 text-sm text-ink" data-testid="live-defense-controls-gated-note">
-        RL-gated shadow-only apps do not appear here for authorization. The server refuses grants, channels, and execute for those apps even if this form is used.
+        Shadow-only apps cannot be authorized here.
       </p>
       {unresolved.length > 0 && (
         <p className="rounded-xl border border-warn/60 bg-warn/15 px-4 py-3 text-sm text-warn" data-testid="live-defense-unresolved">
@@ -82,7 +82,6 @@ export function ControlsDashboard({
               const live = page.items.filter(item => isActiveControl(item.status));
               return (
                 <>
-                  <p className="mb-2 text-xs text-muted">Backend label: {page.label}</p>
                   {live.length === 0 ? <Empty>No verified owned-test control is active.</Empty> : (
                     <ul className="flex flex-col gap-2">{live.map(item => <ControlCard key={item.id} control={item} onChange={onChange} />)}</ul>
                   )}
@@ -189,8 +188,7 @@ function EmergencyStopPanel({
   return (
     <Panel title="Emergency stop (kill switch)">
       <p className="text-sm text-muted">
-        Rejects new controls, tries to remove active ones on the owned-test app, and records the attempt.
-        Success is not claimed until removal is verified.
+        Rejects new controls and removes active ones on the owned-test app.
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
         <Field label="Note (optional)">

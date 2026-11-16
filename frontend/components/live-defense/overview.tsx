@@ -132,20 +132,19 @@ function LiveOverviewRecords({
         ]} />
       </section>
       <p className="-mt-4 text-xs text-muted" data-testid="live-defense-summary">{copy}</p>
-      <Panel title="Recorded health and topology">
+      <Panel title="Health">
         <HealthUnknownNote />
         {health ? (
           <Async resource={health} label="defense health">
             {item => (
               <dl className="mt-3 grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-3 gap-y-1 text-sm text-ink" data-testid="live-defense-health">
-                <dt className="text-muted">Status</dt><dd>{item.status}</dd>
-                <dt className="text-muted">Reason</dt><dd>{item.status_reason}</dd>
-                <dt className="text-muted">Worker</dt><dd>{item.worker_status} — {item.worker_status_reason}</dd>
-                <dt className="text-muted">Telemetry</dt><dd>{item.telemetry_status} — {item.telemetry_status_reason}</dd>
-                <dt className="text-muted">Policy</dt><dd>{item.policy_status} — {item.policy_status_reason}</dd>
-                <dt className="text-muted">Worker last heartbeat</dt><dd>{item.worker_seen_at ? <Time iso={item.worker_seen_at} /> : 'unavailable'}</dd>
-                <dt className="text-muted">Queue depth (this project)</dt><dd>{item.queue_depth ?? 'unavailable'}</dd>
-                <dt className="text-muted">Last ingest window</dt><dd>{item.last_ingest_at ? <Time iso={item.last_ingest_at} /> : 'unavailable'}</dd>
+                <dt className="text-muted">Status</dt><dd title={item.status_reason}>{item.status}</dd>
+                <dt className="text-muted">Worker</dt><dd title={item.worker_status_reason}>{item.worker_status}</dd>
+                <dt className="text-muted">Telemetry</dt><dd title={item.telemetry_status_reason}>{item.telemetry_status}</dd>
+                <dt className="text-muted">Policy</dt><dd title={item.policy_status_reason}>{item.policy_status}</dd>
+                <dt className="text-muted">Last heartbeat</dt><dd>{item.worker_seen_at ? <Time iso={item.worker_seen_at} /> : 'unavailable'}</dd>
+                <dt className="text-muted">Queue depth</dt><dd>{item.queue_depth ?? 'unavailable'}</dd>
+                <dt className="text-muted">Last ingest</dt><dd>{item.last_ingest_at ? <Time iso={item.last_ingest_at} /> : 'unavailable'}</dd>
                 <dt className="text-muted">Last runtime event</dt><dd>{item.last_runtime_event_at ? <Time iso={item.last_runtime_event_at} /> : 'unavailable'}</dd>
               </dl>
             )}
@@ -155,10 +154,9 @@ function LiveOverviewRecords({
           <div className="mt-4">
             <Async resource={graph} label="recorded topology">
               {item => item.nodes.length === 0 ? (
-                <Empty>No recorded applications or ingest routes. This page does not draw a map or mark anything healthy.</Empty>
+                <Empty>No applications connected yet.</Empty>
               ) : (
                 <div data-testid="live-defense-graph">
-                  <p className="mb-2 text-xs text-muted">{item.note}</p>
                   <ul className="flex flex-col gap-2">
                     {item.nodes.map(node => {
                       const obs = item.observations.find(entry => entry.node_id === node.id);
@@ -171,7 +169,6 @@ function LiveOverviewRecords({
                             {obs?.simulated && <Tag tone="warn">simulated source</Tag>}
                             {obs?.last_checked_at && <span className="text-muted">last window <Time iso={obs.last_checked_at} /></span>}
                           </span>
-                          {obs?.note && <p className="mt-1 text-xs text-muted">{obs.note}</p>}
                         </li>
                       );
                     })}
@@ -246,7 +243,6 @@ function LiveOverviewRecords({
           <Async resource={decisions} label="shadow decisions">
             {page => (
               <>
-                <p className="my-2 text-xs text-muted">Backend label: {page.label}</p>
                 {page.items.length === 0 ? <Empty>No shadow decision yet. Authenticated owned-staging ingest is required.</Empty> : (
                   <ul className="flex flex-col gap-2">
                     {page.items.slice(0, 5).map(item => (
@@ -276,7 +272,6 @@ function LiveOverviewRecords({
           <Async resource={recs} label="recommendations">
             {page => (
               <>
-                <p className="my-2 text-xs text-muted">Backend label: {page.label}</p>
                 {page.items.length === 0 ? <Empty>No recommendation has been requested for this project.</Empty> : (
                   <ul className="flex flex-col gap-2">
                     {page.items.slice(0, 5).map(rec => (
@@ -370,7 +365,8 @@ function PreviewOverview({ projectId }: { projectId: string | null }) {
 
 function IntegrationStatus() {
   return (
-    <div data-testid="live-defense-api-coverage">
+    <details className="ld-details" data-testid="live-defense-api-coverage">
+    <summary>Technical details</summary>
     <Panel title="API coverage for this dashboard">
       <p className="mb-3 text-sm text-muted">Live mode uses the endpoints that exist. Missing ones stay empty — they are not filled with mock telemetry.</p>
       <h3 className="label-mono mb-2 text-xs text-ink">In use</h3>
@@ -392,6 +388,6 @@ function IntegrationStatus() {
         ))}
       </ul>
     </Panel>
-    </div>
+    </details>
   );
 }

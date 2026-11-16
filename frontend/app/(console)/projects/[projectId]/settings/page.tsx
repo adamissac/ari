@@ -59,7 +59,7 @@ export default function SettingsPage() {
         </div>
       </Panel>
       <Panel title="Default assessment budget">
-        <p className="mb-3 text-sm text-muted">Hard ceilings enforced by the orchestrator. An assessment that reaches any limit stops and is marked budget-exhausted, never silently extended.</p>
+        <p className="mb-3 text-sm text-muted">Hard limits per assessment. A run that hits one stops.</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Field label="Max tokens"><input className={inputClass} inputMode="numeric" value={draft.maxTokens} onChange={e => set('maxTokens')(e.target.value)} /></Field>
           <Field label="Max USD"><input className={inputClass} inputMode="decimal" value={draft.maxUsd} onChange={e => set('maxUsd')(e.target.value)} /></Field>
@@ -68,8 +68,7 @@ export default function SettingsPage() {
       </Panel>
       <Panel title="Continuous monitoring trigger policy" className="lg:col-span-2">
         <p className="mb-3 text-sm text-muted">
-          Controls whether a pushed commit starts a targeted reassessment. Reassessments still require an active, approved scope;
-          without one the event is recorded as blocked rather than tested.
+          Re-check pushed commits. Needs an approved scope.
         </p>
         <label className="mb-3 flex items-center gap-2 text-sm">
           <input type="checkbox" checked={draft.enabled} onChange={e => set('enabled')(e.target.checked)} />
@@ -92,8 +91,7 @@ export default function SettingsPage() {
       </Panel>
       <Panel title="Code reviewer" className="lg:col-span-2">
         <p className="mb-3 text-sm text-muted">
-          Choose which pushes and pull requests Ari reviews. Eligible events still require repository automatic assessments,
-          an active approved scope, and available project quota.
+          Which pushes and pull requests Ari reviews.
         </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="flex items-center gap-2 text-sm">
@@ -129,10 +127,10 @@ export default function SettingsPage() {
           <p className="text-sm text-muted">Strictness filters only the pull-request comment; all findings remain stored in Ari.</p>
         </fieldset>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Field label="Include branches" hint="Comma- or newline-separated globs. Pushes default to the default branch; pull requests default to all base branches.">
+          <Field label="Include branches" hint="Comma-separated globs. Defaults to the default branch.">
             <textarea className={`${inputClass} min-h-20 font-mono`} value={draft.includeBranches} onChange={e => set('includeBranches')(e.target.value)} />
           </Field>
-          <Field label="Exclude branches" hint="Comma- or newline-separated globs; matching branches are skipped.">
+          <Field label="Exclude branches" hint="Comma-separated globs to skip.">
             <textarea className={`${inputClass} min-h-20 font-mono`} value={draft.excludeBranches} onChange={e => set('excludeBranches')(e.target.value)} />
           </Field>
           <Field label="Include authors" hint="Comma- or newline-separated GitHub login globs. Empty means everyone.">
@@ -150,7 +148,7 @@ export default function SettingsPage() {
         </div>
       </Panel>
       <Panel title="Fix delivery" className="lg:col-span-2">
-        <p className="mb-3 text-sm text-muted">How verified fixes from the code reviewer and the seven agents reach your repository. Needs the GitHub App&apos;s Contents and Pull requests: Read &amp; write permissions.</p>
+        <p className="mb-3 text-sm text-muted">How verified fixes reach your repository. Needs the GitHub App&apos;s write permissions.</p>
         {([
           ['auto', 'Auto-commit', 'Ari commits every fix the Verify agent accepts straight to your default branch, no human check. If the branch moved or is protected, it opens a pull request instead.'],
           ['pull_request', 'Pull request', 'Every verified fix arrives as a pull request. Your team reviews and merges.'],
