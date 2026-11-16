@@ -54,7 +54,7 @@ it('the colony grows to a modest size, slowly at first then faster', () => {
   expect(Math.min(...gaps)).toBeGreaterThan(0.4);
 });
 
-it('only the landing hero draws the colony, as a decorative canvas', () => {
+it('draws a decorative colony only when requested', () => {
   const { rerender } = render(<HeroStage labelledBy="t" colony><h1 id="t">Hi</h1></HeroStage>);
   expect(screen.getByTestId('ant-colony').getAttribute('aria-hidden')).toBe('true');
   rerender(<HeroStage labelledBy="t"><h1 id="t">Hi</h1></HeroStage>);

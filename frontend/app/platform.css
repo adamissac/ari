@@ -74,36 +74,16 @@ h1 { font-weight: 500; }
   .project-shell > .project-body > * { max-width: 1240px; }
 }
 
-/* Landing hero: text beside a real product view. */
-.hero-split { display: grid; gap: 48px; align-items: center; text-align: left; }
-@media (min-width: 1024px) { .hero-split { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 64px; } }
-.hero-split h1 { font-size: clamp(2.25rem, 4.6vw, 4rem); line-height: 1.04; font-weight: 500; letter-spacing: -0.03em; color: var(--color-ink); }
-.hero-split .hero-sub { margin-top: 20px; max-width: 34rem; font-size: 18px; line-height: 28px; color: var(--color-muted); }
+/* Shared actions. Homepage composition lives in landing.module.css. */
 .btn-primary, .btn-quiet { display: inline-flex; height: 44px; align-items: center; border-radius: 10px; padding: 0 18px; font-size: 15px; font-weight: 500; transition: background-color 150ms var(--ease-out); }
 .btn-primary { background: #ededed; color: #141415; box-shadow: inset 0 1px 0 rgb(255 255 255 / 40%); }
 .btn-primary:hover { background: #fff; }
 .btn-quiet { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--glass-line); }
 .btn-quiet:hover { background: #2b2b2e; }
 
-.pv { overflow: hidden; border-radius: 16px; background: var(--color-panel); box-shadow: inset 0 0 0 1px var(--glass-line), 0 32px 64px -40px rgb(0 0 0 / 80%); font-size: 13px; color: var(--color-ink); }
-.pv-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--glass-line); color: var(--color-muted); }
-.pv-bar b { font-weight: 500; color: var(--color-ink); }
-.pv-steps { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-bottom: 1px solid var(--glass-line); color: var(--color-muted); }
-.pv-steps span::before { content: "✓"; margin-right: 6px; color: var(--color-ok); }
-.pv-body { padding: 16px; }
-.pv-title { font-size: 15px; line-height: 22px; font-weight: 500; }
-.pv-meta { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 12px; color: var(--color-muted); }
-.pv-meta .pv-high { color: var(--color-ember); }
-.pv-diff { margin-top: 14px; overflow-x: auto; border-radius: 8px; background: var(--color-night); box-shadow: inset 0 0 0 1px var(--glass-line); font-family: var(--font-mono); font-size: 12px; line-height: 20px; }
-.pv-diff div { padding: 0 12px; white-space: pre; }
-.pv-diff .pv-del { background: rgb(229 72 77 / 12%); color: #f1a5a7; }
-.pv-diff .pv-add { background: rgb(76 195 138 / 12%); color: #9fe0bf; }
-.pv-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--glass-line); }
-.pv-ok { color: var(--color-ok); font-weight: 500; }
 /* Signature: a claim carries the test that proved it. */
 .evidence-tag { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; padding: 2px 8px; background: var(--color-panel-2); box-shadow: inset 0 0 0 1px var(--glass-line); font-family: var(--font-mono); font-size: 12px; line-height: 18px; color: var(--color-muted); }
 .evidence-tag::before { content: "✓"; color: var(--color-ok); }
-.pv-note { margin-top: 12px; font-size: 12px; color: var(--color-faint); }
 
 /* Landing: the top bar sits on the page, not on a tinted band. */
 @media (min-width: 640px) { html[data-home-hero] .site-header { background: transparent; border-bottom: 0; } }
@@ -132,22 +112,12 @@ h1 { font-weight: 500; }
     var(--color-bg);
   background-attachment: fixed;
 }
-/* Landing hero: light pools behind the product view and falls away toward the text. */
-:root:has(.hero-full) .hero-stage.hero-full {
-  background:
-    radial-gradient(46% 62% at 76% 48%, rgb(var(--ember) / 46%), transparent 70%),
-    radial-gradient(60% 40% at 50% 112%, rgb(var(--ember) / 24%), transparent 72%),
-    var(--color-bg) !important;
-}
-.pv { position: relative; }
-.pv::before, .panel::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; background: var(--trail); pointer-events: none; }
+.panel::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 1px; background: var(--trail); pointer-events: none; }
 :root:not(:has(.hero-full)) .panel { position: relative; overflow: hidden; }
 :root:not(:has(.hero-full)) .panel::before { display: block; opacity: 0.55; }
 /* A trail under each page title and across the top bar. */
 .page-title { border-bottom: 0 !important; background: var(--trail) left bottom / 100% 1px no-repeat; }
 :root:not(:has(.hero-full)) .site-header, body:has(.project-shell) .site-header { border-bottom: 0; background: linear-gradient(90deg, transparent 30%, rgb(var(--ember) / 45%) 78%, rgb(var(--ember-hi) / 70%)) left bottom / 100% 1px no-repeat, var(--color-night); }
-.hero-split h1 br + * , .hero-split h1 { background: none; }
-.hero-split h1::after { content: ""; display: block; width: 180px; height: 2px; margin-top: 24px; border-radius: 2px; background: var(--trail); }
 @media (min-width: 1024px) {
   .project-shell { background:
     linear-gradient(180deg, rgb(var(--ember) / 9%), transparent 220px) left top / 247px 100% no-repeat,
@@ -160,15 +130,6 @@ h1 { font-weight: 500; }
 .evidence-tag { box-shadow: inset 0 0 0 1px rgb(var(--ember) / 30%); }
 tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: linear-gradient(90deg, rgb(var(--ember) / 9%), transparent 55%); }
 
-/* Trails across the hero: thin ember streaks that fade out, behind the content. */
-.hero-full { position: relative; }
-.hero-stage.hero-full::after { content: ""; display: block !important; opacity: 1 !important; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background:
-    linear-gradient(90deg, transparent, rgb(var(--ember-hi) / 55%) 62%, transparent 96%) 0 31% / 100% 1px no-repeat,
-    linear-gradient(90deg, transparent 18%, rgb(var(--ember) / 60%) 70%, transparent) 0 58% / 100% 1px no-repeat,
-    linear-gradient(90deg, transparent 40%, rgb(var(--ember-hi) / 40%) 82%, transparent) 0 79% / 100% 1px no-repeat;
-  mask-image: linear-gradient(90deg, transparent, #000 45%); -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%); }
-.hero-full .hero-content { position: relative; z-index: 1; }
 /* With a banner above it (demo account), the landing top bar stays in flow instead of covering it. */
 body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:has(.demo-banner) .site-header { position: sticky; }
 .marketing-atmosphere { background: transparent !important; }

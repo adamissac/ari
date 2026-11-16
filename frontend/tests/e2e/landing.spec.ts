@@ -48,19 +48,19 @@ for (const viewport of [{ width: 1440, height: 1000 }, { width: 1024, height: 76
     page.on('pageerror', error => errors.push(error.message));
     await page.setViewportSize(viewport);
     await page.goto('/'); // public: no sign-in needed
-    await expect(page).toHaveTitle('ARI Console');
+    await expect(page).toHaveTitle('ARI — Code review with proof');
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'ARI');
-    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'ARI — Find the flaw. Prove the fix.');
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', 'ARI — Code review with proof');
     const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toHaveText('Find the flaw. Prove the fix.');
-    await expect(page.locator('.hero-content .hero-sub')).toHaveCount(1);
-    await expect(page.getByRole('figure', { name: 'Sample of an Ari review of one commit' })).toBeVisible();
-    await expectContrastAtLeastAA(page.getByRole('link', { name: 'Go to projects', exact: true }).first(), 'hero CTA');
-    await expectContrastAtLeastAA(page.getByTestId('problem-count'), 'problem count');
-    await expectContrastAtLeastAA(page.getByTestId('story-events-line'), 'events card line');
-    await expectContrastAtLeastAA(page.getByTestId('story-timeline-capsule'), 'timeline capsule');
+    await expect(heading).toHaveText(/Code review\.\s*With proof\./);
+    await expect(page.getByText('Automatic reviews are off until you enable them.')).toBeVisible();
+    await expect(page.getByRole('figure', { name: /From finding to repair.*Illustrative example/ })).toBeVisible();
+    await expectContrastAtLeastAA(page.getByRole('link', { name: 'Connect a repository', exact: true }).first(), 'hero CTA');
+    await expectContrastAtLeastAA(page.getByText('Illustrative example', { exact: true }), 'example label');
+    await expectContrastAtLeastAA(page.getByText('Independent re-test', { exact: true }), 'verification label');
+    await expectContrastAtLeastAA(page.getByText('Automatic reviews are off until you enable them.'), 'automatic review note');
     // The demo account is not linked publicly; the call to action opens the console.
-    await expect(page.getByRole('link', { name: 'Go to projects', exact: true }).first()).toHaveAttribute('href', '/projects');
+    await expect(page.getByRole('link', { name: 'Connect a repository', exact: true }).first()).toHaveAttribute('href', '/projects');
     await expect(page.getByRole('link', { name: /demo/i })).toHaveCount(0);
     await expect(page.getByRole('link', { name: 'How it works', exact: true })).toHaveAttribute('href', '#how');
     const nav = page.getByRole('navigation', { name: 'Primary', exact: true });
@@ -170,19 +170,17 @@ test('reduced motion keeps the hero, logo and menu visible', async ({ page }) =>
   await page.evaluate(() => window.scrollTo(0, 0));
   await expect(page.locator('.nav-secondary')).toHaveCSS('opacity', '0');
   await expect(page.getByRole('link', { name: 'ARI home', exact: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Go to projects', exact: true }).first().click();
+  await page.getByRole('link', { name: 'Connect a repository', exact: true }).first().click();
   await expect(page).toHaveURL(/\/projects$/);
 });
 
-test('problem chapter eases to the short change-check headline', async ({ page }) => {
+test('problem context keeps unconfirmed findings explicit without scroll-dependent text', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  await page.locator('.story-track-3').evaluate(el => {
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo(0, top + (el.clientHeight - window.innerHeight) * 0.9);
-  });
-  await expect(page.getByText('Changes, checked', { exact: true })).toBeVisible();
-  await expect(page.getByTestId('story-timeline-capsule')).toHaveCSS('color', 'rgb(255, 255, 255)');
+  const context = page.getByRole('region', { name: /Understand the change/ });
+  await context.scrollIntoViewIfNeeded();
+  await expect(context.getByRole('heading', { level: 2 })).toHaveText(/Understand the change\.\s*Then challenge it\./);
+  await expect(context.getByText(/the finding stays unconfirmed/)).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(1440);
 });
 
@@ -215,52 +213,26 @@ test('Ari footer fits desktop and mobile', async ({ page }) => {
 });
 
 
-test('process cards traverse with scrolling again', async ({ page }) => {
+test('process steps remain readable in document order', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
   const chapter = page.locator('#how');
-  const cards = chapter.locator('.story-card');
-  for (const [progress, index] of [[0.08, 0], [0.33, 1], [0.55, 2], [0.94, 3]] as const) {
-    await chapter.evaluate((el, p) => {
-      const top = el.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo(0, top + (el.clientHeight - innerHeight) * p);
-    }, progress);
-    await expect(cards.nth(index)).toHaveAttribute('data-active', 'true');
+  const steps = chapter.getByRole('listitem');
+  await expect(steps).toHaveCount(4);
+  await expect(chapter.getByRole('heading', { level: 3 })).toHaveText([
+    'Connect your code', 'Review and investigate', 'Repair, then verify', 'Deliver on your terms',
+  ]);
+  for (const step of await steps.all()) {
+    await step.scrollIntoViewIfNeeded();
+    await expect(step).toBeVisible();
+    await expect(step).not.toHaveAttribute('aria-hidden', 'true');
   }
-});
-
-test('every process card holds for several wheel notches before the chapter moves on', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
-  const chapter = page.locator('#how');
-  await chapter.evaluate(el => window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - innerHeight / 2));
-  await page.mouse.move(720, 450);
-  const pinnedNotches = [0, 0, 0, 0];
-  const order: number[] = [];
-  for (let notch = 0; notch < 60; notch++) {
-    await page.mouse.wheel(0, 100);
-    await page.waitForTimeout(150);
-    const state = await chapter.evaluate(el => {
-      const r = el.getBoundingClientRect();
-      return {
-        active: [...el.querySelectorAll('.story-card')].findIndex(card => card.hasAttribute('data-active')),
-        pinned: r.top <= 0.5 && r.bottom >= innerHeight - 0.5,
-        past: r.bottom < innerHeight - 0.5,
-      };
-    });
-    if (state.past) break;
-    if (!state.pinned) continue;
-    pinnedNotches[state.active] = (pinnedNotches[state.active] ?? 0) + 1;
-    if (order.at(-1) !== state.active) order.push(state.active);
-  }
-  expect(order).toEqual([0, 1, 2, 3]);
-  for (const notches of pinnedNotches) expect(notches).toBeGreaterThanOrEqual(3);
-  expect(pinnedNotches[3]).toBeGreaterThan(pinnedNotches[1]!);
+  await expect(chapter.getByText('Automatic reviews are optional.')).toBeVisible();
 });
 
 test('motion accents respond to hover and respect reduced motion', async ({ page }) => {
   await page.goto('/');
-  const cta = page.locator('.hero-full a.btn-primary');
+  const cta = page.locator('.hero-full').getByRole('link', { name: 'Connect a repository', exact: true });
   await cta.hover();
   await expect(cta).toHaveCSS('translate', 'none'); // hover changes colour only
   const footer = page.getByTestId('landing-footer');

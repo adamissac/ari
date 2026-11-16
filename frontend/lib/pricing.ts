@@ -1,4 +1,4 @@
-/** Proposed plans (hackathon preview; nothing can be purchased). Shown on /pricing. */
+/** Proposed plans (nothing can be purchased). Shown on /pricing. */
 export interface Plan {
   id: string;
   name: string;

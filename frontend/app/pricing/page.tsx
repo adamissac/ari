@@ -11,18 +11,18 @@ const START = DEMO_ONLY ? '/access' : '/projects';
 
 export const metadata: Metadata = {
   title: `Pricing · ${BRAND_NAME}`,
-  description: `${BRAND_NAME} plans: Founder, Growth, Scale and Enterprise, priced by full assessments and assessed source lines per month.`,
+  description: `Proposed ${BRAND_NAME} plans: Founder, Growth, Scale and Enterprise, priced by full assessments and assessed source lines per month.`,
 };
 
 /* Preview pricing: the layout follows kairo.security's pricing page; plan contents describe
    what ARI does. Prices are proposals; nothing can be purchased. */
 const INCLUDED = [
-  'Intent-aware review of every pull request against what the code is meant to do',
-  'A failing test generated to reproduce each functional defect it reports',
-  'Seven security agents probing only inside the sandbox scope you approve',
-  'Fixes proposed only after human approval, and closed only when independent tests pass',
-  'Signed GitHub monitoring that re-checks every push for regressions',
-  'Evidence for every claim: source spans, test reports and agent transcripts',
+  'Intent-aware code review grounded in your repository and its expected behavior',
+  'Generated tests for supported defects, with unverified findings clearly marked',
+  'Seven specialized security agents, with executable checks limited to your approved sandbox scope',
+  'Candidate repairs, independent verification and delivery controls you choose',
+  'Optional GitHub reviews of eligible pushes and pull requests, subject to review limits',
+  'Source references, available test evidence and agent run history for reviewing findings',
 ];
 
 const ENTERPRISE_ADDS = [
@@ -35,12 +35,13 @@ const ENTERPRISE_ADDS = [
 ];
 
 const FAQ = [
-  { q: 'What is a full assessment?', a: 'One run on one commit: intent review, the seven security agents inside your approved scope, and independent verification of any fix.' },
+  { q: 'What is a full assessment?', a: 'One assessment of one repository commit. ARI reviews expected behavior, runs supported security checks within your approved scope, and independently verifies candidate fixes. Some checks can be skipped or remain inconclusive.' },
   { q: 'What counts as assessed source lines?', a: 'In this proposal, the source lines ARI reads across all full assessments in a month. Assessing a 50,000-line repository three times counts as 150,000 lines.' },
-  { q: 'Does ARI ever change our code on its own?', a: 'No. Patches are proposed only after a person approves remediation, and a fix only counts when independent, executed tests agree.' },
-  { q: 'What will ARI test?', a: 'Only the scope you approve, such as sandbox builds of your own repositories. It never targets third-party systems.' },
-  { q: 'Is the Defense Lab live network defense?', a: 'No. It is a policy trained and evaluated in an isolated test network, shown as decision support. Nothing it recommends is applied automatically.' },
-  { q: 'Can I buy a plan today?', a: 'Not yet. This is a hackathon preview: the plans above are proposals and nothing can be purchased. You can open the console and try the product.' },
+  { q: 'Does ARI ever change our code on its own?', a: 'An owner chooses the delivery mode. Manual requires approval for each repair and pushes nothing. Pull request mode, the default, preauthorizes repairs and opens PRs for independently verified fixes when repository writes are enabled. Auto mode can commit verified fixes directly when the service permits it, with a PR fallback.' },
+  { q: 'Do reviews run automatically?', a: 'Automatic reviews start off. Enable them for your project and repository to review eligible pushes and pull requests. Branch and author settings, approved scope and review limits still apply.' },
+  { q: 'What will ARI test?', a: 'Approved sandbox builds of connected repositories, using the check categories you authorize. Probe runs reviewed checks within that scope. Unsupported checks are not treated as proven findings; ARI does not target third-party systems.' },
+  { q: 'Is the Defense Lab live network defense?', a: 'No. The Lab trains and evaluates policies in a simulated network and presents decision support. Nothing the Lab recommends is applied automatically.' },
+  { q: 'Can I buy a plan today?', a: 'Not yet. These plans are proposals and nothing can be purchased. You can open the console to explore the product.' },
 ];
 
 function Check({ dark }: { dark?: boolean }) {
@@ -65,8 +66,8 @@ export default function PricingPage() {
       <header className="hero-ink bleed-hero -mt-6 pb-20 pt-16 md:pb-28 md:pt-24" aria-labelledby="pricing-title">
         <div className="mx-auto max-w-7xl px-4">
           <h1 id="pricing-title" className="display text-5xl font-semibold md:text-7xl">{BRAND_NAME} pricing</h1>
-          <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">Know what every change does, prove every fix, and keep checking as your code moves.</p>
-          <p className="mt-3 text-xs text-white/60" data-testid="pricing-proposal">Hackathon preview: plans are proposals, nothing can be purchased.</p>
+          <p className="mt-4 max-w-xl text-sm text-white/70 md:text-base">Review code changes, investigate supported defects and verify repairs before delivery.</p>
+          <p className="mt-3 text-xs text-white/60" data-testid="pricing-proposal">Plans are proposals; nothing can be purchased yet.</p>
           <div className="mt-7"><Cta href={START} tone="light">Open the console</Cta></div>
         </div>
       </header>
@@ -102,20 +103,20 @@ export default function PricingPage() {
 
       <section aria-label="What every plan includes" className="mt-10 grid border-t border-white/10 pt-8 md:grid-cols-2 md:divide-x md:divide-white/10">
         <div className="md:pr-10">
-          <p className="label-mono text-faint">Every plan includes</p>
+          <p className="label-mono text-faint">Every proposed plan includes</p>
           <ul className="mt-4 flex flex-col gap-3 text-sm text-ink">
             {INCLUDED.map(f => <li key={f} className="flex gap-3"><Check />{f}</li>)}
           </ul>
         </div>
         <div className="mt-8 md:mt-0 md:pl-10">
-          <p className="label-mono text-faint">Enterprise adds</p>
+          <p className="label-mono text-faint">Proposed Enterprise additions</p>
           <ul className="mt-4 flex flex-col gap-3 text-sm text-ink">
             {ENTERPRISE_ADDS.map(f => <li key={f} className="flex gap-3"><Check />{f}</li>)}
           </ul>
         </div>
       </section>
 
-      <p className="mt-14 text-center text-xs text-faint md:mt-16" data-testid="pricing-preview">Hackathon preview: these plans are proposals and nothing can be purchased yet. Prices in USD.</p>
+      <p className="mt-14 text-center text-xs text-faint md:mt-16" data-testid="pricing-preview">Plans are proposals; nothing can be purchased yet. Prices in USD.</p>
 
       <Reveal>
         <section aria-labelledby="faq-title" className="pricing-faq mx-auto mt-24 max-w-3xl py-16 md:py-24">

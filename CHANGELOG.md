@@ -6,6 +6,8 @@ All notable changes are documented here. Format follows
 
 ## [Unreleased]
 
+- Redesigned the public homepage with a restrained hero, a clearly labeled repair example, and a readable four-step process. Removed simulated metrics and scroll-driven chapters; clarified optional reviews, supported checks, independent verification, and delivery choices across home and pricing.
+
 - Functional Verify replays the reviewer's generated JS tests through the sandbox `nodetest` mode, so a validated JS fix can be accepted and delivered. Its suite check for JS covers only the existing tests that mention a changed file (at most 12), because the whole jsdom suite is OOM-killed in the 2 GB microVM.
 
 - Console pages beyond Analytics, Commits, Findings, Approvals and Settings now read like a dashboard: stat tiles first, explanations collapsed under a details toggle (Connect, Monitoring, Scopes, Live Defense, Incidents, Expectations, Onboarding, Setup, assessment detail).
