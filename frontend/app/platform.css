@@ -4,24 +4,24 @@
    delete those rules once this direction is approved. */
 
 :root:not(:has(.hero-full)), :root:has(.hero-full) {
-  --color-brand: #f4f4f2;
-  --color-brand-deep: #d6d6d3;
-  --color-on-brand: #121316;
-  --color-accent: #f4f4f2;
-  --color-ember: #f4f4f2;
-  --color-bg: #0b0b0c;
-  --color-panel: #131417;
-  --color-panel-2: #222327;
-  --color-line: #2b2b2e;
-  --color-control: #6f6f76;
-  --color-ink: #f4f4f2;
-  --color-ink-2: #dededf;
-  --color-muted: #a7a8ac;
-  --color-faint: #85858b;
-  --color-night: #070708;
-  --color-brand-soft: #222327;
-  --glass: rgb(255 255 255 / 3%);
-  --glass-line: rgb(255 255 255 / 8%);
+  --color-brand: #9cbbc7;
+  --color-brand-deep: #7f9eaa;
+  --color-on-brand: #0d1418;
+  --color-accent: #9cbbc7;
+  --color-ember: #9cbbc7;
+  --color-bg: #0d1418;
+  --color-panel: #1c282e;
+  --color-panel-2: #25353d;
+  --color-line: #30434b;
+  --color-control: #78939e;
+  --color-ink: #edf3f5;
+  --color-ink-2: #dce7ea;
+  --color-muted: #a7bac2;
+  --color-faint: #9fb0b8;
+  --color-night: #0d1418;
+  --color-brand-soft: #25353d;
+  --glass: rgb(237 243 245 / 3%);
+  --glass-line: rgb(237 243 245 / 8%);
   --font-display: var(--font-sans);
   --ui-radius: 10px;
 }
@@ -68,7 +68,7 @@ h1 { font-weight: 500; }
   .project-tab { position: relative; min-height: 34px; width: 100%; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 400; color: var(--color-muted); }
   .project-tab::after { display: none; }
   .project-tab:hover { background: var(--color-panel); }
-  .project-tab[aria-current="page"] { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%); }
+  .project-tab[aria-current="page"] { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 1px 0 rgb(237 243 245 / 6%); }
   .project-more { margin-top: 2px; }
   .project-more-button { height: 34px; }
   .project-more-chevron { margin-left: auto; }
@@ -87,7 +87,7 @@ h1 { font-weight: 500; }
 /* Landing: the top bar sits on the page, not on a tinted band. */
 @media (min-width: 640px) { html[data-home-hero] .site-header { background: transparent; border-bottom: 0; } }
 /* Phones: content scrolls under the fixed bar, so it stays solid. */
-@media (max-width: 639px) { html[data-home-hero] .site-header { background: rgb(15 15 16 / 94%); border-bottom: 1px solid var(--glass-line); } }
+@media (max-width: 639px) { html[data-home-hero] .site-header { background: rgb(13 20 24 / 94%); border-bottom: 1px solid var(--glass-line); } }
 .page-title { border-color: var(--glass-line); }
 
 /* Panels and the sidebar: flat graphite, hairline only. */
@@ -102,8 +102,8 @@ h1 { font-weight: 500; }
 .net-map, .graph-view, .lab-now, .monitor-head, .pricing-card-dark { background: var(--color-panel) !important; }
 .story-panel, .story-card, .story-stat { background: var(--color-panel); box-shadow: inset 0 0 0 1px var(--glass-line); }
 
-/* Ember: static fades and trail lines. Colour sits at the edges and on lines, never under text blocks. */
-:root { --ember: 167 168 172; --ember-hi: 244 244 242; --trail: linear-gradient(90deg, rgb(var(--ember-hi) / 85%), rgb(var(--ember) / 35%) 28%, transparent 72%); }
+/* Glacier accents on restrained dark surfaces. */
+:root { --ember: 167 186 194; --ember-hi: 237 243 245; --trail: linear-gradient(90deg, rgb(var(--ember-hi) / 85%), rgb(var(--ember) / 35%) 28%, transparent 72%); }
 :root body, :root:has(.hero-full) body, :root:not(:has(.hero-full)) body {
   background:
     radial-gradient(52% 44% at 88% -8%, rgb(var(--ember) / 10%), transparent 72%),
@@ -141,7 +141,7 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 /* Page change between parts of the site: the mark, and one line that fills. */
 .route-veil { background: var(--color-bg); }
 .route-veil-mark { top: calc(50% - 28px); }
-.route-veil-line { position: absolute; top: calc(50% + 44px); left: 50%; width: 180px; height: 2px; translate: -50%; overflow: hidden; border-radius: 2px; background: rgb(255 255 255 / 10%); }
+.route-veil-line { position: absolute; top: calc(50% + 44px); left: 50%; width: 180px; height: 2px; translate: -50%; overflow: hidden; border-radius: 2px; background: rgb(237 243 245 / 10%); }
 .route-veil-line-fill { display: block; height: 100%; transform-origin: left; background: linear-gradient(90deg, rgb(var(--ember)), rgb(var(--ember-hi))); transition: transform 120ms linear; }
 
 /* Sign-in: one flat card on an ember pool, with the trail on its top edge. */
@@ -204,9 +204,9 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 /* Graphite + platinum: the landing glow is a cool platinum haze, not a white floodlight. */
 :root:has(.hero-full) .hero-ink {
   background:
-    radial-gradient(75% 65% at 50% 108%, rgb(167 168 172 / 38%) 0%, rgb(167 168 172 / 14%) 35%, transparent 70%),
-    radial-gradient(60% 50% at 85% 0%, rgb(167 168 172 / 12%) 0%, transparent 70%),
-    #0b0b0c;
+    radial-gradient(75% 65% at 50% 108%, rgb(167 186 194 / 38%) 0%, rgb(167 186 194 / 14%) 35%, transparent 70%),
+    radial-gradient(60% 50% at 85% 0%, rgb(167 186 194 / 12%) 0%, transparent 70%),
+    #0d1418;
 }
 .hero-orb { opacity: 0.22; }
 
@@ -214,3 +214,19 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 .liquid-bg { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; transform: translateY(calc(var(--scroll, 0) * 120px)); }
 .hero-stage:has(.liquid-bg) .hero-orbs { display: none; }
 .hero-glow { display: none !important; }
+
+/* Glacier is the action color on every page; pale ink stays reserved for text. */
+:root main :is(a, button).bg-white,
+:root main :is(a, button).bg-brand,
+:root .hero-ink :is(a, button).bg-white,
+:root .btn-primary,
+:root .auth-btn-light { background-color: #9cbbc7; color: #0d1418; }
+:root main :is(a, button).bg-white:hover,
+:root main :is(a, button).bg-brand:hover,
+:root .hero-ink :is(a, button).bg-white:hover,
+:root .btn-primary:hover,
+:root .auth-btn-light:hover { background-color: #b6ced6; }
+@media (max-width: 767px) {
+  .hx-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; font-size: 10px; }
+  .hx-stages .hero-step { min-width: 0; }
+}

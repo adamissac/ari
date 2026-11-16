@@ -215,3 +215,7 @@ Keep organization/repository/commit navigation scoped to the selected repository
 Connected repo/commit pages expose a per-repository Automatic runs switch. ON shows background-run status; OFF exposes manual Run. The backend schedules independently of browser visits. Quick reads use Haiku 5.5 only. See backend README and issue #380 for prerequisites and quotas.
 
 - Approvals: the fix-delivery note reads `GET /projects/{id}/delivery-authority` (`state`: manual / inactive / active / revoked, plus `effective_mode`) and shows nothing about automatic approval until it has loaded.
+
+## Visual theme
+
+The shared Obsidian and Glacier palette uses `#0D1418` for the page, `#1C282E` for panels, `#9CBBC7` for actions and accents, and `#EDF3F5` for primary text. Theme tokens live in `app/globals.css`; `app/platform.css` applies them to the console and marketing pages. Status colors remain separate and labeled.
