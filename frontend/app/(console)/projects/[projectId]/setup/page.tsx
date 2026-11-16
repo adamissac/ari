@@ -263,7 +263,7 @@ function Walkthrough({
   const canContinue = currentQuestion !== 6 || authorized;
 
   return (
-      <div className="grid w-full min-w-0 grid-cols-1 gap-6 pb-10 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10 lg:pt-2">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-6 pb-10 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 lg:pt-2">
         <nav aria-label="Setup progress">
           <p className="font-mono text-xs text-muted lg:hidden">Question {currentQuestion} of 8 · {title}</p>
           <div role="progressbar" aria-label={`Question ${currentQuestion} of 8`} aria-valuemin={1} aria-valuemax={8} aria-valuenow={currentQuestion} className="mt-2 h-px bg-panel-2 lg:sr-only">
