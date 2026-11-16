@@ -14,7 +14,7 @@ export function DemoMarker({ className = '' }: { className?: string }) {
   );
 }
 
-const AVATAR_TONES = ['#edf3f5', '#d6d6d3', '#222327', '#5a5b5f', '#a35a00', '#1d5fa8'];
+const AVATAR_TONES = ['#edf3f5', '#c5d8df', '#25353d', '#78939e', '#7f9eaa', '#9cbbc7'];
 
 export function Avatar({ login, size = 28 }: { login: string; size?: number }) {
   const tone = AVATAR_TONES[parseInt(demoSha(login).slice(0, 2), 16) % AVATAR_TONES.length];

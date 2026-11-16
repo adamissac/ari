@@ -462,7 +462,7 @@ html[data-home-hero] .site-header { position: fixed; inset-inline: 0; top: 0; }
 .lab-run-picker { width: 15rem; max-width: 100%; flex-shrink: 0; align-self: flex-start; border-radius: 12px; padding: 14px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.16); }
 .lab-run-picker > div { gap: 8px; }
 .lab-run-picker label { padding-left: 12px; color: rgba(255, 255, 255, 0.7); font-size: 12px; line-height: 16px; letter-spacing: .06em; text-transform: uppercase; }
-.lab-run-picker select { display: block; width: 100%; min-height: 44px; margin: 0; padding: 10px 36px 10px 12px; font-size: 14px; line-height: 22px; color: #fff8f2; border-color: #ffffff38; border-radius: 7px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23fff8f2' stroke-width='1.5'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+.lab-run-picker select { display: block; width: 100%; min-height: 44px; margin: 0; padding: 10px 36px 10px 12px; font-size: 14px; line-height: 22px; color: #edf3f5; border-color: #edf3f538; border-radius: 7px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23edf3f5' stroke-width='1.5'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 @media (max-width: 640px) { .lab-run-picker { width: 100%; } }
 .lab-best { margin-left: 8px; display: inline-block; border-radius: 9999px; padding: 1px 8px; font-size: 0.75rem; font-weight: 600; line-height: 1.5; vertical-align: 1px; color: var(--color-brand-deep); background: var(--color-brand-soft); }
 .lab-headline { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); border-radius: 20px; background: var(--color-panel); box-shadow: inset 0 0 0 1px var(--color-line); overflow: hidden; }
@@ -1645,7 +1645,7 @@ body:has(.commit-stage) main { color: #edf3f5; }
   .hero-step { transition: translate 250ms var(--ease-quad), background-color 250ms; }
   .hero-step[data-active] { translate: 0 -3px; }
   .story-stat { transition: opacity 500ms var(--ease-quad), transform 500ms var(--ease-quad), background-color 250ms, box-shadow 250ms; }
-  .story-stat:hover { background: #ffffff0e; box-shadow: inset 0 0 0 1px #ffb89b44, 0 12px 32px #0002; }
+  .story-stat:hover { background: #edf3f50e; box-shadow: inset 0 0 0 1px #9cbbc744, 0 12px 32px #0002; }
   .story-card[data-active] .story-window { animation: evidence-enter 500ms var(--ease-quad) both; }
   .footer-brand { transition: translate 250ms var(--ease-quad); }
   .footer-brand:hover, .footer-brand:focus-visible { translate: 3px 0; }
@@ -1706,7 +1706,7 @@ body:has(.setup-layout) .site-header-inner { max-width: 100rem; padding-inline: 
 
 .commit-recording-map { display: flex; flex: 1; min-height: 340px; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; background: radial-gradient(ellipse at center, #9cbbc717, transparent 70%); }
 .commit-recording-map > p { max-width: 100%; overflow-wrap: anywhere; }
-.commit-recording-node { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; border: 1px solid #ffffff26; border-radius: 12px; background: #ffffff08; padding: 18px 36px; }
+.commit-recording-node { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; border: 1px solid #edf3f526; border-radius: 12px; background: #edf3f508; padding: 18px 36px; }
 .commit-recording-node strong { font: 26px var(--font-mono); }
 .commit-recording-connector { height: 44px; width: 1px; background: linear-gradient(#ff997c80, #ff997c22); }
 .commit-recording-worker h3 { margin-top: 8px; font-size: 24px; }
@@ -1738,7 +1738,7 @@ body:has(.setup-layout) .site-header-inner { max-width: 100rem; padding-inline: 
 
 /* Pixel-face figures (Sixtyfour, OFL) — card numbers and stats. */
 .home-deep .story-card-num { font-family: var(--font-sixtyfour), var(--font-mono), monospace; font-weight: 400; letter-spacing: 0.04em; color: rgba(255, 150, 120, 0.30); }
-.home-deep .stat-num { font-family: var(--font-sixtyfour), var(--font-mono), monospace; font-weight: 400; letter-spacing: 0.02em; color: #fff0e6;
+.home-deep .stat-num { font-family: var(--font-sixtyfour), var(--font-mono), monospace; font-weight: 400; letter-spacing: 0.02em; color: #edf3f5;
   font-size: clamp(2.25rem, 15vw, 3.75rem); font-size: clamp(2.25rem, 15.5cqw, 4.5rem); }
 /* Sixtyfour is very wide ("Never" ≈ 6.1px per font-px): size the stat to its card, not the
    viewport, so it can never push the page wider. */
@@ -1878,7 +1878,7 @@ body:has(.setup-layout) .site-header-inner { max-width: 100rem; padding-inline: 
 .hx:is([data-phase="attack"], [data-phase="trace"]) .hx-flaw { opacity: 1; background: var(--hx-red); box-shadow: 0 0 18px var(--hx-red); }
 .hx[data-phase="patch"] .hx-flaw { opacity: 1; background: var(--hx-amber); box-shadow: 0 0 18px var(--hx-amber); }
 .hx:is([data-phase="verify"], [data-phase="monitor"]) .hx-flaw { opacity: 1; width: 5px; margin-left: -2.5px; background: var(--hx-green); box-shadow: 0 0 20px var(--hx-green); }
-.hx-gate { position: absolute; top: 50%; left: 12px; translate: 0 -50%; padding: 2px 8px; border: 1px solid rgb(243 180 107 / 50%); border-radius: 9999px; font: 600 9px var(--font-mono); font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; color: var(--hx-amber); background: #0c0c0dcc; opacity: 0; transition: opacity 400ms; }
+.hx-gate { position: absolute; top: 50%; left: 12px; translate: 0 -50%; padding: 2px 8px; border: 1px solid rgb(243 180 107 / 50%); border-radius: 9999px; font: 600 9px var(--font-mono); font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; color: var(--hx-amber); background: #0d1418cc; opacity: 0; transition: opacity 400ms; }
 .hx[data-phase="patch"] .hx-gate { opacity: 1; animation: hx-blink 1100ms ease-in-out infinite alternate; }
 .hx-dot { top: 50%; left: 3%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 9999px; background: #edf3f5; box-shadow: 0 0 14px rgb(237 243 245 / 70%); transition: left 600ms var(--ease-quad), background-color 400ms, opacity 400ms; }
 .hx[data-phase="attack"] .hx-dot { animation: hx-breach 3000ms var(--ease-quad) both; background: var(--hx-red); box-shadow: 0 0 16px var(--hx-red); }
