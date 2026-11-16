@@ -46,7 +46,7 @@ test('supplied logo loads on sign-in, scrolled header and projects on desktop/mo
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', /^\/icon\.png(?:\?|$)/);
   const icon = await page.request.get((await page.locator('link[rel="icon"]').getAttribute('href'))!);
   expect(icon.ok()).toBe(true);
-  expect(createHash('sha256').update(await icon.body()).digest('hex')).toBe(sourceHash);
+  expect((await icon.body()).subarray(1, 4).toString()).toBe('PNG'); // the mark on an obsidian tile, drawn from the original below
   const asset = await page.request.get('/brand/ari-ant.png');
   expect(asset.ok()).toBe(true);
   expect(createHash('sha256').update(await asset.body()).digest('hex')).toBe(sourceHash);
