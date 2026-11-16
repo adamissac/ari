@@ -251,13 +251,14 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 @keyframes loading-fill { from { transform: scaleX(0); } 70%, to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .loading-screen .route-veil-line-fill { animation: none; transform: scaleX(1); } }
 
-/* Sign-in (components/auth-stage.tsx): contour panel left, form column right, full viewport below the header. */
+/* Sign-in (components/auth-stage.tsx): form column left, contour panel right, full viewport below the header. */
 :root main .auth-stage.auth-split { display: grid; min-height: calc(100svh - 56px); margin-inline: calc(50% - 50vw); margin-top: -24px; margin-bottom: -24px; place-items: stretch; background: var(--color-bg) !important; }
-@media (min-width: 1024px) { :root main .auth-stage.auth-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-.auth-visual { position: relative; display: none; overflow: hidden; background: var(--color-night); box-shadow: inset -1px 0 0 var(--glass-line); }
+@media (min-width: 1024px) { :root main .auth-stage.auth-split { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+.auth-visual { position: relative; display: none; overflow: hidden; background: var(--color-night); box-shadow: inset 1px 0 0 var(--glass-line); }
 @media (min-width: 1024px) { .auth-visual { display: block; } }
 .auth-visual .liquid-bg { transform: none; }
-.auth-visual-line { position: absolute; left: 48px; bottom: 48px; z-index: 1; font-family: var(--font-display); font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; color: #edf3f5; text-transform: none; }
+.auth-visual-line { position: absolute; left: 56px; bottom: 56px; z-index: 1; font-family: var(--font-display); font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; color: #edf3f5; text-transform: none; }
 .auth-pane { display: flex; align-items: center; justify-content: center; padding: 48px 24px; }
-:root .auth-split .auth-card { max-width: 400px; padding: 0 !important; background: none !important; box-shadow: none !important; border-radius: 0; overflow: visible; }
+@media (min-width: 1024px) { .auth-pane { padding: 48px 56px; } }
+:root .auth-split .auth-card { max-width: 360px; padding: 0 !important; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-radius: 0; overflow: visible; }
 :root .auth-split .auth-card::before { display: none; }

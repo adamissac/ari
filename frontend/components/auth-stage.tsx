@@ -6,8 +6,9 @@ import { LiquidBackground } from '@/components/liquid-bg';
 import { useMarkAuthStage } from '@/lib/auth-stage-presence';
 
 /**
- * Sign-in layout: the hero's contour field on the left (desktop only) with the brand line, and the
- * form on a calm column to the right. No floating card, glow or orbit decoration.
+ * Sign-in layout: the form in a narrow column on the left, where the eye starts, and the hero's
+ * contour field with the brand line on the right (desktop only), as split sign-in pages such as
+ * Supabase's do. No floating card, glow or orbit decoration.
  */
 export function AuthStage({
   kicker = BRAND_NAME,
@@ -27,10 +28,6 @@ export function AuthStage({
   useMarkAuthStage();
   return (
     <section className="auth-stage auth-split" aria-labelledby="auth-title">
-      <div className="auth-visual" aria-hidden="true">
-        <LiquidBackground />
-        <p className="auth-visual-line">Find the flaw.<br />Prove the fix.</p>
-      </div>
       <div className="auth-pane">
         <div className="auth-card w-full" data-testid={testId}>
           <div className="flex items-center gap-2.5">
@@ -42,6 +39,10 @@ export function AuthStage({
           <div className="mt-8">{children}</div>
           {footnote && <div className="auth-footnote mt-8">{footnote}</div>}
         </div>
+      </div>
+      <div className="auth-visual" aria-hidden="true">
+        <LiquidBackground />
+        <p className="auth-visual-line">Find the flaw.<br />Prove the fix.</p>
       </div>
     </section>
   );
