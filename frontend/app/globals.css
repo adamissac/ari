@@ -1602,28 +1602,29 @@ body:has(.commit-stage) main { color: #edf3f5; }
 /* Quiet motion frames the form without competing with it. */
 .auth-stage .hero-content { position: relative; }
 
-/* Landing footer: shared baselines, two navigation columns, simple legal row. */
-.landing-footer { position: relative; isolation: isolate; overflow: hidden; margin-inline: calc(50% - 50vw); border-top: 1px solid rgb(237 243 245 / 8%); padding: 56px max(24px, calc((100vw - 1216px) / 2)) 20px; background: transparent; color: #edf3f5; }
-.footer-ruler { display: none; }
-.footer-glow { position: absolute; inset: auto -10% -60% -10%; height: 100%; z-index: 0; pointer-events: none; background: radial-gradient(45% 55% at 50% 80%, rgb(167 186 194 / 20%), transparent 70%); filter: blur(30px); }
-.footer-line { position: absolute; top: 0; left: 50%; width: min(720px, 70%); height: 1px; translate: -50% 0; z-index: 1; pointer-events: none; background: linear-gradient(90deg, transparent, #dce7ea, transparent); box-shadow: 0 0 14px rgb(156 187 199 / 60%); opacity: .7; }
-.footer-top { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto; gap: 64px; align-items: start; }
-.footer-brand { display: inline-flex; align-items: center; gap: 12px; height: 42px; }
-.footer-brand > span { font-size: 42px; line-height: 1; letter-spacing: -.04em; }
-.footer-identity > p { margin-top: 16px; color: #78939e; font-size: 14px; line-height: 1.6; }
-.footer-links { display: grid; grid-template-columns: 160px 180px; gap: 48px; padding-top: 4px; }
-.footer-links h2 { margin-bottom: 16px; font: 10px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: #78939e; }
-.footer-links a { display: block; width: fit-content; padding-block: 8px; color: #edf3f5; font-size: 13px; line-height: 1.5; }
-.footer-links a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.footer-bottom { position: relative; z-index: 1; margin-top: 36px; padding-top: 18px; border-top: 1px solid #e2b79e26; display: flex; align-items: center; justify-content: space-between; gap: 24px; color: #78939e; font: 10px var(--font-mono); }
-.footer-top-link { display: inline-flex; align-items: center; gap: 12px; min-height: 36px; }
+/* Landing footer (components/landing-footer.tsx): brand and three link columns on one grid, a contour
+   band with the ARI wordmark cut out of it, then a quiet legal row. */
+.landing-footer { position: relative; isolation: isolate; overflow: hidden; margin-inline: calc(50% - 50vw); border-top: 1px solid var(--glass-line); padding: 56px max(24px, calc((100vw - 1216px) / 2)) 0; background: var(--color-bg); }
+.footer-top { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px; align-items: start; }
+.footer-brand { display: inline-flex; align-items: center; gap: 10px; height: 32px; color: #edf3f5; }
+.footer-brand > span { font-size: 28px; line-height: 1; letter-spacing: -.02em; }
+.footer-identity > p { margin-top: 16px; color: var(--color-muted); font-size: 14px; line-height: 1.6; }
+.footer-links { display: grid; grid-template-columns: repeat(3, minmax(120px, auto)); gap: 56px; }
+.footer-links h2 { margin-bottom: 12px; font-size: 13px; font-weight: 500; color: var(--color-faint); }
+.footer-links a { display: block; width: fit-content; padding-block: 6px; color: var(--color-ink-2); font-size: 14px; line-height: 1.5; transition: color 150ms var(--ease-out); }
+.footer-links a:hover, .footer-links a:focus-visible { color: #edf3f5; }
+.footer-band { position: relative; height: clamp(110px, 14vw, 200px); margin: 40px calc(-1 * max(24px, calc((100vw - 1216px) / 2))) 0; overflow: hidden; -webkit-mask-image: linear-gradient(180deg, transparent, #000 45%); mask-image: linear-gradient(180deg, transparent, #000 45%); }
+.footer-band .liquid-bg { transform: none; }
+.footer-wordmark { position: absolute; left: 50%; bottom: 0; z-index: 1; translate: -50% 22%; font-family: var(--font-display); font-weight: 700; font-size: clamp(120px, 24vw, 360px); line-height: .8; letter-spacing: -.04em; color: var(--color-bg); pointer-events: none; }
+.footer-bottom { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 16px 0 20px; border-top: 1px solid var(--glass-line); color: var(--color-faint); font-size: 13px; }
+.footer-top-link { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; transition: color 150ms var(--ease-out); }
+.footer-top-link:hover { color: var(--color-ink); }
 @media (max-width: 767px) {
-  .landing-footer { padding: 32px 24px 16px; }
+  .landing-footer { padding: 40px 24px 0; }
   .footer-top { grid-template-columns: 1fr; gap: 28px; }
-  .footer-links { grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 0; }
-  .footer-links h2 { margin-bottom: 10px; font-size: 12px; }
-  .footer-links a { font-size: 12px; }
-  .footer-bottom { margin-top: 24px; padding-top: 12px; }
+  .footer-links { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .footer-links a { font-size: 13px; }
+  .footer-band { height: 96px; margin-top: 24px; margin-inline: -24px; }
 }
 
 /* Small motion cues complement the existing scroll-driven chapters. */
@@ -1636,12 +1637,6 @@ body:has(.commit-stage) main { color: #edf3f5; }
   .story-stat { transition: opacity 500ms var(--ease-quad), transform 500ms var(--ease-quad), background-color 250ms, box-shadow 250ms; }
   .story-stat:hover { background: #edf3f50e; box-shadow: inset 0 0 0 1px #9cbbc744, 0 12px 32px #0002; }
   .story-card[data-active] .story-window { animation: evidence-enter 500ms var(--ease-quad) both; }
-  .footer-brand { transition: translate 250ms var(--ease-quad); }
-  .footer-brand:hover, .footer-brand:focus-visible { translate: 3px 0; }
-  .footer-links a { transition: translate 220ms var(--ease-quad), color 220ms; }
-  .footer-links a:hover, .footer-links a:focus-visible { translate: 4px 0; color: #edf3f5; }
-  .footer-top-link > span { transition: translate 220ms var(--ease-quad); }
-  .footer-top-link:hover > span { translate: 0 -3px; }
   .btn:not(:disabled) { transition: translate 200ms var(--ease-quad), background-color 250ms, box-shadow 250ms; }
   .btn:not(:disabled):hover { translate: 0 -2px; }
   .btn:not(:disabled):active { translate: 0 0; }

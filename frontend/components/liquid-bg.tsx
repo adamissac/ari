@@ -18,11 +18,12 @@ void main(){
   float f=fract(b), d=min(f,1.-f), w=fwidth(b);
   float line=1.-smoothstep(0.,w*1.9,d);
   float major=step(mod(floor(b+.5),5.),.5);
-  float glow=smoothstep(1.15,0.,length(uv*vec2(.8,1.)-vec2(0.,-.62)));
+  vec2 sn=gl_FragCoord.xy/r-.5; // screen-normalised, so glow and vignette fit any aspect (hero, footer band, sign-in panel)
+  float glow=smoothstep(1.15,0.,length((sn-vec2(0.,-.62))*vec2(1.2,1.)));
   vec3 ice=vec3(.61,.73,.78), ash=vec3(.145,.208,.239), night=vec3(.051,.078,.094);
   vec3 c=night+ice*glow*glow*.12;
   c+=mix(ash,ice,glow)*line*mix(.35,.85,major)*(.35+.65*glow);
-  float v=smoothstep(1.2,.3,length(uv*vec2(.7,1.)));
+  float v=smoothstep(1.2,.3,length(sn*vec2(1.1,1.)));
   gl_FragColor=vec4(mix(night*.7,c,v),1.);
 }`;
 const VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';

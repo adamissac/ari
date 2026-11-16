@@ -274,7 +274,7 @@ function Walkthrough({
               const number = index + 1;
               const done = finished || progress.answers[QUESTION_KEYS[index] as SetupQuestion] !== undefined;
               return (
-                <li key={label} aria-current={!finished && currentQuestion === number ? 'step' : undefined} className={`flex items-center gap-3 border-l-2 px-3 py-2 text-sm ${!finished && currentQuestion === number ? 'border-brand bg-brand/10 text-ink' : done ? 'border-line-3 text-muted' : 'border-transparent text-faint'}`}>
+                <li key={label} aria-current={!finished && currentQuestion === number ? 'step' : undefined} className={`step-item flex items-center gap-3 rounded-md px-3 py-2 text-sm ${!finished && currentQuestion === number ? 'step-item-current text-ink' : done ? 'text-muted' : 'text-faint'}`}>
                   <span className="w-6 shrink-0 font-mono text-xs tabular-nums">{number}</span>
                   <span>{label}</span>
                   {done && <span className="ml-auto font-mono text-xs text-muted">Saved</span>}

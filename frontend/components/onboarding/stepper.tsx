@@ -28,8 +28,8 @@ export function SetupSteps({
   const renderStep = (step: number) => {
     const state: StepState = step === current ? 'current' : done.has(step) ? 'done' : 'upcoming';
     const href = step === 1 ? '/connect' : step === 2 && org ? `/connect/${encodeURIComponent(org)}` : undefined;
-    const className = `flex w-full items-center gap-3 border-l-2 px-3 py-2 text-left text-sm transition-colors duration-[120ms] ${
-      state === 'current' ? 'border-brand bg-panel text-ink' : state === 'done' ? 'border-line-3 text-muted hover:text-ink' : 'border-transparent text-faint hover:text-muted'
+    const className = `step-item flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm transition-colors duration-[120ms] ${
+      state === 'current' ? 'step-item-current text-ink' : state === 'done' ? 'text-muted hover:text-ink' : 'text-faint hover:text-muted'
     }`;
     const content = (
       <>

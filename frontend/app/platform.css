@@ -263,3 +263,6 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 @media (min-width: 1024px) { .auth-pane { padding: 48px 56px; } }
 :root .auth-split .auth-card { max-width: 360px; padding: 0 !important; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-radius: 0; overflow: visible; }
 :root .auth-split .auth-card::before { display: none; }
+
+/* Step lists (setup, onboarding) share the sidebar tab's current state: one surface step and a glacier bar. */
+.step-item-current { background: var(--color-panel-2); box-shadow: inset 2px 0 0 var(--color-brand); }

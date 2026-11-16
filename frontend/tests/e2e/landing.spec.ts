@@ -296,8 +296,8 @@ test('motion accents respond to hover and respect reduced motion', async ({ page
   await expect(footer.locator('.footer-top')).toHaveAttribute('data-shown', 'true');
   const link = footer.getByRole('link', { name: 'Pricing', exact: true });
   await link.hover();
-  await expect(link).toHaveCSS('translate', '4px');
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(link).toHaveCSS('color', 'rgb(237, 243, 245)'); // hover brightens in place, never slides
   await expect(link).toHaveCSS('translate', 'none');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(footer.locator('.footer-top')).toHaveCSS('transition-duration', '0s');
 });

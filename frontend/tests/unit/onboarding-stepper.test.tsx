@@ -18,5 +18,5 @@ it('renders the four-step first-customer journey with done/current states and ar
   expect(screen.getByText('Step 3 of 4 · Set up the repository')).toBeTruthy();
   expect(screen.getAllByText('Done')).toHaveLength(2);
   expect(items[0]?.querySelector('a')?.className).toContain('border-line-3');
-  expect(items[2]?.querySelector('button')?.className).toContain('border-brand');
+  expect(items[2]?.querySelector('button')?.className).toContain('step-item-current');
 });

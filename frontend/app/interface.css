@@ -107,19 +107,9 @@
 .story-panel { border-radius: 10px; }
 .story-stat { border-radius: 0; border-top: 1px solid rgb(237 243 245 / 18%); }
 .hero-step { border: 1px solid rgb(237 243 245 / 9%); border-radius: 4px; }
-.footer-ruler { height: 5px; background: repeating-linear-gradient(90deg, #d2b9ac55 0 1px, transparent 1px 7px); opacity: .8; }
-.footer-brand > span { font-size: 52px; }
-.footer-links a { transition: color 200ms, translate 200ms; }
-.footer-links a:hover { color: #b6ced6; translate: 4px 0; }
-.footer-horizon { background: radial-gradient(ellipse at 25% 140%, #9cbbc744, transparent 65%); }
 
 @media (max-width: 639px) {
   .site-header-inner { min-height: 68px; }
   .amap-head { padding: 16px; }
   .amap-phases-compact .amap-phase-compact { gap: 3px; padding-inline: 5px; font-size: 0.75rem; }
-  .footer-brand > span { font-size: 42px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .footer-links a { transition: none; }
-  .footer-links a:hover { translate: none; }
 }
