@@ -41,7 +41,9 @@ from backend.live_defense.pilot_guard import (
     leftovers_block_enable,
     reconcile_pending_jobs,
 )
+from backend.live_defense.policy import runtime_status
 from backend.live_defense.readiness import assess
+from backend.live_defense.rl_runtime import decision_activity, smoke_summary
 from monitoring.runtime import ANOMALY_EVENT_THRESHOLD
 from shared.audit import ActorType
 from shared.base import utcnow
@@ -640,6 +642,9 @@ def _defense_health(conn: sa.Connection, project_id: str) -> DefenseHealth:
         worker_status="unknown",
         telemetry_status="unknown",
         policy_status="unknown",
+        rl_runtime=runtime_status(),
+        rl_decisions=decision_activity(conn, project_id),
+        rl_smoke=smoke_summary(),
     )
 
 
@@ -705,7 +710,13 @@ def rl_readiness(project_id: str, request: Request) -> RlReadinessAssessment:
             ).scalars()
             if row and row.get("rl_gated_pilot")
         )
-        return assess(gated_application_count=gated)
+        return assess(gated_application_count=gated).model_copy(
+            update={
+                "rl_runtime": runtime_status(),
+                "rl_decisions": decision_activity(conn, project_id),
+                "rl_smoke": smoke_summary(),
+            }
+        )
 
 
 @router.get("/projects/{project_id}/pilot-report", response_model=PilotReport)

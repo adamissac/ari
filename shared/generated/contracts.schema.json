@@ -4383,6 +4383,39 @@
           "description": "Queued jobs; null if the queue was not readable",
           "title": "Queue Depth"
         },
+        "rl_decisions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RlDecisionActivity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rl_runtime": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RlRuntimeStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rl_smoke": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RlSmokeSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "status": {
           "const": "unknown",
           "default": "unknown",
@@ -4447,7 +4480,10 @@
         "telemetry_status",
         "telemetry_status_reason",
         "policy_status",
-        "policy_status_reason"
+        "policy_status_reason",
+        "rl_runtime",
+        "rl_decisions",
+        "rl_smoke"
       ],
       "title": "DefenseHealth",
       "type": "object"
@@ -13084,6 +13120,78 @@
       "title": "RlCategoryResult",
       "type": "object"
     },
+    "RlDecisionActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "abstentions": {
+          "description": "Decisions in the window where v6 abstained",
+          "minimum": 0,
+          "title": "Abstentions",
+          "type": "integer"
+        },
+        "last_decision_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Decision At"
+        },
+        "last_decision_status": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Decision Status"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "recommendations": {
+          "description": "Decisions in the window where v6 ran",
+          "minimum": 0,
+          "title": "Recommendations",
+          "type": "integer"
+        },
+        "window_hours": {
+          "const": 24,
+          "default": 24,
+          "title": "Window Hours",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "window_hours",
+        "last_decision_at",
+        "last_decision_status",
+        "recommendations",
+        "abstentions",
+        "reason"
+      ],
+      "title": "RlDecisionActivity",
+      "type": "object"
+    },
     "RlEvaluationMetricSpec": {
       "additionalProperties": false,
       "description": "One required metric. Numeric thresholds stay unset until RL-owner approval.",
@@ -13324,6 +13432,39 @@
           "title": "Ready",
           "type": "boolean"
         },
+        "rl_decisions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RlDecisionActivity"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rl_runtime": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RlRuntimeStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rl_smoke": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RlSmokeSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "schema_version": {
           "maxLength": 500,
           "title": "Schema Version",
@@ -13352,9 +13493,270 @@
         "owner_pilot_authorization",
         "phase7_started",
         "gated_application_count",
-        "caveat"
+        "caveat",
+        "rl_runtime",
+        "rl_decisions",
+        "rl_smoke"
       ],
       "title": "RlReadinessAssessment",
+      "type": "object"
+    },
+    "RlRuntimeStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_at": {
+          "format": "date-time",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "checkpoint_path": {
+          "maxLength": 500,
+          "title": "Checkpoint Path",
+          "type": "string"
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Measured sha256 of the file on disk, when it was readable",
+          "title": "Checkpoint Sha256"
+        },
+        "label": {
+          "enum": [
+            "RL runtime: loaded",
+            "RL runtime: not loaded"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "loaded": {
+          "title": "Loaded",
+          "type": "boolean"
+        },
+        "mode": {
+          "const": "shadow, recommendation only",
+          "default": "shadow, recommendation only",
+          "title": "Mode",
+          "type": "string"
+        },
+        "pinned_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pinned Sha256",
+          "type": "string"
+        },
+        "policy_version": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policy Version"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact reason the frozen v6 runner is not loaded",
+          "title": "Reason"
+        },
+        "torch_available": {
+          "title": "Torch Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "loaded",
+        "label",
+        "reason",
+        "mode",
+        "checkpoint_path",
+        "pinned_sha256",
+        "checkpoint_sha256",
+        "policy_version",
+        "torch_available",
+        "checked_at"
+      ],
+      "title": "RlRuntimeStatus",
+      "type": "object"
+    },
+    "RlSmokeSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checkpoint Sha256"
+        },
+        "compromise_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compromise Rate"
+        },
+        "device": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device"
+        },
+        "episodes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Episodes"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passed"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "source_path": {
+          "maxLength": 500,
+          "title": "Source Path",
+          "type": "string"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Steps"
+        },
+        "transitions_written": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transitions Written"
+        }
+      },
+      "required": [
+        "available",
+        "reason",
+        "source_path",
+        "passed",
+        "finished_at",
+        "episodes",
+        "steps",
+        "transitions_written",
+        "compromise_rate",
+        "availability",
+        "checkpoint_sha256",
+        "device"
+      ],
+      "title": "RlSmokeSummary",
       "type": "object"
     },
     "RootCause": {
@@ -15394,5 +15796,5 @@
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HackATL platform contracts",
-  "x-schema-version": "0.30.0"
+  "x-schema-version": "0.31.0"
 }

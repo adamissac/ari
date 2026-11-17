@@ -68,6 +68,9 @@
   "phase6_verdict": "CONDITIONAL GO (rules-based shadow). Distinct from the RL-gated pilot.",
   "phase7_started": false,
   "ready": false,
+  "rl_decisions": null,
+  "rl_runtime": null,
+  "rl_smoke": null,
   "schema_version": "0.20.0",
   "serving_contract": {
     "abstention_reason": null,

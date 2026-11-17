@@ -1,4 +1,318 @@
 {
+  "$defs": {
+    "RlDecisionActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "abstentions": {
+          "description": "Decisions in the window where v6 abstained",
+          "minimum": 0,
+          "title": "Abstentions",
+          "type": "integer"
+        },
+        "last_decision_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Decision At"
+        },
+        "last_decision_status": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Decision Status"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "recommendations": {
+          "description": "Decisions in the window where v6 ran",
+          "minimum": 0,
+          "title": "Recommendations",
+          "type": "integer"
+        },
+        "window_hours": {
+          "const": 24,
+          "default": 24,
+          "title": "Window Hours",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "recommendations",
+        "abstentions"
+      ],
+      "title": "RlDecisionActivity",
+      "type": "object"
+    },
+    "RlRuntimeStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_at": {
+          "format": "date-time",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "checkpoint_path": {
+          "maxLength": 500,
+          "title": "Checkpoint Path",
+          "type": "string"
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Measured sha256 of the file on disk, when it was readable",
+          "title": "Checkpoint Sha256"
+        },
+        "label": {
+          "enum": [
+            "RL runtime: loaded",
+            "RL runtime: not loaded"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "loaded": {
+          "title": "Loaded",
+          "type": "boolean"
+        },
+        "mode": {
+          "const": "shadow, recommendation only",
+          "default": "shadow, recommendation only",
+          "title": "Mode",
+          "type": "string"
+        },
+        "pinned_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Pinned Sha256",
+          "type": "string"
+        },
+        "policy_version": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Policy Version"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact reason the frozen v6 runner is not loaded",
+          "title": "Reason"
+        },
+        "torch_available": {
+          "title": "Torch Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "loaded",
+        "label",
+        "checkpoint_path",
+        "pinned_sha256",
+        "torch_available",
+        "checked_at"
+      ],
+      "title": "RlRuntimeStatus",
+      "type": "object"
+    },
+    "RlSmokeSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Availability"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Checkpoint Sha256"
+        },
+        "compromise_rate": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Compromise Rate"
+        },
+        "device": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device"
+        },
+        "episodes": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Episodes"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finished At"
+        },
+        "passed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Passed"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "source_path": {
+          "maxLength": 500,
+          "title": "Source Path",
+          "type": "string"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Steps"
+        },
+        "transitions_written": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transitions Written"
+        }
+      },
+      "required": [
+        "available",
+        "source_path"
+      ],
+      "title": "RlSmokeSummary",
+      "type": "object"
+    }
+  },
   "additionalProperties": false,
   "description": "Recorded timestamps for ingest and the job worker. Not a liveness verdict.",
   "properties": {
@@ -60,6 +374,39 @@
       "default": null,
       "description": "Queued jobs; null if the queue was not readable",
       "title": "Queue Depth"
+    },
+    "rl_decisions": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RlDecisionActivity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "rl_runtime": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RlRuntimeStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "rl_smoke": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RlSmokeSummary"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "status": {
       "const": "unknown",

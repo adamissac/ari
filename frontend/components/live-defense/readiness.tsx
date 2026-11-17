@@ -2,6 +2,7 @@
 
 import type { EvidenceCheckStatus, RlReadinessAssessment } from '@hackatl/frontend-transport';
 import { SourceTag } from '@/components/live-defense/common';
+import { RlRuntimeCard } from '@/components/live-defense/rl-runtime';
 import { Async, Empty, Mono, Panel, Tag } from '@/components/ui';
 import { RL_BLOCKED_COPY, type LiveDefenseMode } from '@/lib/live-defense';
 import type { Resource } from '@/lib/use-resource';
@@ -24,11 +25,14 @@ export function ReadinessDashboard({
 }) {
   if (mode === 'layout-preview') {
     return (
-      <Panel title="Sample readiness chrome" actions={<SourceTag mode="layout-preview" />}>
-        <p className="text-sm text-ink" data-testid="live-defense-preview-readiness">
-          Sample layout. This panel does not compute readiness. The live tab reads GET /rl-readiness from the backend.
-        </p>
-      </Panel>
+      <div className="flex flex-col gap-4">
+        <Panel title="Sample readiness chrome" actions={<SourceTag mode="layout-preview" />}>
+          <p className="text-sm text-ink" data-testid="live-defense-preview-readiness">
+            Sample layout. This panel does not compute readiness. The live tab reads GET /rl-readiness from the backend.
+          </p>
+        </Panel>
+        <RlRuntimeCard unavailableReason="sample layout has no project; the live tab reads GET /rl-readiness" />
+      </div>
     );
   }
   if (!projectId) return <Empty>Choose a project to load the backend readiness assessment.</Empty>;
@@ -63,6 +67,7 @@ function ReadinessBody({ assessment }: { assessment: RlReadinessAssessment }) {
         </p>
         <p className="mt-2 text-xs text-muted">{assessment.caveat}</p>
       </Panel>
+      <RlRuntimeCard runtime={assessment.rl_runtime} decisions={assessment.rl_decisions} smoke={assessment.rl_smoke} />
       <Panel title="Categories A–J">
         <ul className="flex flex-col gap-2" data-testid="live-defense-readiness-categories">
           {assessment.categories.map(item => (
