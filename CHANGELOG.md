@@ -6,7 +6,7 @@ All notable changes are documented here. Format follows
 
 ## [Unreleased]
 
-- Smaller hosted footprint: the Railway entrypoint starts 2 workers instead of 12 (`WORKER_PROCESSES`), and a worker left above `WORKER_MAX_RSS_MB` (250 on Railway, off elsewhere) by a job restarts itself in place. Commits beyond the worker count wait in the queue instead of all running at once.
+- Smaller hosted footprint: the Railway entrypoint starts 3 workers instead of 12 (`WORKER_PROCESSES`), two for ordinary jobs and one kept free for emergency stop/rollback/expiry, and a worker left above `WORKER_MAX_RSS_MB` (250 on Railway, off elsewhere) by a job restarts itself in place. Commits beyond two wait in the queue instead of all running at once.
 
 - Updated the frontend to the Obsidian and Glacier palette across marketing, console, and demo pages.
 

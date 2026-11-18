@@ -83,7 +83,7 @@ switch is OFF.
 Eligible pushed commits and manual starts share one project pool of 10 starts per
 rolling hour and 50 per rolling day; the $50 global rolling-day spend cap
 applies across all triggers and projects. Over-quota commits are skipped, not retried.
-`WORKER_PROCESSES` (default 2, ~90 MB each idle) runs that many commits at once; the rest
+`WORKER_PROCESSES` (default 3, ~90 MB each idle) runs one fewer commits at once (2); the rest
 wait in the queue (see "Keeping the Railway bill small"). Jobs are
 claimed with `SKIP LOCKED`. Signed webhooks are never rate limited: GitHub does not
 retry a 429, and the durable queue absorbs bursts.
@@ -142,8 +142,11 @@ busy or not. Measured on this repository (Linux, idle, 2026-11-18): the API is a
 workers were therefore about 1.1 GB before any job ran, and a worker that had run an
 assessment kept whatever that job allocated.
 
-- `WORKER_PROCESSES` defaults to 2. Queued jobs wait instead of all starting at once.
+- `WORKER_PROCESSES` defaults to 3. Queued jobs wait instead of all starting at once.
   Raise it for a demo or a burst of commits; each extra worker costs about 90 MB idle.
+- `start.sh` sets `JOB_MAX_RUNNING_GLOBAL` to one below the worker count (2), so ordinary
+  jobs never hold every worker. Emergency stop, rollback and expiry are claimed outside
+  that cap and always find a free one. An explicit `JOB_MAX_RUNNING_GLOBAL` wins.
 - `WORKER_MAX_RSS_MB` defaults to 250 in `start.sh` (0 = off, the default elsewhere). A
   worker above it after a job re-executes itself: same pid, memory back to about 90 MB.
   Not measured: how large a worker gets during a real assessment.

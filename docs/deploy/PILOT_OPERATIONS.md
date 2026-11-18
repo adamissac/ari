@@ -80,7 +80,8 @@ access logs take the same path. Implemented in `backend/ops_logging.py`.
 
 - Compose: `worker` is capped at `mem_limit: 2g`, `cpus: 2.0`, `pids_limit: 512`;
   `api` at `1g`/`1.0`/`256`. One worker process = one job at a time.
-- Railway: `WORKER_PROCESSES` (default 2, ~90 MB each idle) bounds concurrency;
+- Railway: `WORKER_PROCESSES` (default 3, ~90 MB each idle) bounds concurrency; ordinary
+  jobs use at most one fewer (`JOB_MAX_RUNNING_GLOBAL`), leaving a worker for emergency stop;
   `WORKER_MAX_RSS_MB` (default 250 on Railway) restarts a worker in place after a job
   that left it above that size;
   `LLM_MAX_TOKENS_PER_ASSESSMENT` / `LLM_MAX_USD_PER_ASSESSMENT` /
@@ -202,7 +203,7 @@ Browser ──► Vercel (Next.js, ari-ai-lake.vercel.app)
 Railway service (single container, deploy/railway/start.sh)
    ├─ hackatl-migrate          (alembic upgrade head at boot)
    ├─ hackatl-api             (uvicorn :8000 — /healthz /readyz /diagnostics + /api/v1)
-   ├─ hackatl-worker  × N     (WORKER_PROCESSES, default 2)
+   ├─ hackatl-worker  × N     (WORKER_PROCESSES, default 3)
    └─ python -m backend.redeliver   (GitHub webhook redelivery sweeper)
             │
             ├──► Railway PostgreSQL — durable job queue (SKIP LOCKED, lease heartbeats),
@@ -230,7 +231,7 @@ Railway backend service must set, or `/readyz.capabilities` reports the gap:
 | Model | `ANTHROPIC_API_KEY` (production forces `claude-haiku-5-5`; `ANTHROPIC_MODEL*` pins are set in start.sh) |
 | GitHub | `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`, `GITHUB_WEBHOOK_SECRET` |
 | Sandbox | `SECURITY_SANDBOX=vercel` + `VERCEL_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` (or `docker` where a daemon exists) |
-| Rollouts | `WORKER_PROCESSES` (default 2), `WORKER_MAX_RSS_MB`, optional `READYZ_REQUIRE_WORKERS`, `WORKER_LIVENESS_S`, `WORKER_HEARTBEAT_INTERVAL_S` |
+| Rollouts | `WORKER_PROCESSES` (default 3), `WORKER_MAX_RSS_MB`, optional `READYZ_REQUIRE_WORKERS`, `WORKER_LIVENESS_S`, `WORKER_HEARTBEAT_INTERVAL_S` |
 
 Vercel frontend must set `BACKEND_ORIGIN=<railway public origin>`; leave
 `NEXT_PUBLIC_DEMO_ONLY` unset and Deployment Protection off so the OAuth
