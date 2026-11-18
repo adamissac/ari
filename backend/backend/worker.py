@@ -347,9 +347,11 @@ def _restart() -> None:  # pragma: no cover - replaces the process image
     """Replace this process with a fresh worker. The pid is kept, so a supervisor that
     watches it (deploy/railway/start.sh) sees no exit."""
     from backend.db import get_engine
+    from backend.preflight import RECYCLED_ENV
 
     get_engine().dispose()
     logging.shutdown()
+    os.environ[RECYCLED_ENV] = "1"
     os.execv(sys.executable, [sys.executable, *sys.orig_argv[1:]])
 
 

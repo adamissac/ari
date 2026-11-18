@@ -7,14 +7,14 @@ from pathlib import Path
 
 import pytest
 
-from backend import worker
+from backend import cli, preflight, worker
 from backend.settings import get_settings
 
 SCRIPT = """
 import os, sys
 from backend import worker
 if os.environ.get("ARI_TEST_RESTARTED"):
-    print("restarted", os.getpid(), flush=True)
+    print("restarted", os.getpid(), os.environ.get("WORKER_RECYCLED"), flush=True)
     sys.exit(0)
 def run_one(owner, kinds=None):
     os.environ["ARI_TEST_RESTARTED"] = "1"
@@ -35,6 +35,7 @@ def _run(limit: str) -> subprocess.Popen[str]:
         ),
     }
     env.pop("ARI_TEST_RESTARTED", None)
+    env.pop("WORKER_RECYCLED", None)
     return subprocess.Popen(
         [sys.executable, "-c", SCRIPT], stdout=subprocess.PIPE, text=True, env=env
     )
@@ -48,6 +49,27 @@ def test_worker_over_the_limit_restarts_in_place_after_its_job():
     first, second = (line.split() for line in out.strip().splitlines())
     assert (first[0], second[0]) == ("job", "restarted")
     assert first[1] == second[1] == str(proc.pid)
+    assert second[2] == "1"
+
+
+@pytest.mark.parametrize("recycled", [True, False])
+def test_recycled_worker_skips_the_migration_check(monkeypatch, recycled):
+    """A rolling deploy migrates the database under the old container's workers."""
+
+    def behind() -> None:
+        raise SystemExit("preflight migration check failed")
+
+    monkeypatch.setattr(preflight, "require_config", lambda **_: None)
+    monkeypatch.setattr(preflight, "require_migrated", behind)
+    monkeypatch.setattr(worker, "main", lambda: 0)
+    monkeypatch.setattr("backend.ops_logging.configure_logging", lambda: None)
+    if recycled:
+        monkeypatch.setenv(preflight.RECYCLED_ENV, "1")
+    else:
+        monkeypatch.delenv(preflight.RECYCLED_ENV, raising=False)
+    with pytest.raises(SystemExit) as exit_:
+        cli.worker()
+    assert exit_.value.code == (0 if recycled else "preflight migration check failed")
 
 
 @pytest.mark.skipif(worker.rss_mb() is None, reason="needs /proc")

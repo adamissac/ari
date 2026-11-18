@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 
 def serve() -> None:
     from backend import preflight
@@ -23,7 +25,8 @@ def worker() -> None:
     preflight.require_config(worker=True)
     # A worker on a stale schema fails jobs in ways the queue retries forever;
     # refuse to start instead. `hackatl-migrate` runs first in every deploy path.
-    preflight.require_migrated()
+    if not os.environ.get(preflight.RECYCLED_ENV):
+        preflight.require_migrated()
 
     from backend.worker import main
 

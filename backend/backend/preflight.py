@@ -206,6 +206,12 @@ def require_config(*, worker: bool = False) -> None:
         raise SystemExit("preflight configuration check failed")
 
 
+# Set by a worker that re-executes itself (worker._restart). It passed the migration check
+# when it first started; a newer deploy may have migrated the database since, and exiting
+# on that would make the supervisor stop this container before its planned handoff.
+RECYCLED_ENV = "WORKER_RECYCLED"
+
+
 def require_migrated() -> None:
     """Worker guard: refuse to claim jobs on a schema the code did not migrate."""
     result = check_migrations()
