@@ -55,6 +55,11 @@ forces CPU. Before loading, it refuses the checkpoint if the file is missing, is
 pointer stub, does not hash to the v6 pin, or does not match its manifest. It writes
 `runs/live-smoke/summary.json` and `runs/live-smoke/transitions.jsonl`.
 
+The targets use `rl-defense/.venv` when it exists (set it up with the commands under
+Commands in `rl-defense/README.md`), otherwise the root `.venv`. Override with
+`RL_PYTHON=<path>`. If that interpreter cannot import numpy, torch, gymnasium and fastapi,
+the target stops and prints the setup command.
+
 `scripts/rl_live_smoke.sh` runs eight checks (pin, live loop, fresh, stale and unmapped
 telemetry through the backend, tampered checkpoint, no torch, UI card) and prints one
 PASS or FAIL line per check.

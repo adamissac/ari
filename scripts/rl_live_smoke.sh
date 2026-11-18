@@ -3,7 +3,14 @@ set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
-PY="${RL_PYTHON:-$ROOT/.venv/bin/python}"
+PY="${BACKEND_PYTHON:-$ROOT/.venv/bin/python}"
+if [ -n "${RL_PYTHON:-}" ]; then
+  RL_PY="$RL_PYTHON"
+elif [ -x "$ROOT/rl-defense/.venv/bin/python" ]; then
+  RL_PY="$ROOT/rl-defense/.venv/bin/python"
+else
+  RL_PY="$PY"
+fi
 PIN="8113a37f4ff9360a9efed2e9f499c4b2ae36e97bfb78372436f97da106fc05f1"
 CKPT="rl-defense/results/live-retrain-v6/candidate_online.pt"
 DEVICE="${RL_DEVICE:-auto}"
@@ -46,7 +53,7 @@ check_pin() {
 }
 
 check_live_loop() {
-  make -s rl-live-smoke RL_PYTHON="$PY" RL_DEVICE="$DEVICE" || return 1
+  make -s rl-live-smoke RL_PYTHON="$RL_PY" RL_DEVICE="$DEVICE" || return 1
   "$PY" - <<'PY'
 import json, pathlib, sys
 s = json.loads(pathlib.Path("rl-defense/runs/live-smoke/summary.json").read_text())
@@ -68,7 +75,7 @@ b[len(b) // 2] ^= 0xFF
 p.write_bytes(bytes(b))
 PY
   (cd rl-defense && PYTHONPATH="$ROOT/rl-defense:$ROOT/shared:$ROOT/standards:$ROOT/examples/payments-lite/target" \
-    "$PY" -m rl_defense.live.smoke --checkpoint "$tmp/candidate_online.pt" --pin "$PIN" --cpu \
+    "$RL_PY" -m rl_defense.live.smoke --checkpoint "$tmp/candidate_online.pt" --pin "$PIN" --cpu \
     --episodes 1 --horizon 2 --out "$tmp/summary.json")
   rc=$?
   local repo_sha
@@ -85,8 +92,8 @@ check_ui() {
 }
 
 echo "INFO: host $(uname -s) $(uname -m); requested device $DEVICE"
-"$PY" -c "import torch; print('INFO: torch', torch.__version__, 'cuda', torch.cuda.is_available(), 'mps', torch.backends.mps.is_available())" 2>/dev/null \
-  || echo "INFO: torch is not importable by $PY"
+"$RL_PY" -c "import torch; print('INFO: rl loop torch', torch.__version__, 'cuda', torch.cuda.is_available(), 'mps', torch.backends.mps.is_available())" 2>/dev/null \
+  || echo "INFO: torch is not importable by $RL_PY"
 
 run_check a_pin "a. checkpoint sha256 matches the v6 pin" check_pin
 run_check b_live_loop "b. live loop completed one payments-lite episode and wrote at least one transition" check_live_loop

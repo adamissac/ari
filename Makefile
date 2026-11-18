@@ -65,12 +65,16 @@ stop-db:
 standards-data:
 	uv run python -m standards.catalog --check
 
-RL_PYTHON ?= $(CURDIR)/.venv/bin/python
+RL_VENV_PYTHON = $(CURDIR)/rl-defense/.venv/bin/python
+RL_PYTHON ?= $(if $(wildcard $(RL_VENV_PYTHON)),$(RL_VENV_PYTHON),$(CURDIR)/.venv/bin/python)
+RL_PREFLIGHT = $(RL_PYTHON) -c "import numpy, torch, gymnasium, fastapi" 2>/dev/null || { echo "rl-live-smoke: $(RL_PYTHON) cannot import numpy, torch, gymnasium and fastapi. Set up the RL venv: cd rl-defense && uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ../standards -e ../shared -e '.[dev]'" >&2; exit 1; }
 RL_PYTHONPATH = $(CURDIR)/rl-defense:$(CURDIR)/shared:$(CURDIR)/standards:$(CURDIR)/examples/payments-lite/target
 RL_SMOKE_ARGS ?= --episodes 1 --horizon 10 --seed 1000
 
 rl-live-smoke:
+	@$(RL_PREFLIGHT)
 	cd rl-defense && PYTHONPATH=$(RL_PYTHONPATH) $(RL_PYTHON) -m rl_defense.live.smoke --device $${RL_DEVICE:-auto} $(RL_SMOKE_ARGS)
 
 rl-live-smoke-cpu:
+	@$(RL_PREFLIGHT)
 	cd rl-defense && PYTHONPATH=$(RL_PYTHONPATH) $(RL_PYTHON) -m rl_defense.live.smoke --cpu $(RL_SMOKE_ARGS)
