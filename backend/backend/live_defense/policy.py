@@ -174,7 +174,12 @@ class RuntimeUnavailable(ValueError):
 def _verified_v6_blob() -> tuple[bytes, str]:
     if not V6_CHECKPOINT.is_file():
         raise RuntimeUnavailable(f"checkpoint file missing at {_display_path(V6_CHECKPOINT)}")
-    blob = V6_CHECKPOINT.read_bytes()
+    try:
+        blob = V6_CHECKPOINT.read_bytes()
+    except OSError as exc:
+        raise RuntimeUnavailable(
+            f"checkpoint file unreadable: {type(exc).__name__}: {exc}"[:400]
+        ) from exc
     digest = hashlib.sha256(blob).hexdigest()
     if blob.startswith(LFS_POINTER_PREFIX):
         raise RuntimeUnavailable(
@@ -191,9 +196,14 @@ def _verified_v6_blob() -> tuple[bytes, str]:
             f"checkpoint manifest missing at {_display_path(manifest)}", digest=digest
         )
     try:
-        expected = json.loads(manifest.read_text())["checkpoint_sha256"]
-    except (ValueError, KeyError) as exc:
-        raise RuntimeUnavailable(f"checkpoint manifest unreadable: {exc}", digest=digest) from exc
+        doc = json.loads(manifest.read_text())
+        if not isinstance(doc, dict):
+            raise ValueError("manifest is not a JSON object")
+        expected = doc["checkpoint_sha256"]
+    except (OSError, ValueError, KeyError) as exc:
+        raise RuntimeUnavailable(
+            f"checkpoint manifest unreadable: {type(exc).__name__}: {exc}"[:400], digest=digest
+        ) from exc
     if expected != digest:
         raise RuntimeUnavailable(
             "checkpoint manifest sha256 does not match the pinned file", digest=digest

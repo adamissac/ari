@@ -67,7 +67,7 @@ def smoke_summary() -> RlSmokeSummary:
         )
     try:
         doc = json.loads(path.read_text())
-        if doc.get("kind") != "rl_live_smoke":
+        if not isinstance(doc, dict) or doc.get("kind") != "rl_live_smoke":
             raise ValueError("file is not an rl_live_smoke summary")
         return RlSmokeSummary(
             available=True,

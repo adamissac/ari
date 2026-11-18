@@ -180,3 +180,52 @@ def test_torch_unavailable_reports_not_loaded(staging, monkeypatch, fresh_runner
         assert "torch is not importable" in runtime["reason"]
     readiness = alice.get(f"/api/v1/projects/{app.project_id}/rl-readiness").json()
     assert readiness["ready"] is False
+
+
+def _status_paths_report_not_loaded(alice, app, needle: str) -> None:
+    for path in ("defense-health", "rl-readiness"):
+        resp = alice.get(f"/api/v1/projects/{app.project_id}/{path}")
+        assert resp.status_code == 200, resp.text
+        runtime = resp.json()["rl_runtime"]
+        assert runtime["loaded"] is False
+        assert runtime["label"] == "RL runtime: not loaded"
+        assert needle in runtime["reason"]
+
+
+def test_non_object_manifest_reports_not_loaded(staging, tmp_path, monkeypatch, fresh_runner):
+    alice, app = _setup(staging)
+    copy = tmp_path / "candidate_online.pt"
+    shutil.copyfile(policy.V6_CHECKPOINT, copy)
+    copy.with_suffix(".manifest.json").write_text("[]")
+    monkeypatch.setattr(policy, "V6_CHECKPOINT", copy)
+    _status_paths_report_not_loaded(alice, app, "manifest")
+
+
+def test_unreadable_checkpoint_reports_not_loaded(staging, tmp_path, monkeypatch, fresh_runner):
+    alice, app = _setup(staging)
+    copy = tmp_path / "candidate_online.pt"
+    shutil.copyfile(policy.V6_CHECKPOINT, copy)
+    monkeypatch.setattr(policy, "V6_CHECKPOINT", copy)
+    real = type(copy).read_bytes
+
+    def denied(self):
+        if self == copy:
+            raise PermissionError(13, "Permission denied", str(self))
+        return real(self)
+
+    monkeypatch.setattr(type(copy), "read_bytes", denied)
+    _status_paths_report_not_loaded(alice, app, "unreadable")
+
+
+@pytest.mark.parametrize("body", ["[]", "42", "{not json"])
+def test_malformed_smoke_summary_reports_not_available(staging, tmp_path, monkeypatch, body):
+    alice, app = _setup(staging)
+    summary = tmp_path / "summary.json"
+    summary.write_text(body)
+    monkeypatch.setenv("RL_LIVE_SMOKE_SUMMARY_PATH", str(summary))
+    for path in ("defense-health", "rl-readiness"):
+        resp = alice.get(f"/api/v1/projects/{app.project_id}/{path}")
+        assert resp.status_code == 200, resp.text
+        smoke = resp.json()["rl_smoke"]
+        assert smoke["available"] is False
+        assert "unreadable" in smoke["reason"]
