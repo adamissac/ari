@@ -3,6 +3,15 @@
 Append-only. Newest entry at the top. Every development session (human or agent)
 adds an entry before ending.
 
+### 2026-11-18 — Devin (agent, Adam) — smaller Railway footprint (`feat/adam/slim-railway-footprint`)
+
+- Why: the owner stopped the Railway subscription over a ~$70 monthly bill. The bill itself was not inspected (no Railway token in the session); the cause below is inferred from local measurement.
+- Measured idle on Linux: API ~105 MB, each worker ~90 MB, under 0.2% CPU per process. Twelve always-on workers held ~1.1 GB before any job; memory a job allocates is not returned by Python.
+- Did: `deploy/railway/start.sh` defaults `WORKER_PROCESSES` to 2 and `WORKER_MAX_RSS_MB` to 250. New setting `worker_max_rss_mb` (0 = off, the default outside Railway): after a job, a worker above it deregisters and `os.execv`s itself, keeping its pid so `start.sh` sees no exit.
+- Tests run: `backend/tests/test_worker_recycle.py` and `test_worker_drain.py` (5 passed). By hand against embedded Postgres: a real `hackatl-worker` with a 50 MB limit ran a job, restarted in 0.5 s under the same pid, kept a fresh heartbeat row and exited on SIGTERM.
+- Not done: worker size during a real assessment was not measured; nothing was deployed; retention still ships in dry-run, so the Postgres volume keeps growing until `RETENTION_DRY_RUN=false`.
+- Behavior change: a burst of commits to one project now runs 2 at a time on Railway unless `WORKER_PROCESSES` is raised. `JOB_MAX_RUNNING_PER_PROJECT` stays 12 (a cap).
+
 ### 2026-11-15 — Claude (agent, for Alan) — gate v4 (long-block rule, hold for confirmation): FAIL
 
 - Owner decision (Alan): run a fourth gate. Added `LoopConfig.confirm_error_p` (an answering owner is wrong either way), counters `wrongly_confirmed` / `wrongly_denied`, `pilot_gate.run(confirm=...)` and `--confirm-*` flags, `configs/live/pilot_gate_v4/` (4 fresh scenarios, 2 with missing grants). Pre-registered in `298d05cf`, run once.

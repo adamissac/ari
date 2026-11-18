@@ -83,7 +83,8 @@ switch is OFF.
 Eligible pushed commits and manual starts share one project pool of 10 starts per
 rolling hour and 50 per rolling day; the $50 global rolling-day spend cap
 applies across all triggers and projects. Over-quota commits are skipped, not retried.
-`WORKER_PROCESSES` (default 12, ~80 MB each) runs that many commits at once; jobs are
+`WORKER_PROCESSES` (default 2, ~90 MB each idle) runs that many commits at once; the rest
+wait in the queue (see "Keeping the Railway bill small"). Jobs are
 claimed with `SKIP LOCKED`. Signed webhooks are never rate limited: GitHub does not
 retry a 429, and the durable queue absorbs bursts.
 Opening the commit page is unnecessary; it polls the persisted run when visited.
@@ -132,6 +133,23 @@ fixture users, so Probe/Verify can call the real API as either user and Patch/Ve
 run `backend/tests/test_api_core.py`. The recipe's `sandbox` block lists the apt packages
 and exact-pinned wheels installed while egress allows only PyPI and the HTTPS Ubuntu
 mirrors, and the paths uploaded; Scout only surveys routes under those paths.
+
+### Keeping the Railway bill small
+
+Railway bills memory by the GB-month, and a resident process holds its memory all month,
+busy or not. Measured on this repository (Linux, idle, 2026-11-18): the API is about
+105 MB and each worker about 90 MB; idle CPU is under 0.2% per process. Twelve idle
+workers were therefore about 1.1 GB before any job ran, and a worker that had run an
+assessment kept whatever that job allocated.
+
+- `WORKER_PROCESSES` defaults to 2. Queued jobs wait instead of all starting at once.
+  Raise it for a demo or a burst of commits; each extra worker costs about 90 MB idle.
+- `WORKER_MAX_RSS_MB` defaults to 250 in `start.sh` (0 = off, the default elsewhere). A
+  worker above it after a job re-executes itself: same pid, memory back to about 90 MB.
+  Not measured: how large a worker gets during a real assessment.
+- Storage: set `RETENTION_DRY_RUN=false` once a storage report has been reviewed
+  ([POSTGRES_STORAGE.md](POSTGRES_STORAGE.md)); until then nothing is deleted and the
+  Postgres volume only grows.
 
 ### RL defense policy
 

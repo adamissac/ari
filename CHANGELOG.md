@@ -6,6 +6,8 @@ All notable changes are documented here. Format follows
 
 ## [Unreleased]
 
+- Smaller hosted footprint: the Railway entrypoint starts 2 workers instead of 12 (`WORKER_PROCESSES`), and a worker left above `WORKER_MAX_RSS_MB` (250 on Railway, off elsewhere) by a job restarts itself in place. Commits beyond the worker count wait in the queue instead of all running at once.
+
 - Updated the frontend to the Obsidian and Glacier palette across marketing, console, and demo pages.
 
 - Live Defense works for applications in any language: `monitoring.proxy` is a sidecar reverse proxy that forwards traffic unchanged, reports per-route counters by owner-listed route templates, and serves Ari's signed control endpoint. Tested in front of a Node app with Ari's API and worker applying, verifying and rolling back a rate limit. One proxy instance per app; WebSockets and serverless are not covered.

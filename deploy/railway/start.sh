@@ -26,11 +26,14 @@ hackatl-preflight --config --worker
 
 hackatl-migrate
 
-# Twelve workers (~80 MB each) so concurrent commits each get their own run at once; jobs are
-# claimed with SKIP LOCKED, so they never run the same job twice.
+# Two workers (~90 MB each idle) by default: memory is what the host bills for, and every
+# worker holds it all month. Queued commits wait their turn; raise WORKER_PROCESSES to run
+# more at once. Jobs are claimed with SKIP LOCKED, so they never run the same job twice.
+# A worker that grew past WORKER_MAX_RSS_MB during a job restarts itself once the job is done.
+export WORKER_MAX_RSS_MB="${WORKER_MAX_RSS_MB-250}"
 pids=""
 i=0
-while [ "$i" -lt "${WORKER_PROCESSES:-12}" ]; do
+while [ "$i" -lt "${WORKER_PROCESSES:-2}" ]; do
   hackatl-worker &
   pids="$pids $!"
   i=$((i + 1))
