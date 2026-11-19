@@ -3,6 +3,15 @@
 Append-only. Newest entry at the top. Every development session (human or agent)
 adds an entry before ending.
 
+### 2026-11-18 — Devin (agent, Adam) — Railway workers on demand (`feat/adam/on-demand-workers`)
+
+- Production first: the slim-footprint commit (8db17b77) was deployed. The first deploy failed its `/readyz` check because Postgres was still down (migrate could not resolve `postgres.railway.internal`); a redeploy after Postgres started succeeded. Seen live: 3 workers, a backlog of ~50 jobs drained 2 at a time, and five recycles logged ("restarting to release 696..712 MB"). Memory peaked at 2.5 GB and settled at 0.78 GB idle.
+- The bill, read from Railway's usage API with a project token the owner supplied (30 days, twelve resident workers): about $61 at list rates, backend memory $43, network egress $12, everything else $6. Postgres sent 109 GB of egress; not explained.
+- Did: `backend/worker_pool.py` (`hackatl-worker-pool --max N`) replaces the resident workers in `deploy/railway/start.sh`. Each second it starts a worker per claimable job without an idle worker (`jobs.claimable_count`, `jobs.busy_workers`); workers get `WORKER_IDLE_EXIT_S` (new setting, 60 from the pool) and `WORKER_RECYCLED=1` (the pool passed the migration check). The pool reconciles on the worker interval and beats a `pool:` heartbeat row, which `/readyz` counts as alive. Three workers failing within 10 s of start in a row stop the pool, and `start.sh` then stops the service as before. `WORKER_ON_DEMAND=false` keeps resident workers.
+- No contract, migration or claim-SQL change. `workers.alive` in `/readyz` now includes the pool row.
+- Tests run: `backend/tests/test_worker_pool.py` (9 passed, one starts a real worker that claims a job and exits idle), packaging entrypoint tests. By hand: the real `start.sh` against embedded Postgres showed the pool at 82 MB with no worker, three workers started for four queued jobs, each exited 8 s after its last job (`WORKER_IDLE_EXIT_S=8`), and SIGTERM stopped the service cleanly.
+- Not done: no Railway deploy of this branch. Not measured: pool memory in production. The per-project limit is not applied by `claimable_count`.
+
 ### 2026-11-18 — Devin (agent, Adam) — smaller Railway footprint (`feat/adam/slim-railway-footprint`)
 
 - Why: the owner stopped the Railway subscription over a ~$70 monthly bill. The bill itself was not inspected (no Railway token in the session); the cause below is inferred from local measurement.

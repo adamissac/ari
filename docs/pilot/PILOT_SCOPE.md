@@ -24,7 +24,7 @@ explicit exclusion (bottom of document), not a "maybe".
 | API rate limit | 60 mutations/min and 600 GET/HEAD reads/min per user (in-process limiter) | `backend/backend/api/deps.py` |
 | Automatic (push-triggered) runs | Count all project triggers; over-quota runs are recorded as skipped and not retried | `backend/backend/quota.py`, `auto_commits.py` |
 | Global daily assessment spend | **$50/day across all projects and triggers**; over-cap starts are blocked | `settings.assessments_usd_per_day`, `backend/backend/quota.py` |
-| Worker concurrency | 2 commits at once by default (`WORKER_PROCESSES` 3, one kept free for emergency stop), Postgres `SKIP LOCKED` queue | `deploy/railway/start.sh`, `jobs.py` |
+| Worker concurrency | 2 commits at once by default (`WORKER_PROCESSES` 3, started on demand, one kept free for emergency stop), Postgres `SKIP LOCKED` queue | `deploy/railway/start.sh`, `jobs.py` |
 
 ## Expected response times (measured, not promised SLAs)
 

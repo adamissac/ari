@@ -83,7 +83,7 @@ switch is OFF.
 Eligible pushed commits and manual starts share one project pool of 10 starts per
 rolling hour and 50 per rolling day; the $50 global rolling-day spend cap
 applies across all triggers and projects. Over-quota commits are skipped, not retried.
-`WORKER_PROCESSES` (default 3, ~90 MB each idle) runs one fewer commits at once (2); the rest
+`WORKER_PROCESSES` (default 3, started on demand) runs one fewer commits at once (2); the rest
 wait in the queue (see "Keeping the Railway bill small"). Jobs are
 claimed with `SKIP LOCKED`. Signed webhooks are never rate limited: GitHub does not
 retry a 429, and the durable queue absorbs bursts.
@@ -137,22 +137,29 @@ mirrors, and the paths uploaded; Scout only surveys routes under those paths.
 ### Keeping the Railway bill small
 
 Railway bills memory by the GB-month, and a resident process holds its memory all month,
-busy or not. Measured on this repository (Linux, idle, 2026-11-18): the API is about
-105 MB and each worker about 90 MB; idle CPU is under 0.2% per process. Twelve idle
-workers were therefore about 1.1 GB before any job ran, and a worker that had run an
-assessment kept whatever that job allocated.
+busy or not. Measured locally (Linux, idle, 2026-11-18): the API is about 105 MB, a worker
+about 90 MB and the worker pool about 80 MB; idle CPU is under 0.2% per process.
 
-- `WORKER_PROCESSES` defaults to 3. Queued jobs wait instead of all starting at once.
-  Raise it for a demo or a burst of commits; each extra worker costs about 90 MB idle.
+Measured on the production service (Railway usage API, 30 days to 2026-11-18, twelve
+resident workers): backend memory was about 70% of usage, averaging about 4.4 GB. The
+deploy logs after the change show why: a worker ends every assessment holding about
+700 MB, and before it kept that until the next deploy. Disk was under 2% of usage.
+
+- Workers start on demand. `hackatl-worker-pool` is the only worker-side process that
+  stays up: each second it counts the jobs a worker could claim and starts workers until
+  each has one, up to `WORKER_PROCESSES` (default 3). A worker it started exits after
+  `WORKER_IDLE_EXIT_S` (60) with nothing to claim. A job waits about a second longer for
+  a worker to boot. The pool also runs the periodic reconcile and beats a `pool:` row in
+  `worker_heartbeats`, which is what `/readyz` counts as alive while no worker runs.
+  `WORKER_ON_DEMAND=false` keeps `WORKER_PROCESSES` workers resident instead.
 - `start.sh` sets `JOB_MAX_RUNNING_GLOBAL` to one below the worker count (2), so ordinary
   jobs never hold every worker. Emergency stop, rollback and expiry are claimed outside
   that cap and always find a free one. An explicit `JOB_MAX_RUNNING_GLOBAL` wins.
 - `WORKER_MAX_RSS_MB` defaults to 250 in `start.sh` (0 = off, the default elsewhere). A
   worker above it after a job re-executes itself: same pid, memory back to about 90 MB.
-  Not measured: how large a worker gets during a real assessment.
 - Storage: set `RETENTION_DRY_RUN=false` once a storage report has been reviewed
   ([POSTGRES_STORAGE.md](POSTGRES_STORAGE.md)); until then nothing is deleted and the
-  Postgres volume only grows.
+  Postgres volume only grows. At the measured 8.7 GB that is about $1.30 a month.
 
 ### RL defense policy
 
