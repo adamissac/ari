@@ -6,6 +6,8 @@ All notable changes are documented here. Format follows
 
 ## [Unreleased]
 
+- The project workspace now fills wide desktop screens, keeps its content and sidebar independently scrollable on short screens, and sizes its shell to the visible viewport.
+
 - Railway workers start on demand: `hackatl-worker-pool` starts a worker when a job is waiting (up to `WORKER_PROCESSES`, default 3) and each exits after 60 idle seconds (`WORKER_IDLE_EXIT_S`), so no worker holds memory between jobs. A job waits about a second longer for its worker to boot. `WORKER_ON_DEMAND=false` restores resident workers.
 
 - Smaller hosted footprint: the Railway entrypoint starts 3 workers instead of 12 (`WORKER_PROCESSES`), two for ordinary jobs and one kept free for emergency stop/rollback/expiry, and a worker left above `WORKER_MAX_RSS_MB` (250 on Railway, off elsewhere) by a job restarts itself in place. Commits beyond two wait in the queue instead of all running at once.

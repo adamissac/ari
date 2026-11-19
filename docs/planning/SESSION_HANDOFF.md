@@ -3054,3 +3054,8 @@ Canonical main 9437e217d65aa1be22fa7b4f54f723200cd428c8; external pilot NO-GO. S
 
 - Branch `feat/adam/obsidian-glacier-theme` updates the shared frontend palette and page overrides from current `main`. Core colors: `#0D1418` background, `#1C282E` panel, `#9CBBC7` accent, `#EDF3F5` text. Distinct labeled status colors remain.
 - Verified locally: production Next.js build, 543 frontend unit tests, and Playwright checks of home, pricing, lab, projects, connect, and the mobile homepage. The projects route showed its signed-out session state; authenticated console detail pages were not visually inspected.
+
+## 2026-11-18 — responsive project workspace sizing
+
+- Branch `fix/adam/responsive-sizing` removes the 1240px desktop workspace content cap, uses the visible viewport height, and lets the sidebar scroll when screen height is short.
+- Browser checks covered public routes at 320–1920px and a project shell layout fixture at 1024, 1440, and 1920px. Authenticated project screens still need a live visual pass.
