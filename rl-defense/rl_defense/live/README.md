@@ -47,6 +47,31 @@ PYTHONPATH=.:../shared:../standards:../examples/payments-lite/target \
 Reference output of this exact command is in
 [`results/live-slice/run_output.txt`](../../results/live-slice/run_output.txt).
 
+## Smoke check (is it actually running?)
+
+`make rl-live-smoke` runs one short real episode (seed 1000, horizon 10) with the frozen
+v6 checkpoint on payments-lite. It picks CUDA, then MPS, then CPU. `make rl-live-smoke-cpu`
+forces CPU. Before loading, it refuses the checkpoint if the file is missing, is a Git LFS
+pointer stub, does not hash to the v6 pin, or does not match its manifest. It writes
+`runs/live-smoke/summary.json` and `runs/live-smoke/transitions.jsonl`.
+
+The targets use `rl-defense/.venv` when it exists (set it up with the commands under
+Commands in `rl-defense/README.md`), otherwise the root `.venv`. Override with
+`RL_PYTHON=<path>`. If that interpreter cannot import numpy, torch, gymnasium and fastapi,
+the target stops and prints the setup command.
+
+`scripts/rl_live_smoke.sh` runs eight checks (pin, live loop, fresh, stale and unmapped
+telemetry through the backend, tampered checkpoint, no torch, UI card) and prints one
+PASS or FAIL line per check.
+
+The backend reports the same runtime state on `defense-health` and `rl-readiness` as
+`rl_runtime`: either `RL runtime: loaded` or `RL runtime: not loaded` with the exact reason.
+Loaded only means shadow inference can run. Nothing is ever executed.
+
+The Railway worker variables in `deploy/railway/start.sh` point at the protocol-v1
+checkpoint. They are not the v6 live shadow checkpoint, which the backend loads from the
+fixed path above.
+
 ## Live retraining (closing the sim-to-real gap)
 
 ```

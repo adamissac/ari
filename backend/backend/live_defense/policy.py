@@ -10,6 +10,8 @@ and lets deterministic rules stand.
 from __future__ import annotations
 
 import hashlib
+import importlib.util
+import json
 import logging
 from dataclasses import dataclass
 from datetime import timedelta
@@ -18,7 +20,13 @@ from typing import Any
 
 from monitoring.detect import RuleHit, WindowView, is_quiet
 from shared.base import utcnow
-from shared.live_defense import AuthorizationContext, InferenceStatus
+from shared.live_defense import (
+    RL_RUNTIME_LOADED,
+    RL_RUNTIME_NOT_LOADED,
+    AuthorizationContext,
+    InferenceStatus,
+    RlRuntimeStatus,
+)
 from shared.monitoring import AUTHENTICATED_RUNTIME_SOURCES, RuntimeSource
 from shared.rl import ActionScore, DefenseActionName, NodeName
 
@@ -28,6 +36,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 V6_CHECKPOINT = REPO_ROOT / "rl-defense" / "results" / "live-retrain-v6" / "candidate_online.pt"
 V6_SHA256 = "8113a37f4ff9360a9efed2e9f499c4b2ae36e97bfb78372436f97da106fc05f1"
 V6_OBS_DIM = 55
+LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/"
 FRESHNESS = timedelta(minutes=30)
 NODE_PATTERNS: tuple[tuple[NodeName, tuple[str, ...]], ...] = (
     ("gateway", ("* /health*", "* /docs*", "* /openapi.json")),
@@ -141,27 +150,124 @@ def decide_inference(
         )
     try:
         return _run_v6(windows)
-    except Exception as exc:
+    except RuntimeUnavailable as exc:
         log.warning("v6 shadow inference unavailable: %s", exc)
         return ShadowInference(
             status=InferenceStatus.skipped_unavailable,
-            reason=f"frozen v6 runner unavailable: {type(exc).__name__}",
+            reason=f"frozen v6 runner unavailable: {exc}",
         )
+    except Exception as exc:
+        log.warning("v6 shadow inference failed: %s", exc)
+        return ShadowInference(
+            status=InferenceStatus.skipped_unavailable,
+            reason=f"frozen v6 runner failed: {type(exc).__name__}: {exc}"[:500],
+        )
+
+
+class RuntimeUnavailable(ValueError):
+    def __init__(self, reason: str, *, digest: str | None = None, torch_ok: bool = True) -> None:
+        super().__init__(reason)
+        self.digest = digest
+        self.torch_ok = torch_ok
+
+
+def _verified_v6_blob() -> tuple[bytes, str]:
+    if not V6_CHECKPOINT.is_file():
+        raise RuntimeUnavailable(f"checkpoint file missing at {_display_path(V6_CHECKPOINT)}")
+    try:
+        blob = V6_CHECKPOINT.read_bytes()
+    except OSError as exc:
+        raise RuntimeUnavailable(
+            f"checkpoint file unreadable: {type(exc).__name__}: {exc}"[:400]
+        ) from exc
+    digest = hashlib.sha256(blob).hexdigest()
+    if blob.startswith(LFS_POINTER_PREFIX):
+        raise RuntimeUnavailable(
+            "checkpoint file is a git LFS pointer stub, not weights", digest=digest
+        )
+    if digest != V6_SHA256:
+        raise RuntimeUnavailable(
+            f"checkpoint hash mismatch: sha256 {digest[:12]} is not pin {V6_SHA256[:12]}; refusing to load",
+            digest=digest,
+        )
+    manifest = V6_CHECKPOINT.with_suffix(".manifest.json")
+    if not manifest.is_file():
+        raise RuntimeUnavailable(
+            f"checkpoint manifest missing at {_display_path(manifest)}", digest=digest
+        )
+    try:
+        doc = json.loads(manifest.read_text())
+        if not isinstance(doc, dict):
+            raise ValueError("manifest is not a JSON object")
+        expected = doc["checkpoint_sha256"]
+    except (OSError, ValueError, KeyError) as exc:
+        raise RuntimeUnavailable(
+            f"checkpoint manifest unreadable: {type(exc).__name__}: {exc}"[:400], digest=digest
+        ) from exc
+    if expected != digest:
+        raise RuntimeUnavailable(
+            "checkpoint manifest sha256 does not match the pinned file", digest=digest
+        )
+    return blob, digest
 
 
 def _load_v6() -> tuple[Any, str]:
     global _RUNNER
-    if not V6_CHECKPOINT.is_file():
-        raise FileNotFoundError("v6 checkpoint missing")
-    blob = V6_CHECKPOINT.read_bytes()
-    digest = hashlib.sha256(blob).hexdigest()
-    if digest != V6_SHA256:
-        raise ValueError("v6 checkpoint hash mismatch; refusing to load")
+    blob, digest = _verified_v6_blob()
+    try:
+        importlib.import_module("torch")
+    except ImportError as exc:
+        raise RuntimeUnavailable(
+            f"torch is not importable in this backend process: {exc}", digest=digest, torch_ok=False
+        ) from exc
     if _RUNNER is None:
-        from rl_defense.inference import PolicyRunner
-
-        _RUNNER = PolicyRunner(V6_CHECKPOINT, blob=blob)
+        try:
+            from rl_defense.inference import PolicyRunner
+        except ImportError as exc:
+            raise RuntimeUnavailable(
+                f"rl_defense is not importable in this backend process: {exc}", digest=digest
+            ) from exc
+        try:
+            _RUNNER = PolicyRunner(V6_CHECKPOINT, blob=blob)
+        except Exception as exc:
+            raise RuntimeUnavailable(
+                f"checkpoint failed to load: {type(exc).__name__}: {exc}"[:400], digest=digest
+            ) from exc
     return _RUNNER, digest
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
+def runtime_status() -> RlRuntimeStatus:
+    common = {
+        "checkpoint_path": _display_path(V6_CHECKPOINT),
+        "pinned_sha256": V6_SHA256,
+        "checked_at": utcnow(),
+    }
+    try:
+        runner, digest = _load_v6()
+    except RuntimeUnavailable as exc:
+        return RlRuntimeStatus(
+            loaded=False,
+            label=RL_RUNTIME_NOT_LOADED,
+            reason=str(exc),
+            checkpoint_sha256=exc.digest,
+            torch_available=exc.torch_ok and importlib.util.find_spec("torch") is not None,
+            **common,
+        )
+    return RlRuntimeStatus(
+        loaded=True,
+        label=RL_RUNTIME_LOADED,
+        checkpoint_sha256=digest,
+        policy_version=str(runner.policy_version),
+        torch_available=True,
+        **common,
+    )
 
 
 def _run_v6(windows: list[WindowView]) -> ShadowInference:

@@ -16,6 +16,7 @@ import { DefenseMap } from '@/components/defense-map';
 import { DefenseSwitch } from '@/components/defense-switch';
 import { HealthUnknownNote, SimulationCaveat, SourceTag } from '@/components/live-defense/common';
 import { Async, Badge, Empty, Mono, Panel, StatGrid, Tag, Time } from '@/components/ui';
+import { RlRuntimeCard } from '@/components/live-defense/rl-runtime';
 import {
   actionInWords,
   eventIncidentIds,
@@ -182,6 +183,11 @@ function LiveOverviewRecords({
           </div>
         ) : null}
       </Panel>
+      {health ? (
+        <Async resource={health} label="RL runtime">
+          {item => <RlRuntimeCard runtime={item.rl_runtime} decisions={item.rl_decisions} smoke={item.rl_smoke} />}
+        </Async>
+      ) : <RlRuntimeCard unavailableReason="defense-health was not requested" />}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Panel title="Recorded events" actions={<SourceTag mode="live" />}>
           {events ? (
@@ -327,6 +333,7 @@ function PreviewOverview({ projectId }: { projectId: string | null }) {
       <p className="min-w-0 rounded-xl border border-line bg-panel p-5 sm:p-6 text-sm text-ink">
         Sample layout only. Counts, map states and Q-values below are fixtures. They are not telemetry and not a loaded policy.
       </p>
+      <RlRuntimeCard unavailableReason="sample layout has no project; the live overview reads GET /defense-health" />
       <DefenseMap
         nodes={PREVIEW_NODES}
         links={PREVIEW_LINKS}

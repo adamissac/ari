@@ -3045,3 +3045,11 @@ Canonical main 9437e217d65aa1be22fa7b4f54f723200cd428c8; external pilot NO-GO. S
 
 - Branch `feat/adam/obsidian-glacier-theme` updates the shared frontend palette and page overrides from current `main`. Core colors: `#0D1418` background, `#1C282E` panel, `#9CBBC7` accent, `#EDF3F5` text. Distinct labeled status colors remain.
 - Verified locally: production Next.js build, 543 frontend unit tests, and Playwright checks of home, pricing, lab, projects, connect, and the mobile homepage. The projects route showed its signed-out session state; authenticated console detail pages were not visually inspected.
+
+## 2026-11-17 - RL live defense running and visible (`feat/devin/rl-live-defense-running`)
+
+- `make rl-live-smoke` (and `rl-live-smoke-cpu`) runs `rl_defense.live.smoke`: one payments-lite episode, seed 1000, horizon 10, frozen v6 checkpoint pinned to `8113a37f...`. Output: `rl-defense/runs/live-smoke/summary.json` and `transitions.jsonl`.
+- Backend: `policy.runtime_status()` and `rl_runtime.py` feed new optional `rl_runtime`, `rl_decisions` and `rl_smoke` fields on `DefenseHealth` and `RlReadinessAssessment`. Readiness gates are unchanged and still blocked.
+- Frontend: `RlRuntimeCard` on the live-defense overview and readiness pages. Preview pages show "not available" with a reason.
+- `scripts/rl_live_smoke.sh` runs eight checks. Verified on a Linux x86_64 CPU VM only. Apple silicon (MPS) and GPU (CUDA) paths were not run.
+- Gap: the Railway worker variables in `deploy/railway/start.sh` point at the protocol-v1 checkpoint, not v6. The hosted Railway image was not inspected; only a local build of `backend/Dockerfile` was checked.

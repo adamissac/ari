@@ -40,6 +40,7 @@ test('live defense health and reviews validate shared types and never include a 
     telemetry_status_reason: 'Ingest timestamps are not a telemetry health verdict.',
     policy_status: 'unknown',
     policy_status_reason: 'No live policy-health producer. Shadow decisions stay NOT_EXECUTED; HTTP 200 is not policy health.',
+    rl_runtime: null, rl_decisions: null, rl_smoke: null,
   };
   const got = await client(() => json(health)).defenseHealth('prj_12345678');
   assert.equal(got.status, 'unknown');

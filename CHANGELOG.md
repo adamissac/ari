@@ -6,6 +6,8 @@ All notable changes are documented here. Format follows
 
 ## [Unreleased]
 
+- RL live defense is now observable end to end. `make rl-live-smoke` runs one real payments-lite episode with the frozen v6 checkpoint and writes a summary JSON; it refuses a missing checkpoint, a Git LFS pointer stub, a hash mismatch, or a manifest mismatch. `defense-health` and `rl-readiness` now report `rl_runtime` (`RL runtime: loaded`, or `RL runtime: not loaded` with the exact reason), 24 hour recommendation and abstention counts, and the latest smoke summary. The live-defense overview and readiness pages show these in an RL runtime card. Shadow only; nothing is executed. `scripts/rl_live_smoke.sh` runs eight PASS or FAIL checks. Contract change is additive (optional fields).
+
 - Smaller hosted footprint: the Railway entrypoint starts 3 workers instead of 12 (`WORKER_PROCESSES`), two for ordinary jobs and one kept free for emergency stop/rollback/expiry, and a worker left above `WORKER_MAX_RSS_MB` (250 on Railway, off elsewhere) by a job restarts itself in place. Commits beyond two wait in the queue instead of all running at once.
 
 - Updated the frontend to the Obsidian and Glacier palette across marketing, console, and demo pages.

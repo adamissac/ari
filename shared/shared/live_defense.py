@@ -121,6 +121,65 @@ class IngestTokenView(StrictModel):
     last_used_at: UtcDatetime | None = None
 
 
+RL_RUNTIME_LOADED = "RL runtime: loaded"
+RL_RUNTIME_NOT_LOADED = "RL runtime: not loaded"
+RL_RUNTIME_MODE = "shadow, recommendation only"
+
+
+class RlRuntimeStatus(StrictModel):
+    loaded: bool
+    label: Literal["RL runtime: loaded", "RL runtime: not loaded"]
+    reason: ShortText | None = Field(
+        default=None, description="Exact reason the frozen v6 runner is not loaded"
+    )
+    mode: Literal["shadow, recommendation only"] = "shadow, recommendation only"
+    checkpoint_path: ShortText
+    pinned_sha256: Sha256Hex
+    checkpoint_sha256: Sha256Hex | None = Field(
+        default=None, description="Measured sha256 of the file on disk, when it was readable"
+    )
+    policy_version: ShortText | None = None
+    torch_available: bool
+    checked_at: UtcDatetime
+
+    @model_validator(mode="after")
+    def _truthful(self) -> RlRuntimeStatus:
+        if self.loaded:
+            if self.label != RL_RUNTIME_LOADED or self.reason is not None:
+                raise ValueError("a loaded runtime carries the loaded label and no reason")
+            if self.checkpoint_sha256 != self.pinned_sha256 or not self.torch_available:
+                raise ValueError("a loaded runtime needs torch and the pinned checkpoint hash")
+        elif self.label != RL_RUNTIME_NOT_LOADED or not self.reason:
+            raise ValueError(
+                "a runtime that is not loaded carries the not loaded label and a reason"
+            )
+        return self
+
+
+class RlDecisionActivity(StrictModel):
+    window_hours: Literal[24] = 24
+    last_decision_at: UtcDatetime | None = None
+    last_decision_status: ShortText | None = None
+    recommendations: int = Field(ge=0, description="Decisions in the window where v6 ran")
+    abstentions: int = Field(ge=0, description="Decisions in the window where v6 abstained")
+    reason: ShortText | None = None
+
+
+class RlSmokeSummary(StrictModel):
+    available: bool
+    reason: ShortText | None = None
+    source_path: ShortText
+    passed: bool | None = None
+    finished_at: UtcDatetime | None = None
+    episodes: int | None = Field(default=None, ge=0)
+    steps: int | None = Field(default=None, ge=0)
+    transitions_written: int | None = Field(default=None, ge=0)
+    compromise_rate: float | None = Field(default=None, ge=0.0, le=1.0)
+    availability: float | None = Field(default=None, ge=0.0, le=1.0)
+    checkpoint_sha256: Sha256Hex | None = None
+    device: ShortText | None = None
+
+
 class DefenseHealth(StrictModel):
     """Recorded timestamps for ingest and the job worker. Not a liveness verdict."""
 
@@ -153,6 +212,9 @@ class DefenseHealth(StrictModel):
         "No live policy-health producer. Shadow decisions stay NOT_EXECUTED; "
         "HTTP 200 is not policy health."
     )
+    rl_runtime: RlRuntimeStatus | None = None
+    rl_decisions: RlDecisionActivity | None = None
+    rl_smoke: RlSmokeSummary | None = None
 
 
 class ComponentNodeKind(StrEnum):
@@ -858,6 +920,9 @@ class RlReadinessAssessment(StrictModel):
     phase7_started: Literal[False] = False
     gated_application_count: int = Field(ge=0, default=0)
     caveat: ShortText = RL_GATED_PILOT_CAVEAT
+    rl_runtime: RlRuntimeStatus | None = None
+    rl_decisions: RlDecisionActivity | None = None
+    rl_smoke: RlSmokeSummary | None = None
 
 
 # ---------------------------------------------------------------------------
