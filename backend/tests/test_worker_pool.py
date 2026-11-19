@@ -159,8 +159,11 @@ def test_worker_exits_after_the_idle_limit(settings_override, monkeypatch):
         assert jobs.live_workers(conn, 30) == []  # it deregistered
 
 
-def test_pool_runs_a_real_worker_that_takes_the_job_and_leaves(settings_override):
-    settings_override(worker_idle_exit_s="1", worker_poll_interval_s="0.1")
+@pytest.mark.parametrize("max_rss_mb", ["0", "1"])  # 1: it also recycles itself after the job
+def test_pool_runs_a_real_worker_that_takes_the_job_and_leaves(settings_override, max_rss_mb):
+    settings_override(
+        worker_idle_exit_s="1", worker_poll_interval_s="0.1", worker_max_rss_mb=max_rss_mb
+    )
     jid = _enqueue("pool_kind_without_a_handler")  # the worker fails it permanently
     pool = worker_pool.Pool(1)
     assert pool.tick() == 1
