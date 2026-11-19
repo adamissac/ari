@@ -399,7 +399,7 @@ def main(argv: list[str] | None = None) -> int:
         log.exception("worker heartbeat prune failed")
     # Startup reconciliation recovers jobs orphaned by a crash or restart of the fleet.
     reconcile_safely()
-    last_reconcile = last_seen = time.monotonic()
+    last_reconcile = last_seen = last_job = time.monotonic()
     _registry(owner, "idle")
     recycle = False
     while not stopping.is_set():
@@ -412,8 +412,13 @@ def main(argv: list[str] | None = None) -> int:
             _registry(owner, "idle")
             last_seen = now
         if run_one(owner) is None:
+            if s.worker_idle_exit_s and time.monotonic() - last_job >= s.worker_idle_exit_s:
+                log.info("worker %s idle for %.0fs", owner, s.worker_idle_exit_s)
+                break
             stopping.wait(s.worker_poll_interval_s)
-        elif not stopping.is_set() and over_memory_limit():
+            continue
+        last_job = time.monotonic()
+        if not stopping.is_set() and over_memory_limit():
             # Python does not return a finished job's memory to the OS; a fresh process does.
             recycle = True
             break
@@ -426,7 +431,7 @@ def main(argv: list[str] | None = None) -> int:
     if recycle and not stopping.is_set():
         log.info("worker %s restarting to release %.0f MB", owner, rss_mb() or 0)
         _restart()
-    log.info("worker %s stopped after finishing its job", owner)
+    log.info("worker %s stopped", owner)
     return 0
 
 

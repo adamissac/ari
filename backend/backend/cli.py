@@ -1,4 +1,5 @@
-"""Console entry points: hackatl-api, hackatl-worker, hackatl-migrate, hackatl-preflight."""
+"""Console entry points: hackatl-api, hackatl-worker, hackatl-worker-pool, hackatl-migrate,
+hackatl-preflight."""
 
 from __future__ import annotations
 
@@ -29,6 +30,19 @@ def worker() -> None:
         preflight.require_migrated()
 
     from backend.worker import main
+
+    raise SystemExit(main())
+
+
+def worker_pool() -> None:
+    from backend import preflight
+    from backend.ops_logging import configure_logging
+
+    configure_logging()
+    preflight.require_config(worker=True)
+    preflight.require_migrated()
+
+    from backend.worker_pool import main
 
     raise SystemExit(main())
 

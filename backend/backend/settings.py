@@ -99,6 +99,9 @@ class Settings(BaseSettings):
     # After a job, a worker whose resident memory exceeds this restarts itself in place so
     # the memory goes back to the host. 0 disables it.
     worker_max_rss_mb: int = Field(default=0, ge=0)
+    # A worker with nothing to claim for this long exits. 0 = never. The worker pool sets it
+    # for the workers it starts on demand (backend/worker_pool.py).
+    worker_idle_exit_s: float = Field(default=0, ge=0)
     # Worker liveness for /readyz: each worker upserts a heartbeat row; a heartbeat older
     # than this is stale. None → require a live worker only in production/staging.
     worker_heartbeat_interval_s: float = 5.0

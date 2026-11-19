@@ -128,6 +128,8 @@ def require_workers(s: Settings) -> bool:
 
 
 def workers_status(s: Settings, conn: sa.engine.Connection) -> dict[str, Any]:
+    # With on-demand workers the pool's own ``pool:`` row is the one that is always here:
+    # it polls the queue and starts a worker for whatever it finds (backend/worker_pool.py).
     rows = jobs.live_workers(conn, s.worker_liveness_s)
     counts = jobs.queue_counts(conn)
     expected = int(os.environ.get("WORKER_PROCESSES") or 0) or None

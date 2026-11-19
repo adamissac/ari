@@ -76,6 +76,9 @@ def _railway_workers(tmp_path: Path, **env: str) -> list[str]:
         "hackatl-migrate": "exit 0",
         "python": "exit 0",
         "hackatl-worker": f'echo "${{JOB_MAX_RUNNING_GLOBAL-unset}}" >> {seen}\nexec sleep 30',
+        "hackatl-worker-pool": (
+            f'echo "pool $* ${{JOB_MAX_RUNNING_GLOBAL-unset}}" >> {seen}\nexec sleep 30'
+        ),
         "hackatl-api": "sleep 1",  # exits, so the supervisor stops the workers and returns
     }
     for name, body in stubs.items():
@@ -94,15 +97,22 @@ def _railway_workers(tmp_path: Path, **env: str) -> list[str]:
     return seen.read_text().split()
 
 
-def test_railway_keeps_one_worker_free_for_emergency_jobs(tmp_path: Path) -> None:
+def test_railway_starts_workers_on_demand_with_one_kept_free_for_emergency_jobs(
+    tmp_path: Path,
+) -> None:
     # Emergency stop/rollback/expiry are claimed outside JOB_MAX_RUNNING_GLOBAL, so a cap
-    # one below the process count leaves them a worker when every ordinary slot is busy.
-    assert _railway_workers(tmp_path) == ["2", "2", "2"]
+    # one below the worker limit leaves them a worker when every ordinary slot is busy.
+    assert _railway_workers(tmp_path) == ["pool", "--max", "3", "2"]
+    (tmp_path / "workers").unlink()
+    assert _railway_workers(tmp_path, WORKER_PROCESSES="5") == ["pool", "--max", "5", "4"]
 
 
-def test_railway_worker_count_and_cap_are_overridable(tmp_path: Path) -> None:
-    assert _railway_workers(tmp_path, WORKER_PROCESSES="5") == ["4"] * 5
-    (tmp_path / "workers").unlink()
-    assert _railway_workers(tmp_path, WORKER_PROCESSES="4", JOB_MAX_RUNNING_GLOBAL="0") == ["0"] * 4
-    (tmp_path / "workers").unlink()
-    assert _railway_workers(tmp_path, WORKER_PROCESSES="1") == ["unset"]
+def test_railway_resident_worker_count_and_cap_are_overridable(tmp_path: Path) -> None:
+    def resident(**env: str) -> list[str]:
+        (tmp_path / "workers").unlink(missing_ok=True)
+        return _railway_workers(tmp_path, WORKER_ON_DEMAND="false", **env)
+
+    assert resident() == ["2", "2", "2"]
+    assert resident(WORKER_PROCESSES="5") == ["4"] * 5
+    assert resident(WORKER_PROCESSES="4", JOB_MAX_RUNNING_GLOBAL="0") == ["0"] * 4
+    assert resident(WORKER_PROCESSES="1") == ["unset"]

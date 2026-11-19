@@ -206,9 +206,10 @@ def require_config(*, worker: bool = False) -> None:
         raise SystemExit("preflight configuration check failed")
 
 
-# Set by a worker that re-executes itself (worker._restart). It passed the migration check
-# when it first started; a newer deploy may have migrated the database since, and exiting
-# on that would make the supervisor stop this container before its planned handoff.
+# Set for a worker that re-executes itself (worker._restart) or is started by the worker
+# pool. The migration check passed when the first process started; a newer deploy may have
+# migrated the database since, and exiting on that would make the supervisor stop this
+# container before its planned handoff.
 RECYCLED_ENV = "WORKER_RECYCLED"
 
 
