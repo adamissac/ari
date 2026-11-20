@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from helpers import BASE, HEAD, post_webhook, push_payload, setup_project
 
 from backend import worker
-from backend.auto_commits import authors, docs_only, per_commit_enabled
+from backend.auto_commits import _matches, authors, docs_only, per_commit_enabled
 from backend.db import (
     assessments,
     jobs,
@@ -948,8 +948,8 @@ def test_legacy_monitoring_pipeline_obeys_shared_quota(automatic, settings_overr
             False,
             "author is outside",
         ),
-        ({}, "adamissac[bot]", "main", "push", False, "author excluded"),
-        ({}, "adamissac[bot]", "main", "pull_request", False, "author excluded"),
+        ({}, "dependabot[bot]", "main", "push", False, "author excluded"),
+        ({}, "ari-security[bot]", "main", "pull_request", False, "author excluded"),
     ],
 )
 @pytest.mark.parametrize("global_authors", ["adamissac", '""'])
@@ -1683,3 +1683,20 @@ def test_docs_only_is_false_unless_every_listed_file_is_documentation(files):
 
 def test_docs_only_accepts_documentation_and_images_case_insensitively():
     assert docs_only({"files": [{"filename": "CHANGELOG.MD"}, {"filename": "a/b.webp"}]})
+
+
+@pytest.mark.parametrize(
+    ("login", "skipped"),
+    [
+        ("ari-security[bot]", True),
+        ("Dependabot[bot]", True),
+        ("devin-ai-integration[bot]", False),
+        ("copilot-swe-agent[bot]", False),
+        ("bob", False),
+    ],
+)
+def test_default_author_exclusion_skips_only_ari_and_dependabot(login, skipped):
+    from shared.tenancy import ReviewerSettings
+
+    patterns = ReviewerSettings().exclude_authors
+    assert _matches(patterns, login, literal_brackets=True) is skipped

@@ -136,7 +136,7 @@ export default function SettingsPage() {
           <Field label="Include authors" hint="Comma- or newline-separated GitHub login globs. Empty means everyone.">
             <textarea className={`${inputClass} min-h-20 font-mono`} value={draft.includeAuthors} onChange={e => set('includeAuthors')(e.target.value)} />
           </Field>
-          <Field label="Exclude authors" hint="Comma- or newline-separated GitHub login globs. Defaults to *[bot].">
+          <Field label="Exclude authors" hint="Comma- or newline-separated GitHub login globs. Defaults to ari-security[bot], dependabot[bot] and renovate[bot].">
             <textarea className={`${inputClass} min-h-20 font-mono`} value={draft.excludeAuthors} onChange={e => set('excludeAuthors')(e.target.value)} />
           </Field>
         </div>

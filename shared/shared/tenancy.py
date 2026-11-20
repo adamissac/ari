@@ -66,7 +66,10 @@ class ReviewerSettings(StrictModel):
     include_branches: list[ShortText] = Field(default_factory=list, max_length=50)
     exclude_branches: list[ShortText] = Field(default_factory=list, max_length=50)
     include_authors: list[ShortText] = Field(default_factory=list, max_length=50)
-    exclude_authors: list[ShortText] = Field(default_factory=lambda: ["*[bot]"], max_length=50)
+    exclude_authors: list[ShortText] = Field(
+        default_factory=lambda: ["ari-security[bot]", "dependabot[bot]", "renovate[bot]"],
+        max_length=50,
+    )
     strictness: int = Field(default=2, ge=1, le=3)
     comment_on_pull_requests: bool = True
     max_reviews_per_hour: int | None = Field(default=None, ge=1)
