@@ -4,19 +4,19 @@
    delete those rules once this direction is approved. */
 
 :root:not(:has(.hero-full)), :root:has(.hero-full) {
-  --color-bg: #141415;
-  --color-panel: #19191b;
-  --color-panel-2: #232325;
-  --color-line: #2b2b2e;
-  --color-control: #6f6f76;
-  --color-ink: #ededed;
-  --color-ink-2: #dededf;
-  --color-muted: #a1a1a6;
-  --color-faint: #85858b;
-  --color-night: #0f0f10;
+  --color-bg: #0d1418;
+  --color-panel: #1c282e;
+  --color-panel-2: #25353d;
+  --color-line: #30434b;
+  --color-control: #78939e;
+  --color-ink: #edf3f5;
+  --color-ink-2: #dce7ea;
+  --color-muted: #a7bac2;
+  --color-faint: #9fb0b8;
+  --color-night: #0d1418;
   --color-brand-soft: #2a1c19;
-  --glass: rgb(255 255 255 / 3%);
-  --glass-line: rgb(255 255 255 / 8%);
+  --glass: rgb(237 243 245 / 3%);
+  --glass-line: rgb(237 243 245 / 8%);
   --font-display: var(--font-sans);
   --ui-radius: 10px;
 }
@@ -64,7 +64,7 @@ h1 { font-weight: 500; }
   .project-tab { position: relative; min-height: 34px; width: 100%; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 400; color: var(--color-muted); }
   .project-tab::after { display: none; }
   .project-tab:hover { background: var(--color-panel); }
-  .project-tab[aria-current="page"] { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%); }
+  .project-tab[aria-current="page"] { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 1px 0 rgb(237 243 245 / 6%); }
   .project-more { margin-top: 2px; }
   .project-more-button { height: 34px; }
   .project-more-chevron { margin-left: auto; }
@@ -76,10 +76,10 @@ h1 { font-weight: 500; }
 
 /* Shared actions. Homepage composition lives in landing.module.css. */
 .btn-primary, .btn-quiet { display: inline-flex; height: 44px; align-items: center; border-radius: 10px; padding: 0 18px; font-size: 15px; font-weight: 500; transition: background-color 150ms var(--ease-out); }
-.btn-primary { background: #ededed; color: #141415; box-shadow: inset 0 1px 0 rgb(255 255 255 / 40%); }
-.btn-primary:hover { background: #fff; }
+.btn-primary { background: #edf3f5; color: #0d1418; box-shadow: inset 0 1px 0 rgb(237 243 245 / 40%); }
+.btn-primary:hover { background: #edf3f5; }
 .btn-quiet { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--glass-line); }
-.btn-quiet:hover { background: #2b2b2e; }
+.btn-quiet:hover { background: #283940; }
 
 /* Signature: a claim carries the test that proved it. */
 .evidence-tag { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; padding: 2px 8px; background: var(--color-panel-2); box-shadow: inset 0 0 0 1px var(--glass-line); font-family: var(--font-mono); font-size: 12px; line-height: 18px; color: var(--color-muted); }
@@ -88,7 +88,7 @@ h1 { font-weight: 500; }
 /* Landing: the top bar sits on the page, not on a tinted band. */
 @media (min-width: 640px) { html[data-home-hero] .site-header { background: transparent; border-bottom: 0; } }
 /* Phones: content scrolls under the fixed bar, so it stays solid. */
-@media (max-width: 639px) { html[data-home-hero] .site-header { background: rgb(15 15 16 / 94%); border-bottom: 1px solid var(--glass-line); } }
+@media (max-width: 639px) { html[data-home-hero] .site-header { background: rgb(13 20 24 / 94%); border-bottom: 1px solid var(--glass-line); } }
 .page-title { border-color: var(--glass-line); }
 
 /* Panels and the sidebar: flat graphite, hairline only. */
@@ -103,8 +103,8 @@ h1 { font-weight: 500; }
 .net-map, .graph-view, .lab-now, .monitor-head, .pricing-card-dark { background: var(--color-panel) !important; }
 .story-panel, .story-card, .story-stat { background: var(--color-panel); box-shadow: inset 0 0 0 1px var(--glass-line); }
 
-/* Ember: static fades and trail lines. Colour sits at the edges and on lines, never under text blocks. */
-:root { --ember: 194 69 45; --ember-hi: 255 138 117; --trail: linear-gradient(90deg, rgb(var(--ember-hi) / 85%), rgb(var(--ember) / 35%) 28%, transparent 72%); }
+/* Glacier accents on restrained dark surfaces. */
+:root { --ember: 156 187 199; --ember-hi: 156 187 199; --trail: linear-gradient(90deg, rgb(var(--ember-hi) / 85%), rgb(var(--ember) / 35%) 28%, transparent 72%); }
 :root body, :root:has(.hero-full) body, :root:not(:has(.hero-full)) body {
   background:
     radial-gradient(52% 44% at 88% -8%, rgb(var(--ember) / 32%), transparent 72%),
@@ -125,8 +125,8 @@ h1 { font-weight: 500; }
   .project-tab[aria-current="page"] { background: linear-gradient(90deg, rgb(var(--ember) / 26%), rgb(var(--ember) / 6%) 60%, transparent), var(--color-panel-2); box-shadow: inset 2px 0 0 rgb(var(--ember-hi)); }
   .project-shell > .project-body { background: radial-gradient(56% 360px at 100% 0, rgb(var(--ember) / 24%), transparent 100%); }
 }
-.btn-primary { background: rgb(var(--ember)); color: #fff; box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%); }
-.btn-primary:hover { background: #d0503a; }
+.btn-primary { background: rgb(var(--ember)); color: #0d1418; box-shadow: inset 0 1px 0 rgb(237 243 245 / 18%); }
+.btn-primary:hover { background: #b6ced6; }
 .evidence-tag { box-shadow: inset 0 0 0 1px rgb(var(--ember) / 30%); }
 tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: linear-gradient(90deg, rgb(var(--ember) / 9%), transparent 55%); }
 
@@ -141,7 +141,7 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 /* Page change between parts of the site: the mark, and one line that fills. */
 .route-veil { background: var(--color-bg); }
 .route-veil-mark { top: calc(50% - 28px); }
-.route-veil-line { position: absolute; top: calc(50% + 44px); left: 50%; width: 180px; height: 2px; translate: -50%; overflow: hidden; border-radius: 2px; background: rgb(255 255 255 / 10%); }
+.route-veil-line { position: absolute; top: calc(50% + 44px); left: 50%; width: 180px; height: 2px; translate: -50%; overflow: hidden; border-radius: 2px; background: rgb(237 243 245 / 10%); }
 .route-veil-line-fill { display: block; height: 100%; transform-origin: left; background: linear-gradient(90deg, rgb(var(--ember)), rgb(var(--ember-hi))); transition: transform 120ms linear; }
 
 /* Sign-in: one flat card on an ember pool, with the trail on its top edge. */
