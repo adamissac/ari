@@ -69,4 +69,4 @@ def test_repository_has_a_single_migration_head():
     """
     cfg = Config()
     cfg.set_main_option("script_location", str(MIGRATIONS))
-    assert ScriptDirectory.from_config(cfg).get_heads() == ["0022"]
+    assert ScriptDirectory.from_config(cfg).get_heads() == ["0023"]

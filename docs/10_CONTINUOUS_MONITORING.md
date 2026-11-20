@@ -86,7 +86,7 @@ Both paths apply `review_pushes`,
 strictness, PR comments and an optional hourly cap in Project Settings. Branch
 and author globs are case-insensitive. Empty include-branches means every branch,
 for pushes and for PR base branches alike. Empty author
-includes means everyone; `*[bot]` is excluded by default. Strictness filters only
+includes means everyone; `ari-security[bot]`, `dependabot[bot]` and `renovate[bot]` are excluded by default; other bots, such as coding agents, are reviewed. Strictness filters only
 the PR comment; all findings remain stored.
 
 For the per-commit path, `GITHUB_AUTO_COMMIT_AUTHORS` restricts the signed push
