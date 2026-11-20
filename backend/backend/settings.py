@@ -67,6 +67,9 @@ class Settings(BaseSettings):
     github_web_url: str = "https://github.com"
     # Empty or * preserves impact monitoring; a non-empty comma list enables per-commit runs.
     github_auto_commit_authors: str = ""
+    # A pushed commit that only changes documentation or images is recorded as checked and
+    # skipped instead of spending a full model run; anything else is always assessed.
+    skip_docs_only_commits: bool = True
     project_assessments_per_hour: int = Field(default=10, ge=1)
     project_assessments_per_day: int = Field(default=50, ge=1)
     assessments_usd_per_day: float = Field(default=50.0, gt=0)

@@ -40,7 +40,6 @@ export function Explainability({
           <Async resource={decisions} label="shadow decisions">
             {page => (
               <>
-                <p className="mb-3 text-xs text-muted">Backend label: {page.label}</p>
                 {page.items.length === 0 ? <Empty>No shadow decision has been produced for this project.</Empty> : (
                   <ul className="flex flex-col gap-3">{page.items.map(item => (
                     <LiveShadowDecision
@@ -61,7 +60,6 @@ export function Explainability({
           <Async resource={recs} label="recommendations">
             {page => (
               <>
-                <p className="mb-3 text-xs text-muted">Backend label: {page.label}</p>
                 {page.items.length === 0 ? <Empty>No recommendation has been requested for this project.</Empty> : (
                   <ul className="flex flex-col gap-3">{page.items.map(rec => (
                     <LiveRecommendation

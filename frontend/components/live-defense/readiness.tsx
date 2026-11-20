@@ -47,54 +47,47 @@ export function ReadinessDashboard({
 }
 
 function ReadinessBody({ assessment }: { assessment: RlReadinessAssessment }) {
+  const passed = assessment.categories.filter(item => item.status === 'PASS').length;
   return (
     <>
-      <Panel title="Backend verdict" actions={<SourceTag mode="live" />}>
-        <p className="text-sm text-ink" data-testid="live-defense-readiness-verdict">
-          {assessment.verdict}
-        </p>
-        <p className="mt-2 text-sm text-ink">
-          ready=<Mono>{String(assessment.ready)}</Mono>
-          {' · '}infrastructure complete={String(assessment.infrastructure_complete)}
-          {' · '}customer infra provisioned={String(assessment.customer_infra_provisioned)}
-        </p>
-        <p className="mt-2 text-xs text-muted" data-testid="live-defense-readiness-phase6">
-          {assessment.phase6_verdict}
-        </p>
-        <p className="mt-2 text-xs text-muted">{assessment.caveat}</p>
-      </Panel>
-      <Panel title="Categories A–J">
-        <ul className="flex flex-col gap-2" data-testid="live-defense-readiness-categories">
+      <Panel title="RL pilot readiness" actions={<SourceTag mode="live" />}>
+        <p className="text-base font-medium text-ink" data-testid="live-defense-readiness-verdict">{assessment.verdict}</p>
+        <p className="mt-1 text-sm text-muted">{passed} of {assessment.categories.length} checks pass</p>
+        <ul className="mt-4 divide-y divide-line" data-testid="live-defense-readiness-categories">
           {assessment.categories.map(item => (
-            <li key={item.category} className="rounded-md border border-line bg-panel-2 p-3" data-testid={`live-defense-readiness-${item.letter}`}>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-medium text-ink">{item.letter}. {item.title}</p>
-                <Tag tone={TONE[item.status]}>{item.status}</Tag>
-              </div>
-              <p className="mt-1 text-xs text-muted">{item.summary}</p>
+            <li key={item.category} className="flex items-center justify-between gap-3 py-2" title={item.summary} data-testid={`live-defense-readiness-${item.letter}`}>
+              <span className="text-sm text-ink-2">{item.title}</span>
+              <Tag tone={TONE[item.status]}>{item.status}</Tag>
             </li>
           ))}
         </ul>
       </Panel>
-      <Panel title="Evaluation plan">
-        <p className="text-sm text-ink">
-          Thresholds are unset pending RL-owner approval. Pass-by-total-reward is forbidden.
-        </p>
-        <ul className="mt-2 text-xs text-muted">
-          {assessment.evaluation_plan.metrics.map(metric => (
-            <li key={metric.name}>
-              {metric.name}: threshold {metric.threshold === null ? 'unset' : String(metric.threshold)} ({metric.threshold_status})
-            </li>
-          ))}
-        </ul>
-      </Panel>
-      <Panel title="Hosted inference">
-        <p className="text-sm text-ink">
-          v6 passed new criteria: {String(assessment.hosted_inference.v6_passed_new_criteria)}.
-          Approved checkpoint present: {String(assessment.hosted_inference.approved_checkpoint_present)}.
-        </p>
-        <p className="mt-1 text-xs text-muted">Q-values are not probabilities. Missing serving fields stay missing.</p>
-      </Panel>
+      <details className="ld-details">
+        <summary>Technical details</summary>
+        <Panel title="Evidence">
+          <p className="text-sm text-ink">
+            ready=<Mono>{String(assessment.ready)}</Mono>
+            {' · '}infrastructure complete={String(assessment.infrastructure_complete)}
+            {' · '}customer infra provisioned={String(assessment.customer_infra_provisioned)}
+          </p>
+          <p className="mt-2 text-xs text-muted" data-testid="live-defense-readiness-phase6">{assessment.phase6_verdict}</p>
+          <p className="mt-2 text-xs text-muted">{assessment.caveat}</p>
+          <ul className="mt-3 flex flex-col gap-1 text-xs text-muted">
+            {assessment.categories.map(item => <li key={item.category}>{item.letter}. {item.title}: {item.summary}</li>)}
+          </ul>
+          <p className="mt-3 text-xs text-muted">Thresholds are unset pending RL-owner approval; pass-by-total-reward is forbidden.</p>
+          <ul className="mt-1 text-xs text-muted">
+            {assessment.evaluation_plan.metrics.map(metric => (
+              <li key={metric.name}>{metric.name}: threshold {metric.threshold === null ? 'unset' : String(metric.threshold)} ({metric.threshold_status})</li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-muted">
+            v6 passed new criteria: {String(assessment.hosted_inference.v6_passed_new_criteria)}.
+            Approved checkpoint present: {String(assessment.hosted_inference.approved_checkpoint_present)}.
+            Q-values are not probabilities.
+          </p>
+        </Panel>
+      </details>
     </>
   );
 }

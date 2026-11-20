@@ -62,18 +62,18 @@ h1 { font-weight: 500; }
   .project-shell > * { grid-column: 2; }
   .project-shell > .project-head { grid-column: 1; grid-row: 1; flex-direction: column; align-items: flex-start; gap: 12px; margin: 0; padding: 20px 16px 12px; background: none !important; border-image-source: none !important; border-image-outset: 0 !important; z-index: auto; }
   .project-shell > .project-head > div { flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; }
-  .project-shell > .project-head select { width: 100%; }
+  .project-shell > .project-head select { width: 100%; height: 36px; padding-inline: 10px; border-radius: 6px; font-size: 13px; background-color: transparent; border-color: var(--glass-line); }
   .project-shell > .project-tabbar { grid-column: 1; grid-row: 2 / -1; position: static; min-height: 0; flex-direction: column; align-items: stretch; align-self: stretch; overflow-y: auto; margin: 0; padding: 4px 8px 16px; background: none !important; border-image-source: none !important; border-image-outset: 0 !important; z-index: auto; }
   .project-tab-scroll { flex-direction: column; gap: 2px; overflow: visible; }
-  .project-tab { position: relative; min-height: 34px; width: 100%; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 400; color: var(--color-muted); }
+  .project-tab { position: relative; min-height: 32px; width: 100%; padding: 0 10px; border-radius: 6px; font-size: 14px; font-weight: 400; color: var(--color-muted); }
   .project-tab::after { display: none; }
-  .project-tab:hover { background: var(--color-panel); }
-  .project-tab[aria-current="page"] { background: var(--color-panel-2); color: var(--color-ink); box-shadow: inset 0 1px 0 rgb(237 243 245 / 6%); }
+  .project-tab:hover { background: rgb(237 243 245 / 4%); color: var(--color-ink-2); }
+  .project-tab[aria-current="page"] { background: rgb(237 243 245 / 7%); color: var(--color-ink); font-weight: 500; box-shadow: none; }
   .project-more { margin-top: 2px; }
-  .project-more-button { height: 34px; }
+  .project-more-button { height: 32px; }
   .project-more-chevron { margin-left: auto; }
   .project-more-menu { position: static; width: auto; max-width: none; border: 0; background: none; box-shadow: none; padding: 2px 0 0 26px; }
-  .project-more-menu a { padding: 6px 10px; border-radius: 8px; }
+  .project-more-menu a { padding: 6px 10px; border-radius: 6px; }
   .project-shell > .project-body { grid-column: 2; grid-row: 1 / -1; min-width: 0; overflow-y: auto; padding: 28px clamp(20px, 2.5vw, 48px) 64px; }
   .project-shell > .project-body > * { min-width: 0; }
 }
@@ -115,7 +115,6 @@ h1 { font-weight: 500; }
 @media (min-width: 1024px) {
   .project-shell { background:
     linear-gradient(90deg, var(--color-night) 0 247px, var(--glass-line) 247px 248px, transparent 248px); }
-  .project-tab[aria-current="page"] { background: var(--color-panel-2); box-shadow: inset 2px 0 0 var(--color-brand); }
 }
 .evidence-tag { box-shadow: inset 0 0 0 1px rgb(var(--ember) / 30%); }
 tbody tr:hover, main :is(ol, ul).divide-y > li:hover { background: rgb(var(--ember) / 5%); }
@@ -264,5 +263,13 @@ body:has(.demo-banner) html[data-home-hero] .site-header, html[data-home-hero]:h
 :root .auth-split .auth-card { max-width: 360px; padding: 0 !important; background: none !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; border-radius: 0; overflow: visible; }
 :root .auth-split .auth-card::before { display: none; }
 
-/* Step lists (setup, onboarding) share the sidebar tab's current state: one surface step and a glacier bar. */
-.step-item-current { background: var(--color-panel-2); box-shadow: inset 2px 0 0 var(--color-brand); }
+/* Step lists (setup, onboarding) share the sidebar tab's current state: a soft tint, no bar. */
+.step-item-current { background: rgb(237 243 245 / 7%); font-weight: 500; }
+
+/* Developer-facing detail tucked behind one disclosure at the bottom of a page. */
+.ld-details > summary { cursor: pointer; width: fit-content; padding: 6px 0; font-size: 13px; color: var(--color-faint); list-style: none; }
+.ld-details > summary::-webkit-details-marker { display: none; }
+.ld-details > summary::before { content: "+ "; }
+.ld-details[open] > summary::before { content: "− "; }
+.ld-details > summary:hover { color: var(--color-ink-2); }
+.ld-details[open] > summary { margin-bottom: 12px; }

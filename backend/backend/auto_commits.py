@@ -94,6 +94,21 @@ def per_commit_enabled() -> bool:
     return bool(_configured_authors())
 
 
+# Suffixes that cannot change behaviour. Config (.json/.yaml/.toml) and .svg (can carry
+# script) are deliberately absent: those commits are always assessed.
+DOCS_ONLY_SUFFIXES = (".md", ".mdx", ".rst", ".txt", ".png", ".jpg", ".jpeg", ".gif", ".webp")
+GITHUB_COMMIT_FILES_CAP = 300  # GitHub lists at most this many files on a commit
+
+
+def docs_only(commit: dict[str, Any]) -> bool:
+    """True only when GitHub listed every changed file and each one is documentation."""
+    files = commit.get("files")
+    if not isinstance(files, list) or not files or len(files) >= GITHUB_COMMIT_FILES_CAP:
+        return False
+    names = [f.get("filename") if isinstance(f, dict) else None for f in files]
+    return all(isinstance(n, str) and n.lower().endswith(DOCS_ONLY_SUFFIXES) for n in names)
+
+
 def _matches(patterns: list[str], value: str, *, literal_brackets: bool = False) -> bool:
     normalized = value.casefold()
     for pattern in patterns:
@@ -553,6 +568,8 @@ def assess_commit(ctx: JobContext) -> dict[str, Any]:
     # "*" admits any author, including commits whose email maps to no GitHub account.
     if allowed and "*" not in allowed and (not login or login not in allowed):
         return policy_exit(p, "commit author is outside the automatic rollout")
+    if get_settings().skip_docs_only_commits and docs_only(commit):
+        return policy_exit(p, "skipped: documentation-only change")
     ctx.check_cancelled()
     with transaction() as conn:
         # Serialize quota reservations across all repositories in a project.
@@ -923,12 +940,6 @@ def post_pr_review(ctx: JobContext) -> dict[str, Any]:
             .first()
         )
         if repo is not None and repo["disconnected_at"] is not None:
-            return {"noop": "repository is disconnected"}
-        if repo is None or not repo["installation_id"]:
-            raise PermanentJobError(
-                ErrorCode.VALIDATION_FAILED, "connected GitHub installation is unavailable"
-            )
-        if repo["disconnected_at"] is not None:
             audit.record(
                 conn,
                 org_id=project_org(conn, assessment.project_id),
@@ -942,6 +953,10 @@ def post_pr_review(ctx: JobContext) -> dict[str, Any]:
             )
             log.info("pr review for %s skipped: repository disconnected", assessment_id)
             return {"noop": "repository disconnected"}
+        if repo is None or not repo["installation_id"]:
+            raise PermanentJobError(
+                ErrorCode.VALIDATION_FAILED, "connected GitHub installation is unavailable"
+            )
         finding_docs = list(
             conn.execute(
                 sa.select(findings.c.doc)
