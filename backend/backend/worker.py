@@ -16,6 +16,7 @@ import logging
 import os
 import signal
 import socket
+import sys
 import threading
 import time
 import traceback
@@ -324,6 +325,36 @@ def worker_id() -> str:
     return f"{socket.gethostname()}:{os.getpid()}"
 
 
+def rss_mb() -> float | None:
+    """Resident memory of this process in MB, or None where /proc is unavailable."""
+    try:
+        with open("/proc/self/status", encoding="ascii") as f:
+            for line in f:
+                if line.startswith("VmRSS:"):
+                    return int(line.split()[1]) / 1024
+    except (OSError, ValueError, IndexError):
+        pass
+    return None
+
+
+def over_memory_limit() -> bool:
+    limit = get_settings().worker_max_rss_mb
+    used = rss_mb()
+    return bool(limit) and used is not None and used > limit
+
+
+def _restart() -> None:  # pragma: no cover - replaces the process image
+    """Replace this process with a fresh worker. The pid is kept, so a supervisor that
+    watches it (deploy/railway/start.sh) sees no exit."""
+    from backend.db import get_engine
+    from backend.preflight import RECYCLED_ENV
+
+    get_engine().dispose()
+    logging.shutdown()
+    os.environ[RECYCLED_ENV] = "1"
+    os.execv(sys.executable, [sys.executable, *sys.orig_argv[1:]])
+
+
 def drain(max_jobs: int = 100, kinds: list[str] | None = None) -> list[str]:
     done = []
     owner = worker_id()
@@ -368,8 +399,9 @@ def main(argv: list[str] | None = None) -> int:
         log.exception("worker heartbeat prune failed")
     # Startup reconciliation recovers jobs orphaned by a crash or restart of the fleet.
     reconcile_safely()
-    last_reconcile = last_seen = time.monotonic()
+    last_reconcile = last_seen = last_job = time.monotonic()
     _registry(owner, "idle")
+    recycle = False
     while not stopping.is_set():
         s = get_settings()
         now = time.monotonic()
@@ -380,14 +412,26 @@ def main(argv: list[str] | None = None) -> int:
             _registry(owner, "idle")
             last_seen = now
         if run_one(owner) is None:
+            if s.worker_idle_exit_s and time.monotonic() - last_job >= s.worker_idle_exit_s:
+                log.info("worker %s idle for %.0fs", owner, s.worker_idle_exit_s)
+                break
             stopping.wait(s.worker_poll_interval_s)
+            continue
+        last_job = time.monotonic()
+        if not stopping.is_set() and over_memory_limit():
+            # Python does not return a finished job's memory to the OS; a fresh process does.
+            recycle = True
+            break
     try:
         with transaction() as conn:
             execution.worker_gone(conn, owner)
             jobs.worker_stopped(conn, owner)
     except Exception:  # pragma: no cover - the stale row ages out of the active count
         log.warning("could not deregister worker %s", owner, exc_info=True)
-    log.info("worker %s stopped after finishing its job", owner)
+    if recycle and not stopping.is_set():
+        log.info("worker %s restarting to release %.0f MB", owner, rss_mb() or 0)
+        _restart()
+    log.info("worker %s stopped", owner)
     return 0
 
 

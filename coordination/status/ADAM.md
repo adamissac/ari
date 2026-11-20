@@ -1,5 +1,15 @@
 # Adam — implementation status
 
+## 2026-11-18 — Railway workers on demand
+- Branch: `feat/adam/on-demand-workers`.
+- `hackatl-worker-pool` starts workers when jobs wait (up to `WORKER_PROCESSES`, 3) and they exit after 60 idle seconds; `WORKER_ON_DEMAND=false` keeps resident workers. No contract or migration change.
+- Production runs 8db17b77 (slim footprint); measured 0.78 GB idle.
+
+## 2026-11-18 — smaller Railway footprint
+- Branch: `feat/adam/slim-railway-footprint`.
+- Railway entrypoint: 3 workers by default (was 12), ordinary jobs capped at 2 so emergency stop always has a worker; workers above `WORKER_MAX_RSS_MB` (250) after a job restart in place.
+- Verification: worker recycle and entrypoint tests passed locally; real worker restart checked by hand on embedded Postgres. Not deployed.
+
 ## 2026-10-25 — correction: empty auto-commit allowlist behavior
 - Branch: `fix/adam/manual-only-auto-assess-default`; prior commit `163e6247` set the empty allowlist default.
 - Corrected the deployment and storage docs: an empty `GITHUB_AUTO_COMMIT_AUTHORS` disables per-commit full runs, but pushes from repositories with `automatic_assessments` ON fall back to the legacy impact-gated, coalesced monitoring policy.

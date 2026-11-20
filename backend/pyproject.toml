@@ -24,6 +24,7 @@ dependencies = [
 [project.scripts]
 hackatl-api = "backend.cli:serve"
 hackatl-worker = "backend.cli:worker"
+hackatl-worker-pool = "backend.cli:worker_pool"
 hackatl-migrate = "backend.cli:migrate"
 hackatl-preflight = "backend.cli:preflight"
 

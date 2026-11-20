@@ -521,6 +521,48 @@ _CLAIM_SQL = sa.text(
 )
 
 
+_CLAIMABLE_SQL = sa.text(
+    """
+    SELECT
+      count(*) FILTER (WHERE claimable AND emergency) AS emergency_waiting,
+      count(*) FILTER (WHERE claimable AND NOT emergency) AS ordinary_waiting,
+      count(*) FILTER (WHERE held AND emergency) AS emergency_running,
+      count(*) FILTER (WHERE held AND NOT emergency) AS ordinary_running
+    FROM (
+      SELECT
+        kind = ANY(:emergency_kinds) AS emergency,
+        status = 'running' AND lease_expires_at >= now() AS held,
+        ((status = 'queued' AND run_after <= clock_timestamp())
+          OR (status = 'running' AND lease_expires_at < now() AND effect_state IS NULL))
+          AND cancel_requested IS NOT TRUE
+          AND (deadline_at IS NULL OR deadline_at > now()) AS claimable
+      FROM jobs WHERE status IN ('queued', 'running')
+    ) j
+    """
+)
+
+
+def claimable_count(conn: Connection) -> int:
+    """How many jobs ``claim`` would hand out right now, one per free worker.
+
+    Applies the same emergency and global limits as ``_CLAIM_SQL``. The per-project limit
+    is not applied: a job it holds back is counted, and the worker started for it finds
+    nothing and leaves."""
+    settings = get_settings()
+    row = conn.execute(_CLAIMABLE_SQL, {"emergency_kinds": sorted(EMERGENCY_JOB_KINDS)}).one()
+    ordinary, emergency = row.ordinary_waiting, 0
+    if settings.job_max_running_emergency > 0:
+        emergency = min(
+            row.emergency_waiting,
+            max(0, settings.job_max_running_emergency - row.emergency_running),
+        )
+    else:
+        ordinary += row.emergency_waiting
+    if settings.job_max_running_global > 0:
+        ordinary = min(ordinary, max(0, settings.job_max_running_global - row.ordinary_running))
+    return int(ordinary + emergency)
+
+
 def claim(conn: Connection, owner: str, lease_s: int, kinds: list[str] | None = None) -> Job | None:
     """Claim the next runnable job, fairly across projects.
 
@@ -1010,6 +1052,22 @@ def worker_heartbeat(
             index_elements=[worker_heartbeats.c.worker_id],
             set_=set_,
         )
+    )
+
+
+def busy_workers(conn: Connection, worker_ids: list[str]) -> int:
+    """How many of these workers hold a claimed job."""
+    if not worker_ids:
+        return 0
+    return int(
+        conn.execute(
+            sa.select(sa.func.count())
+            .select_from(worker_heartbeats)
+            .where(
+                worker_heartbeats.c.worker_id.in_(worker_ids),
+                worker_heartbeats.c.current_job_id.is_not(None),
+            )
+        ).scalar_one()
     )
 
 

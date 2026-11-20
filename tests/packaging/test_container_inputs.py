@@ -66,3 +66,53 @@ def test_build_context_excludes_local_credentials_and_artifacts() -> None:
         "hackatl-agentic-security",
     } <= patterns
     assert "!**/.env.example" in patterns
+
+
+def _railway_workers(tmp_path: Path, **env: str) -> list[str]:
+    """Run the Railway entrypoint with stub binaries; return each worker's ordinary-job cap."""
+    seen = tmp_path / "workers"
+    stubs = {
+        "hackatl-preflight": "exit 0",
+        "hackatl-migrate": "exit 0",
+        "python": "exit 0",
+        "hackatl-worker": f'echo "${{JOB_MAX_RUNNING_GLOBAL-unset}}" >> {seen}\nexec sleep 30',
+        "hackatl-worker-pool": (
+            f'echo "pool $* ${{JOB_MAX_RUNNING_GLOBAL-unset}}" >> {seen}\nexec sleep 30'
+        ),
+        "hackatl-api": "sleep 1",  # exits, so the supervisor stops the workers and returns
+    }
+    for name, body in stubs.items():
+        stub = tmp_path / name
+        stub.write_text(f"#!/bin/sh\n{body}\n")
+        stub.chmod(0o755)
+    path = f"{tmp_path}:/usr/bin:/bin"
+    result = subprocess.run(
+        ["sh", str(ROOT / "deploy/railway/start.sh")],
+        env={"PATH": path, **env},
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert result.returncode == 1, result.stderr
+    return seen.read_text().split()
+
+
+def test_railway_starts_workers_on_demand_with_one_kept_free_for_emergency_jobs(
+    tmp_path: Path,
+) -> None:
+    # Emergency stop/rollback/expiry are claimed outside JOB_MAX_RUNNING_GLOBAL, so a cap
+    # one below the worker limit leaves them a worker when every ordinary slot is busy.
+    assert _railway_workers(tmp_path) == ["pool", "--max", "3", "2"]
+    (tmp_path / "workers").unlink()
+    assert _railway_workers(tmp_path, WORKER_PROCESSES="5") == ["pool", "--max", "5", "4"]
+
+
+def test_railway_resident_worker_count_and_cap_are_overridable(tmp_path: Path) -> None:
+    def resident(**env: str) -> list[str]:
+        (tmp_path / "workers").unlink(missing_ok=True)
+        return _railway_workers(tmp_path, WORKER_ON_DEMAND="false", **env)
+
+    assert resident() == ["2", "2", "2"]
+    assert resident(WORKER_PROCESSES="5") == ["4"] * 5
+    assert resident(WORKER_PROCESSES="4", JOB_MAX_RUNNING_GLOBAL="0") == ["0"] * 4
+    assert resident(WORKER_PROCESSES="1") == ["unset"]

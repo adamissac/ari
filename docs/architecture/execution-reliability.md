@@ -148,7 +148,14 @@ inside the reservation transaction — both rows commit or neither does.
 * `JOB_MAX_RUNNING_PER_PROJECT` (default 12, the default worker count): live leases per project. Enforced in
   the claim statement; claims serialize on an advisory lock while any limit is on,
   so the limit holds across workers (claims are one short statement).
-* `JOB_MAX_RUNNING_GLOBAL` (default 0 = off; the worker count already bounds it).
+* `JOB_MAX_RUNNING_GLOBAL` (default 0 = off; the worker count already bounds it). The
+  Railway entrypoint sets it to one below `WORKER_PROCESSES`, so a worker stays free for
+  the emergency kinds below.
+* Workers on demand (`backend/worker_pool.py`, Railway default): the pool starts a worker
+  for each job `jobs.claimable_count` says could be claimed now and has no idle worker,
+  up to `--max`. That count applies the global and emergency limits above, not the
+  per-project one. The pool runs `reconcile` on the usual interval, so expired leases and
+  waiting jobs are handled while no worker is running.
 * Fairness: claim order is `priority`, then the project with the fewest running
   jobs, then age. A project with 1,000 queued jobs cannot starve another project
   at the same priority. Jobs without a project are not limited.

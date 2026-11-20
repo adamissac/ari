@@ -52,18 +52,18 @@ h1 { font-weight: 500; }
 
 /* Console shell: fixed sidebar, content scrolls beside it. */
 @media (min-width: 1024px) {
-  body:has(.project-shell) { display: flex; height: 100vh; flex-direction: column; overflow: hidden; }
+  body:has(.project-shell) { display: flex; height: 100dvh; flex-direction: column; overflow: hidden; }
   body:has(.project-shell) .site-header { position: static; flex: none; }
   body:has(.project-shell) .site-header-inner { max-width: none; }
   body:has(.project-shell) .site-main { display: block; min-height: 0; max-width: none; flex: 1; padding: 0; margin: 0; width: 100%; }
   body:has(.project-shell) :is(.night-footer, footer) { display: none; }
-  .project-shell { display: grid; height: 100%; grid-template-columns: 248px minmax(0, 1fr); grid-template-rows: auto auto 1fr;
+  .project-shell { display: grid; height: 100%; min-height: 0; grid-template-columns: 248px minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr);
     background: linear-gradient(90deg, var(--color-night) 0 247px, var(--glass-line) 247px 248px, transparent 248px); }
   .project-shell > * { grid-column: 2; }
   .project-shell > .project-head { grid-column: 1; grid-row: 1; flex-direction: column; align-items: flex-start; gap: 12px; margin: 0; padding: 20px 16px 12px; background: none !important; border-image-source: none !important; border-image-outset: 0 !important; z-index: auto; }
   .project-shell > .project-head > div { flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; }
   .project-shell > .project-head select { width: 100%; }
-  .project-shell > .project-tabbar { grid-column: 1; grid-row: 2 / -1; position: static; flex-direction: column; align-items: stretch; align-self: start; margin: 0; padding: 4px 8px 16px; background: none !important; border-image-source: none !important; border-image-outset: 0 !important; z-index: auto; }
+  .project-shell > .project-tabbar { grid-column: 1; grid-row: 2 / -1; position: static; min-height: 0; flex-direction: column; align-items: stretch; align-self: stretch; overflow-y: auto; margin: 0; padding: 4px 8px 16px; background: none !important; border-image-source: none !important; border-image-outset: 0 !important; z-index: auto; }
   .project-tab-scroll { flex-direction: column; gap: 2px; overflow: visible; }
   .project-tab { position: relative; min-height: 34px; width: 100%; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 400; color: var(--color-muted); }
   .project-tab::after { display: none; }
@@ -74,8 +74,8 @@ h1 { font-weight: 500; }
   .project-more-chevron { margin-left: auto; }
   .project-more-menu { position: static; width: auto; max-width: none; border: 0; background: none; box-shadow: none; padding: 2px 0 0 26px; }
   .project-more-menu a { padding: 6px 10px; border-radius: 8px; }
-  .project-shell > .project-body { grid-column: 2; grid-row: 1 / -1; overflow-y: auto; padding: 28px 32px 64px; }
-  .project-shell > .project-body > * { max-width: 1240px; }
+  .project-shell > .project-body { grid-column: 2; grid-row: 1 / -1; min-width: 0; overflow-y: auto; padding: 28px clamp(20px, 2.5vw, 48px) 64px; }
+  .project-shell > .project-body > * { min-width: 0; }
 }
 
 /* Landing hero: text beside a real product view. */

@@ -26,15 +26,31 @@ hackatl-preflight --config --worker
 
 hackatl-migrate
 
-# Twelve workers (~80 MB each) so concurrent commits each get their own run at once; jobs are
-# claimed with SKIP LOCKED, so they never run the same job twice.
+# Up to three workers by default. Ordinary jobs may hold all but one of them, so two commits
+# run at once and the rest wait their turn; an emergency stop, rollback or expiry is claimed
+# outside that cap and always finds a free worker. Raise WORKER_PROCESSES to run more at once.
+# Jobs are claimed with SKIP LOCKED, so they never run the same job twice.
+# Memory is what the host bills for, so no worker sits idle: the pool starts one when a job
+# is waiting and it exits after WORKER_IDLE_EXIT_S (60) without work. WORKER_ON_DEMAND=false
+# keeps WORKER_PROCESSES workers running instead.
+# A worker that grew past WORKER_MAX_RSS_MB during a job restarts itself once the job is done.
+export WORKER_MAX_RSS_MB="${WORKER_MAX_RSS_MB-250}"
+worker_count="${WORKER_PROCESSES:-3}"
+if [ "$worker_count" -gt 1 ]; then
+  export JOB_MAX_RUNNING_GLOBAL="${JOB_MAX_RUNNING_GLOBAL-$((worker_count - 1))}"
+fi
 pids=""
-i=0
-while [ "$i" -lt "${WORKER_PROCESSES:-12}" ]; do
-  hackatl-worker &
-  pids="$pids $!"
-  i=$((i + 1))
-done
+if [ "${WORKER_ON_DEMAND:-true}" = "true" ]; then
+  hackatl-worker-pool --max "$worker_count" &
+  pids=" $!"
+else
+  i=0
+  while [ "$i" -lt "$worker_count" ]; do
+    hackatl-worker &
+    pids="$pids $!"
+    i=$((i + 1))
+  done
+fi
 workers="$pids"
 hackatl-api &
 api=$!

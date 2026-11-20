@@ -3,6 +3,25 @@
 Append-only. Newest entry at the top. Every development session (human or agent)
 adds an entry before ending.
 
+### 2026-11-18 — Devin (agent, Adam) — Railway workers on demand (`feat/adam/on-demand-workers`)
+
+- Production first: the slim-footprint commit (8db17b77) was deployed. The first deploy failed its `/readyz` check because Postgres was still down (migrate could not resolve `postgres.railway.internal`); a redeploy after Postgres started succeeded. Seen live: 3 workers, a backlog of ~50 jobs drained 2 at a time, and five recycles logged ("restarting to release 696..712 MB"). Memory peaked at 2.5 GB and settled at 0.78 GB idle.
+- The bill, read from Railway's usage API with a project token the owner supplied (30 days, twelve resident workers): about $61 at list rates, backend memory $43, network egress $12, everything else $6. Postgres sent 109 GB of egress; not explained.
+- Did: `backend/worker_pool.py` (`hackatl-worker-pool --max N`) replaces the resident workers in `deploy/railway/start.sh`. Each second it starts a worker per claimable job without an idle worker (`jobs.claimable_count`, `jobs.busy_workers`); workers get `WORKER_IDLE_EXIT_S` (new setting, 60 from the pool) and `WORKER_RECYCLED=1` (the pool passed the migration check). The pool reconciles on the worker interval and beats a `pool:` heartbeat row, which `/readyz` counts as alive. Three workers failing within 10 s of start in a row stop the pool, and `start.sh` then stops the service as before. `WORKER_ON_DEMAND=false` keeps resident workers.
+- No contract, migration or claim-SQL change. `workers.alive` in `/readyz` now includes the pool row.
+- Tests run: `backend/tests/test_worker_pool.py` (9 passed, one starts a real worker that claims a job and exits idle), packaging entrypoint tests. By hand: the real `start.sh` against embedded Postgres showed the pool at 82 MB with no worker, three workers started for four queued jobs, each exited 8 s after its last job (`WORKER_IDLE_EXIT_S=8`), and SIGTERM stopped the service cleanly.
+- Not done: no Railway deploy of this branch. Not measured: pool memory in production. The per-project limit is not applied by `claimable_count`.
+
+### 2026-11-18 — Devin (agent, Adam) — smaller Railway footprint (`feat/adam/slim-railway-footprint`)
+
+- Why: the owner stopped the Railway subscription over a ~$70 monthly bill. The bill itself was not inspected (no Railway token in the session); the cause below is inferred from local measurement.
+- Measured idle on Linux: API ~105 MB, each worker ~90 MB, under 0.2% CPU per process. Twelve always-on workers held ~1.1 GB before any job; memory a job allocates is not returned by Python.
+- Did: `deploy/railway/start.sh` defaults `WORKER_PROCESSES` to 2 and `WORKER_MAX_RSS_MB` to 250. New setting `worker_max_rss_mb` (0 = off, the default outside Railway): after a job, a worker above it deregisters and `os.execv`s itself, keeping its pid so `start.sh` sees no exit.
+- Tests run: `backend/tests/test_worker_recycle.py` and `test_worker_drain.py` (5 passed). By hand against embedded Postgres: a real `hackatl-worker` with a 50 MB limit ran a job, restarted in 0.5 s under the same pid, kept a fresh heartbeat row and exited on SIGTERM.
+- Review fixes (Devin Review, same branch): (1) a recycled worker sets `WORKER_RECYCLED` and `hackatl-worker` then skips `require_migrated`; without it, a recycle after a newer deploy migrated the database exited the worker and `start.sh` stopped the old container before its handoff. (2) `start.sh` defaults `WORKER_PROCESSES` to 3 and `JOB_MAX_RUNNING_GLOBAL` to one below it, so two assessments cannot hold every worker while an emergency stop waits. Tests: `test_worker_recycle.py` (5 passed), `tests/packaging/test_container_inputs.py` (4 passed; runs `start.sh` with stub binaries).
+- Not done: worker size during a real assessment was not measured; nothing was deployed; retention still ships in dry-run, so the Postgres volume keeps growing until `RETENTION_DRY_RUN=false`.
+- Behavior change: a burst of commits to one project now runs 2 at a time on Railway unless `WORKER_PROCESSES` is raised. `JOB_MAX_RUNNING_PER_PROJECT` stays 12 (a cap).
+
 ### 2026-11-15 — Claude (agent, for Alan) — gate v4 (long-block rule, hold for confirmation): FAIL
 
 - Owner decision (Alan): run a fourth gate. Added `LoopConfig.confirm_error_p` (an answering owner is wrong either way), counters `wrongly_confirmed` / `wrongly_denied`, `pilot_gate.run(confirm=...)` and `--confirm-*` flags, `configs/live/pilot_gate_v4/` (4 fresh scenarios, 2 with missing grants). Pre-registered in `298d05cf`, run once.
@@ -3035,3 +3054,8 @@ Canonical main 9437e217d65aa1be22fa7b4f54f723200cd428c8; external pilot NO-GO. S
 
 - Branch `feat/adam/obsidian-glacier-theme` updates the shared frontend palette and page overrides from current `main`. Core colors: `#0D1418` background, `#1C282E` panel, `#9CBBC7` accent, `#EDF3F5` text. Distinct labeled status colors remain.
 - Verified locally: production Next.js build, 543 frontend unit tests, and Playwright checks of home, pricing, lab, projects, connect, and the mobile homepage. The projects route showed its signed-out session state; authenticated console detail pages were not visually inspected.
+
+## 2026-11-18 — responsive project workspace sizing
+
+- Branch `fix/adam/responsive-sizing` removes the 1240px desktop workspace content cap, uses the visible viewport height, and lets the sidebar scroll when screen height is short.
+- Browser checks covered public routes at 320–1920px and a project shell layout fixture at 1024, 1440, and 1920px. Authenticated project screens still need a live visual pass.

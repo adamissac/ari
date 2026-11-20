@@ -83,8 +83,8 @@ class Settings(BaseSettings):
     worker_lease_s: int = 60
     worker_poll_interval_s: float = 1.0
     # Execution reliability (docs/architecture/execution-reliability.md). 0 disables a limit.
-    # Matches the default worker count (deploy/railway/start.sh): a burst of commits to one
-    # project runs all at once instead of four at a time. Other projects stay served because
+    # A cap, not a worker count: one project may use every worker the deploy runs
+    # (WORKER_PROCESSES in deploy/railway/start.sh). Other projects stay served because
     # claims prefer the least-busy project.
     job_max_running_per_project: int = 12
     job_max_running_global: int = 0
@@ -96,6 +96,12 @@ class Settings(BaseSettings):
     worker_stale_s: int = 120
     job_stuck_pending_s: int = 900
     worker_finalize_retries: int = 3
+    # After a job, a worker whose resident memory exceeds this restarts itself in place so
+    # the memory goes back to the host. 0 disables it.
+    worker_max_rss_mb: int = Field(default=0, ge=0)
+    # A worker with nothing to claim for this long exits. 0 = never. The worker pool sets it
+    # for the workers it starts on demand (backend/worker_pool.py).
+    worker_idle_exit_s: float = Field(default=0, ge=0)
     # Worker liveness for /readyz: each worker upserts a heartbeat row; a heartbeat older
     # than this is stale. None → require a live worker only in production/staging.
     worker_heartbeat_interval_s: float = 5.0
