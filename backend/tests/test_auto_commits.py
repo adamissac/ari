@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from helpers import BASE, HEAD, post_webhook, push_payload, setup_project
 
 from backend import worker
-from backend.auto_commits import authors, per_commit_enabled
+from backend.auto_commits import authors, docs_only, per_commit_enabled
 from backend.db import (
     assessments,
     jobs,
@@ -1597,3 +1597,89 @@ def test_a_push_during_a_running_assessment_is_still_assessed(automatic):
         )
     push(alice, "b" * 40)
     assert sorted(records()) == ["a" * 40, "b" * 40]
+
+
+# --- every commit in a push, docs-only fast path ----------------------------------------
+
+DOCS_SHA, CODE_SHA_A, CODE_SHA_B = "d" * 40, "a" * 40, "b" * 40
+
+
+def _files_by_sha(monkeypatch, files: dict[str, list[str]]):
+    def commit(self, installation, repo, sha):
+        return {
+            "sha": sha,
+            "author": {"login": "adamissac"},
+            "files": [{"filename": name} for name in files.get(sha, ["app.py"])],
+        }
+
+    monkeypatch.setattr("backend.auto_commits.GitHubApp.commit", commit)
+
+
+def _skip_reason(sha: str) -> str | None:
+    with transaction() as conn:
+        doc = conn.execute(
+            sa.select(reassessment_requests.c.doc).where(
+                reassessment_requests.c.doc["head_sha"].astext == sha
+            )
+        ).scalar_one()
+    return doc["reason"] if doc["status"] == "skipped" else None
+
+
+def test_every_commit_in_one_push_gets_its_own_assessment(automatic, monkeypatch):
+    alice, bob, ids, _ = automatic
+    bob.post(f"/api/v1/scopes/{ids['scope']}/approve")
+    shas = [f"{n:x}" * 40 for n in range(1, 6)]
+    _files_by_sha(monkeypatch, {})
+    push(alice, *shas)
+    assert sorted(records()) == sorted(shas)
+    with transaction() as conn:
+        keys = set(
+            conn.execute(
+                sa.select(jobs.c.dedupe_key).where(jobs.c.kind == "assess_github_commit")
+            ).scalars()
+        )
+    assert {f"github:commit:{ids['repo']}:{sha}" for sha in shas} <= keys
+
+
+def test_docs_only_commit_is_recorded_as_checked_without_a_model_run(automatic, monkeypatch):
+    alice, bob, ids, _ = automatic
+    bob.post(f"/api/v1/scopes/{ids['scope']}/approve")
+    _files_by_sha(
+        monkeypatch,
+        {
+            DOCS_SHA: ["README.md", "docs/guide.rst", "img/shot.png"],
+            CODE_SHA_A: ["README.md", "app.py"],
+        },
+    )
+    push(alice, DOCS_SHA, CODE_SHA_A, CODE_SHA_B)
+    assert sorted(records()) == sorted([CODE_SHA_A, CODE_SHA_B])
+    assert _skip_reason(DOCS_SHA) == "skipped: documentation-only change"
+
+
+def test_docs_only_skip_can_be_switched_off(automatic, monkeypatch, settings_override):
+    alice, bob, ids, _ = automatic
+    settings_override(github_auto_commit_authors="adamissac", skip_docs_only_commits=False)
+    bob.post(f"/api/v1/scopes/{ids['scope']}/approve")
+    _files_by_sha(monkeypatch, {DOCS_SHA: ["README.md"]})
+    push(alice, DOCS_SHA)
+    assert records() == [DOCS_SHA]
+
+
+@pytest.mark.parametrize(
+    "files",
+    [
+        None,  # GitHub gave no file list: never assume docs
+        [],
+        [{"filename": "config.json"}],  # config can change behaviour
+        [{"filename": "logo.svg"}],  # svg can carry script
+        [{"filename": "README.md"}, {"filename": "settings.yaml"}],
+        [{"filename": f"doc{i}.md"} for i in range(300)],  # GitHub's list may be truncated
+        [{"filename": None}],
+    ],
+)
+def test_docs_only_is_false_unless_every_listed_file_is_documentation(files):
+    assert docs_only({"files": files} if files is not None else {}) is False
+
+
+def test_docs_only_accepts_documentation_and_images_case_insensitively():
+    assert docs_only({"files": [{"filename": "CHANGELOG.MD"}, {"filename": "a/b.webp"}]})

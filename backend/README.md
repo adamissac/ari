@@ -123,6 +123,11 @@ comma-separated login list to opt into per-commit full runs. Eligibility require
 the signed push sender and GitHub API commit-author attribution to match the rollout;
 author metadata alone never authorizes paid work.
 
+`SKIP_DOCS_ONLY_COMMITS` (default `true`) records a commit whose changed files are all
+documentation or images (`.md .mdx .rst .txt .png .jpg .jpeg .gif .webp`) as checked and
+skipped, with reason `skipped: documentation-only change`, instead of a full model run. Config
+(`.json .yaml .toml`), `.svg`, a missing file list or GitHub's 300-file cap always run in full.
+
 Install the GitHub App with push events, connect the repository, enable project
 monitoring, and approve its sandbox scope once. With a nonempty author allowlist,
 subsequent eligible pushes queue full assessments for every commit, including
